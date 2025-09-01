@@ -5,16 +5,22 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.StdCtrls,
-  Vcl.Imaging.jpeg;
+  Vcl.Imaging.jpeg, Vcl.Buttons;
 
 type
   TformLogin = class(TForm)
     panelBackground: TPanel;
     imageBackground: TImage;
-    GridPanelLogin: TGridPanel;
+    gridPanelLayout: TGridPanel;
+    panelInputs: TPanel;
     editUser: TEdit;
+    panelButton: TPanel;
+    buttonLogin: TSpeedButton;
+    panelEditUser: TPanel;
+    panelEditPassword: TPanel;
     editPassword: TEdit;
-    buttonLogin: TButton;
+    labelTitle: TLabel;
+    procedure buttonLoginClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -27,5 +33,10 @@ var
 implementation
 
 {$R *.dfm}
+
+procedure TformLogin.buttonLoginClick(Sender: TObject);
+begin
+  ShowMessage('fkasdfka');
+end;
 
 end.
