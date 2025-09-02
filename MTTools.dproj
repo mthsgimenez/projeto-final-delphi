@@ -127,6 +127,11 @@
             <Form>formLogin</Form>
             <FormType>dfm</FormType>
         </DCCReference>
+        <DCCReference Include="src\infra\DBConnection.pas">
+            <Form>Connection</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TDataModule</DesignClass>
+        </DCCReference>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
