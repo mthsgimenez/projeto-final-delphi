@@ -123,9 +123,8 @@
         <DelphiCompile Include="$(MainSource)">
             <MainSource>MainSource</MainSource>
         </DelphiCompile>
-        <DCCReference Include="src\views\LoginView.pas">
+        <DCCReference Include="src\view\LoginView.pas">
             <Form>formLogin</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="src\infra\DBConnection.pas">
             <Form>Connection</Form>

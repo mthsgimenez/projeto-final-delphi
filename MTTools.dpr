@@ -2,7 +2,7 @@ program MTTools;
 
 uses
   Vcl.Forms,
-  LoginView in 'src\views\LoginView.pas' {formLogin},
+  LoginView in 'src\view\LoginView.pas' {formLogin},
   DBConnection in 'src\infra\DBConnection.pas' {Connection: TDataModule};
 
 {$R *.res}
