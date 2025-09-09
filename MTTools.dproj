@@ -131,6 +131,9 @@
             <FormType>dfm</FormType>
             <DesignClass>TDataModule</DesignClass>
         </DCCReference>
+        <DCCReference Include="src\DTO\DBConfigDTO.pas"/>
+        <DCCReference Include="src\model\repository\interface\DBConfigRepositoryInterface.pas"/>
+        <DCCReference Include="src\model\entity\DBConfigModel.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
