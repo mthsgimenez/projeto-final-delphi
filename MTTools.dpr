@@ -6,7 +6,12 @@ uses
   DBConnection in 'src\infra\DBConnection.pas' {Connection: TDataModule},
   DBConfigDTO in 'src\DTO\DBConfigDTO.pas',
   DBConfigRepositoryInterface in 'src\model\repository\interface\DBConfigRepositoryInterface.pas',
-  DBConfigModel in 'src\model\entity\DBConfigModel.pas';
+  DBConfigModel in 'src\model\entity\DBConfigModel.pas',
+  DBConfigRepositoryJSON in 'src\model\repository\implementation\DBConfigRepositoryJSON.pas',
+  DBConfigController in 'src\controller\DBConfigController.pas',
+  DBConfigService in 'src\service\DBConfigService.pas',
+  MainView in 'src\view\MainView.pas' {formMain},
+  MainController in 'src\controller\MainController.pas';
 
 {$R *.res}
 
@@ -14,6 +19,7 @@ begin
   Application.Initialize;
   Application.MainFormOnTaskbar := True;
   Application.CreateForm(TConnection, Connection);
+  Application.CreateForm(TformMain, formMain);
   Application.CreateForm(TformLogin, formLogin);
   Application.Run;
 end.
