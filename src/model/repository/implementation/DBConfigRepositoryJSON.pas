@@ -2,7 +2,7 @@ unit DBConfigRepositoryJSON;
 
 interface
 
-  uses DBConfigModel, DBConfigRepository, DBConfigDTO,
+  uses DBConfigRepositoryInterface, DBConfigModel, DBConfigDTO,
   System.JSON, System.IOUtils, System.SysUtils, Vcl.Dialogs;
 
   type TDBConfigRepositoryJSON = class(TInterfacedObject, IDBConfigRepository)
@@ -11,33 +11,17 @@ interface
     public
       function ReadFromFile: TDBConfigModel;
       procedure SaveToFile(aDBConfigModel: TDBConfigModel);
-      constructor Create(aPath: String);
-      function PathExists(aPath: String): Boolean;
+      constructor Create;
   end;
 
 implementation
 
 { TDBConfigRepositoryJSON }
 
-constructor TDBConfigRepositoryJSON.Create(aPath: String);
+constructor TDBConfigRepositoryJSON.Create;
 begin
   inherited Create;
-  if not PathExists(aPath) then raise Exception.Create('Caminho para arquivo de configuração inválido: ' + aPath);
-  Self.path := aPath;
-end;
-
-function TDBConfigRepositoryJSON.PathExists(aPath: String): Boolean;
-var
-  path: String;
-begin
-  path := ExtractFileDir(aPath);
-  
-  if DirectoryExists(path) then begin
-    Result := True;
-    Exit;
-  end;
-
-  Result := False;
+  Self.path := TPath.Combine(GetEnvironmentVariable('APPDATA'), 'MTTools');
 end;
 
 function TDBConfigRepositoryJSON.ReadFromFile: TDBConfigModel;
