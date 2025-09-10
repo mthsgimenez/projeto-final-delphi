@@ -9,7 +9,6 @@ uses
   DBConfigModel in 'src\model\entity\DBConfigModel.pas',
   DBConfigRepositoryJSON in 'src\model\repository\implementation\DBConfigRepositoryJSON.pas',
   DBConfigController in 'src\controller\DBConfigController.pas',
-  DBConfigService in 'src\service\DBConfigService.pas',
   MainView in 'src\view\MainView.pas' {formMain},
   MainController in 'src\controller\MainController.pas';
 
