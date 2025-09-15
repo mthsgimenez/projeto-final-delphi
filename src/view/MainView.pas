@@ -4,13 +4,15 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, System.IOUtils, ConfigController;
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, System.IOUtils, Vcl.ExtCtrls, ConfigController, DBConfigView, LoginView;
 
 type
   TformMain = class(TForm)
+    Panel1: TPanel;
     procedure FormCreate(Sender: TObject);
   private
     configController: TConfigController;
+    activeForm: TForm;
   public
     { Public declarations }
   end;
@@ -23,9 +25,34 @@ implementation
 {$R *.dfm}
 
 procedure TformMain.FormCreate(Sender: TObject);
+var
+  configForm: TformDBConfig;
+  loginForm: TformLogin;
 begin
   Self.configController := TConfigController.Create;
   Self.configController.PrepareDirectory;
+
+  try
+    Self.configController.LoadDBConfig;
+  except
+    on e: Exception do begin
+      ShowMessage(e.Message);
+
+      configForm := TformDBConfig.Create(Self.configController, nil);
+      configForm.ShowModal;
+      configForm.Free;
+    end;
+  end;
+
+  if Self.configController.IsDBConnected then begin
+    loginForm := TformLogin.Create(Self.Panel1);
+    loginForm.Parent := Self.Panel1;
+    loginForm.BorderStyle := bsNone;
+    loginForm.Show;
+    Self.activeForm := loginForm;
+  end else begin
+    Application.Terminate;
+  end;
 end;
 
 end.
