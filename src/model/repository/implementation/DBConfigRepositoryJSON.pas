@@ -21,33 +21,49 @@ implementation
 constructor TDBConfigRepositoryJSON.Create;
 begin
   inherited Create;
-  Self.path := TPath.Combine(GetEnvironmentVariable('APPDATA'), 'MTTools');
+  Self.path := TPath.Combine(GetEnvironmentVariable('APPDATA'), 'MTTools', 'config.json');
 end;
 
 function TDBConfigRepositoryJSON.ReadFromFile: TDBConfigModel;
 var
   jsonFile: TJSONValue;
   config: TDBConfigModel;
+  currentField: String;
 begin
-  jsonFile := TJSONObject.ParseJSONValue(TFile.ReadAllBytes(Self.path), 0);
-  if jsonFile <> nil then
+  try
+    jsonFile := TJSONObject.ParseJSONValue(TFile.ReadAllBytes(Self.path), 0);
+
+    if jsonFile = nil then
+    raise Exception.Create('Erro ao ler arquivo config.json localizado em "' + Self.path + '". Verifique se o arquivo é um arquivo json válido.');
+
     config := TDBConfigModel.Create;
-    //  TODO: Tratamento de erro
+
     try
+      currentField := 'server';
       config.server := TJSONObject(jsonFile).GetValue<String>('server');
+
+      currentField := 'port';
       config.port := TJSONObject(jsonFile).GetValue<Integer>('port');
+
+      currentField := 'database';
       config.database := TJSONObject(jsonFile).GetValue<String>('database');
+
+      currentField := 'user';
       config.user := TJSONObject(jsonFile).GetValue<String>('user');
+
+      currentField := 'password';
       config.password := TJSONObject(jsonFile).GetValue<String>('password');
 
       Result := config;
     except
-    on e: Exception do begin
-      config.Free;
-      ShowMessage(e.Message);
+      on e: Exception do begin
+        config.Free;
+        ShowMessage('Erro ao ler campo "' + currentField + '" do arquivo config.json localizado em "' + Self.path + '". Verifique se o campo está presente e nomeado corretamente.');
+      end;
     end;
-    end;
+  finally
     jsonFile.Free;
+  end;
 end;
 
 procedure TDBConfigRepositoryJSON.SaveToFile(aDBConfigModel: TDBConfigModel);

@@ -8,9 +8,8 @@ uses
   DBConfigRepositoryInterface in 'src\model\repository\interface\DBConfigRepositoryInterface.pas',
   DBConfigModel in 'src\model\entity\DBConfigModel.pas',
   DBConfigRepositoryJSON in 'src\model\repository\implementation\DBConfigRepositoryJSON.pas',
-  DBConfigController in 'src\controller\DBConfigController.pas',
-  MainView in 'src\view\MainView.pas' {formMain},
-  MainController in 'src\controller\MainController.pas';
+  ConfigController in 'src\controller\ConfigController.pas',
+  MainView in 'src\view\MainView.pas' {formMain};
 
 {$R *.res}
 

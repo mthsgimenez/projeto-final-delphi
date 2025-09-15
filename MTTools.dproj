@@ -137,12 +137,11 @@
         <DCCReference Include="src\model\repository\interface\DBConfigRepositoryInterface.pas"/>
         <DCCReference Include="src\model\entity\DBConfigModel.pas"/>
         <DCCReference Include="src\model\repository\implementation\DBConfigRepositoryJSON.pas"/>
-        <DCCReference Include="src\controller\DBConfigController.pas"/>
+        <DCCReference Include="src\controller\ConfigController.pas"/>
         <DCCReference Include="src\view\MainView.pas">
             <Form>formMain</Form>
             <FormType>dfm</FormType>
         </DCCReference>
-        <DCCReference Include="src\controller\MainController.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
