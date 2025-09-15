@@ -46,9 +46,11 @@ begin
     Self.FDConnection.Connected := True;
   except
   on e: EPgNativeException do begin
+    Self.FDConnection.Connected := False;
     raise Exception.Create('Erro na conexão: ' + e.Message);
   end;
   on e: Exception do begin
+    Self.FDConnection.Connected := False;
     raise Exception.Create('Erro: ' + e.Message);
   end;
   end;
