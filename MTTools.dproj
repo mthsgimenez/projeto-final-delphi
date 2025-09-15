@@ -142,6 +142,10 @@
             <Form>formMain</Form>
             <FormType>dfm</FormType>
         </DCCReference>
+        <DCCReference Include="src\view\DBConfigView.pas">
+            <Form>formDBConfig</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

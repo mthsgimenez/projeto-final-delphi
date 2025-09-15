@@ -9,7 +9,8 @@ uses
   DBConfigModel in 'src\model\entity\DBConfigModel.pas',
   DBConfigRepositoryJSON in 'src\model\repository\implementation\DBConfigRepositoryJSON.pas',
   ConfigController in 'src\controller\ConfigController.pas',
-  MainView in 'src\view\MainView.pas' {formMain};
+  MainView in 'src\view\MainView.pas' {formMain},
+  DBConfigView in 'src\view\DBConfigView.pas' {formDBConfig};
 
 {$R *.res}
 
@@ -19,5 +20,6 @@ begin
   Application.CreateForm(TConnection, Connection);
   Application.CreateForm(TformMain, formMain);
   Application.CreateForm(TformLogin, formLogin);
+  Application.CreateForm(TformDBConfig, formDBConfig);
   Application.Run;
 end.
