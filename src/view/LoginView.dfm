@@ -5,8 +5,6 @@ object formLogin: TformLogin
   ClientHeight = 561
   ClientWidth = 784
   Color = clBtnFace
-  Constraints.MinHeight = 600
-  Constraints.MinWidth = 800
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
   Font.Height = -12
@@ -3312,10 +3310,6 @@ object formLogin: TformLogin
         Caption = 'panelLoginForm'
         ShowCaption = False
         TabOrder = 0
-        ExplicitLeft = 472
-        ExplicitTop = 264
-        ExplicitWidth = 185
-        ExplicitHeight = 41
         object shapeLoginForm: TShape
           Left = 0
           Top = 0
@@ -3371,8 +3365,6 @@ object formLogin: TformLogin
             end>
           ShowCaption = False
           TabOrder = 0
-          ExplicitLeft = -16
-          ExplicitTop = 56
           DesignSize = (
             314
             337)
@@ -3393,8 +3385,6 @@ object formLogin: TformLogin
             ParentColor = False
             ParentFont = False
             Layout = tlCenter
-            ExplicitLeft = 124
-            ExplicitTop = 42
             ExplicitWidth = 170
             ExplicitHeight = 40
           end
@@ -3408,10 +3398,6 @@ object formLogin: TformLogin
             Caption = 'cap'
             ShowCaption = False
             TabOrder = 0
-            ExplicitLeft = 168
-            ExplicitTop = 168
-            ExplicitWidth = 185
-            ExplicitHeight = 41
             DesignSize = (
               314
               135)
@@ -3888,7 +3874,6 @@ object formLogin: TformLogin
                 ParentFont = False
                 TabOrder = 0
                 TextHint = 'Usu'#225'rio'
-                ExplicitWidth = 209
               end
             end
             object panelEditPassword: TPanel
@@ -4352,8 +4337,6 @@ object formLogin: TformLogin
             Caption = 'panelButtonLogin'
             ShowCaption = False
             TabOrder = 1
-            ExplicitLeft = 184
-            ExplicitTop = 288
             object shapeButtonLogin: TShape
               Left = 0
               Top = 0
