@@ -4,8 +4,8 @@ interface
   uses DBConfigModel, DBConfigDTO;
 
   type IDBConfigRepository = interface
-    function ReadFromFile: TDBConfigModel;
-    procedure SaveToFile(aDBConfigModel: TDBConfigModel);
+    function Get: TDBConfigModel;
+    procedure Save(aDBConfigModel: TDBConfigModel);
   end;
 implementation
 

@@ -9,8 +9,8 @@ interface
     private
       path: String;
     public
-      function ReadFromFile: TDBConfigModel;
-      procedure SaveToFile(aDBConfigModel: TDBConfigModel);
+      function Get: TDBConfigModel;
+      procedure Save(aDBConfigModel: TDBConfigModel);
       constructor Create;
   end;
 
@@ -24,7 +24,7 @@ begin
   Self.path := TPath.Combine(GetEnvironmentVariable('APPDATA'), 'MTTools', 'config.json');
 end;
 
-function TDBConfigRepositoryJSON.ReadFromFile: TDBConfigModel;
+function TDBConfigRepositoryJSON.Get: TDBConfigModel;
 var
   jsonFile: TJSONValue;
   config: TDBConfigModel;
@@ -66,7 +66,7 @@ begin
   end;
 end;
 
-procedure TDBConfigRepositoryJSON.SaveToFile(aDBConfigModel: TDBConfigModel);
+procedure TDBConfigRepositoryJSON.Save(aDBConfigModel: TDBConfigModel);
 var
   json: TJSONObject;
 begin
