@@ -9,10 +9,13 @@ uses DBConfigDTO, DBConfigModel, DBConnection,
 type TConfigController = class
   private
     repository: IDBConfigRepository;
+    function DtoToModel(aConfigDTO: TDBConfigDTO): TDBConfigModel;
   public
     constructor Create;
+    destructor Destroy;
+    function IsConfigValid: Boolean;
     procedure PrepareDirectory;
-    procedure ConfigureConnection(aDBConfigModel: TDBConfigModel);
+    procedure ConfigureConnection(aDBConfig: TDBConfigDTO);
 end;
 
 implementation
@@ -22,6 +25,26 @@ implementation
 constructor TConfigController.Create;
 begin
   Self.repository := TDBConfigRepositoryJSON.Create;
+end;
+
+function TConfigController.DtoToModel(aConfigDTO: TDBConfigDTO): TDBConfigModel;
+begin
+  Result := TDBConfigModel.Create;
+  Result.server := aConfigDTO.server;
+  Result.port := aConfigDTO.port;
+  Result.database := aConfigDTO.database;
+  Result.user := aConfigDTO.user;
+  Result.password := aConfigDTO.password;
+end;
+
+function TConfigController.IsConfigValid: Boolean;
+begin
+  try
+    repository.Get;
+    Result := True;
+  except
+    Result := False;
+  end;
 end;
 
 procedure TConfigController.PrepareDirectory;
@@ -39,27 +62,16 @@ begin
   end;
 end;
 
-procedure TConfigController.ConfigureConnection(aDBConfigModel: TDBConfigModel);
+procedure TConfigController.ConfigureConnection(aDBConfig: TDBConfigDTO);
+var
+  DBConfigModel: TDBConfigModel;
 begin
+  DBConfigModel := Self.DtoToModel(aDBConfig);
   try
-    Connection.FDConnection.Connected := False;
-    with Connection.FDConnection.Params do begin
-      Clear;
-      Add('Server=' + aDBConfigModel.server);
-      Add('Port=' + aDBConfigModel.port.ToString);
-      Add('Database=' + aDBConfigModel.database);
-      Add('User_Name=' + aDBConfigModel.user);
-      Add('Password=' + aDBConfigModel.password);
-      Add('DriverID=PG');
-    end;
-    Connection.FDConnection.Connected := True;
-  except
-  on e: EPgNativeException do begin
-    ShowMessage('Erro na conexão: ' + e.Message);
-  end;
-  on e: Exception do begin
-    ShowMessage('Erro: ' + e.Message);
-  end;
+    Connection.Configure(DBConfigModel);
+    repository.Save(DBConfigModel);
+  finally
+    DBConfigModel.Free;
   end;
 end;
 
