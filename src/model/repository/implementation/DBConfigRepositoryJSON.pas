@@ -30,39 +30,35 @@ var
   config: TDBConfigModel;
   currentField: String;
 begin
+  jsonFile := TJSONObject.ParseJSONValue(TFile.ReadAllBytes(Self.path), 0);
+
+  if jsonFile = nil then raise Exception.Create('Erro ao ler arquivo config.json localizado em "' + Self.path + '". Verifique se o arquivo é um arquivo json válido.');
+
+  config := TDBConfigModel.Create;
+
   try
-    jsonFile := TJSONObject.ParseJSONValue(TFile.ReadAllBytes(Self.path), 0);
+    currentField := 'server';
+    config.server := TJSONObject(jsonFile).GetValue<String>('server');
 
-    if jsonFile = nil then
-    raise Exception.Create('Erro ao ler arquivo config.json localizado em "' + Self.path + '". Verifique se o arquivo é um arquivo json válido.');
+    currentField := 'port';
+    config.port := TJSONObject(jsonFile).GetValue<Integer>('port');
 
-    config := TDBConfigModel.Create;
+    currentField := 'database';
+    config.database := TJSONObject(jsonFile).GetValue<String>('database');
 
-    try
-      currentField := 'server';
-      config.server := TJSONObject(jsonFile).GetValue<String>('server');
+    currentField := 'user';
+    config.user := TJSONObject(jsonFile).GetValue<String>('user');
 
-      currentField := 'port';
-      config.port := TJSONObject(jsonFile).GetValue<Integer>('port');
+    currentField := 'password';
+    config.password := TJSONObject(jsonFile).GetValue<String>('password');
 
-      currentField := 'database';
-      config.database := TJSONObject(jsonFile).GetValue<String>('database');
-
-      currentField := 'user';
-      config.user := TJSONObject(jsonFile).GetValue<String>('user');
-
-      currentField := 'password';
-      config.password := TJSONObject(jsonFile).GetValue<String>('password');
-
-      Result := config;
-    except
-      on e: Exception do begin
-        config.Free;
-        ShowMessage('Erro ao ler campo "' + currentField + '" do arquivo config.json localizado em "' + Self.path + '". Verifique se o campo está presente e nomeado corretamente.');
-      end;
-    end;
-  finally
+    Result := config;
     jsonFile.Free;
+  except
+    on e: Exception do begin
+      config.Free;
+      raise Exception.Create('Erro ao ler campo "' + currentField + '" do arquivo config.json localizado em "' + Self.path + '". Verifique se o campo está presente e nomeado corretamente.');
+    end;
   end;
 end;
 
