@@ -12,10 +12,10 @@ type TConfigController = class
     function DtoToModel(aConfigDTO: TDBConfigDTO): TDBConfigModel;
   public
     constructor Create;
-    destructor Destroy;
-    function IsConfigValid: Boolean;
     procedure PrepareDirectory;
     procedure ConfigureConnection(aDBConfig: TDBConfigDTO);
+    procedure LoadDBConfig;
+    function IsDBConnected: Boolean;
 end;
 
 implementation
@@ -37,13 +37,21 @@ begin
   Result.password := aConfigDTO.password;
 end;
 
-function TConfigController.IsConfigValid: Boolean;
+function TConfigController.IsDBConnected: Boolean;
+begin
+  Result := Connection.FDConnection.Connected;
+end;
+
+procedure TConfigController.LoadDBConfig;
+var
+  config: TDBConfigModel;
 begin
   try
-    repository.Get;
-    Result := True;
+    config := repository.Get;
+    Connection.Configure(config);
+    config.Free;
   except
-    Result := False;
+    raise;
   end;
 end;
 
