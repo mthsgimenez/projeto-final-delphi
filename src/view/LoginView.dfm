@@ -4322,6 +4322,7 @@ object formLogin: TformLogin
                 Font.Name = 'Roboto'
                 Font.Style = []
                 ParentFont = False
+                PasswordChar = '*'
                 TabOrder = 0
                 TextHint = 'Senha'
               end
@@ -4369,6 +4370,7 @@ object formLogin: TformLogin
               Font.Name = 'Roboto'
               Font.Style = []
               ParentFont = False
+              OnClick = buttonLoginClick
               ExplicitLeft = 72
               ExplicitTop = 8
               ExplicitWidth = 23

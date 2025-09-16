@@ -10,7 +10,11 @@ uses
   DBConfigRepositoryJSON in 'src\model\repository\implementation\DBConfigRepositoryJSON.pas',
   ConfigController in 'src\controller\ConfigController.pas',
   MainView in 'src\view\MainView.pas' {formMain},
-  DBConfigView in 'src\view\DBConfigView.pas' {formDBConfig};
+  DBConfigView in 'src\view\DBConfigView.pas' {formDBConfig},
+  Bcrypt in 'lib\Bcrypt.pas',
+  UserModel in 'src\model\entity\UserModel.pas',
+  UserRepository in 'src\model\repository\implementation\UserRepository.pas',
+  LoginController in 'src\controller\LoginController.pas';
 
 {$R *.res}
 

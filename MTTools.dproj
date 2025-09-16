@@ -146,6 +146,10 @@
             <Form>formDBConfig</Form>
             <FormType>dfm</FormType>
         </DCCReference>
+        <DCCReference Include="lib\Bcrypt.pas"/>
+        <DCCReference Include="src\model\entity\UserModel.pas"/>
+        <DCCReference Include="src\model\repository\implementation\UserRepository.pas"/>
+        <DCCReference Include="src\controller\LoginController.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

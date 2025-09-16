@@ -5,7 +5,7 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.StdCtrls,
-  Vcl.Imaging.jpeg, Vcl.Buttons, Vcl.Imaging.pngimage;
+  Vcl.Imaging.jpeg, Vcl.Buttons, Vcl.Imaging.pngimage, LoginController;
 
 type
   TformLogin = class(TForm)
@@ -30,9 +30,10 @@ type
     buttonLogin: TSpeedButton;
     procedure buttonLoginClick(Sender: TObject);
   private
-    { Private declarations }
+    loginController: TLoginController;
   public
-    { Public declarations }
+    constructor Create(AOwner: TComponent); override;
+    destructor Destroy; override;
   end;
 
 var
@@ -43,8 +44,40 @@ implementation
 {$R *.dfm}
 
 procedure TformLogin.buttonLoginClick(Sender: TObject);
+var
+  user, password: String;
+  errors: TStringList;
 begin
-  ShowMessage('fkasdfka');
+  user := Trim(editUser.Text);
+  password := Trim(editPassword.Text);
+
+  errors := TStringList.Create;
+  try
+    if user = '' then begin
+      errors.Add('Preencha o campo usuário');
+    end;
+    if password = '' then begin
+      errors.Add('Preencha o campo senha');
+    end;
+
+    if errors.Count > 0 then raise Exception.Create(errors.Text);
+
+    Self.loginController.Login(user, password);
+  finally
+    errors.Free;
+  end;
+end;
+
+constructor TformLogin.Create(AOwner: TComponent);
+begin
+  inherited Create(AOwner);
+  Self.loginController := TLoginController.Create;
+end;
+
+destructor TformLogin.Destroy;
+begin
+  Self.loginController.Free;
+  inherited Destroy;
 end;
 
 end.
