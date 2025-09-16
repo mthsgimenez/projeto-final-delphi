@@ -56,6 +56,7 @@ begin
     jsonFile.Free;
   except
     on e: Exception do begin
+      jsonFile.Free;
       config.Free;
       raise Exception.Create('Erro ao ler campo "' + currentField + '" do arquivo config.json localizado em "' + Self.path + '". Verifique se o campo está presente e nomeado corretamente.');
     end;
