@@ -23,6 +23,7 @@ begin
   if Trim(Self.server) = '' then errorFields.Add('campo "server" não pode estar vazio.');
   if Trim(Self.database) = '' then errorFields.Add('campo "database" não pode estar vazio.');
   if Trim(Self.user) = '' then errorFields.Add('campo "user" não pode estar vazio.');
+
   Result := errorFields;
 end;
 

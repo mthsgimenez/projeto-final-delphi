@@ -48,12 +48,14 @@ var
   errors: TStringList;
 begin
   DBConfigDTO.server := Self.editServer.Text;
-  if not TryStrToInt(Self.editPort.Text, DBConfigDTO.port) then raise Exception.Create('Campo "port" deve ser um número inteiro');
   DBConfigDTO.database := Self.editDatabase.Text;
   DBConfigDTO.user := Self.editUser.Text;
   DBConfigDTO.password := Self.editPassword.Text;
 
   errors := DBConfigDTO.ValidateDTO;
+
+  if not TryStrToInt(Self.editPort.Text, DBConfigDTO.port) then errors.Add('campo "port" deve ser um número inteiro');
+
   if errors.Count > 0 then raise Exception.Create(errors.Text);
 
   Self.controller.ConfigureConnection(DBConfigDTO);

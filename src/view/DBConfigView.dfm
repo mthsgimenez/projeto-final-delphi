@@ -104,8 +104,6 @@ object formDBConfig: TformDBConfig
       Caption = 'panelServer'
       ShowCaption = False
       TabOrder = 0
-      ExplicitTop = 72
-      ExplicitHeight = 71
       object labelServer: TLabel
         Left = 136
         Top = 16
@@ -136,8 +134,6 @@ object formDBConfig: TformDBConfig
       Caption = 'panelServer'
       ShowCaption = False
       TabOrder = 1
-      ExplicitTop = 143
-      ExplicitHeight = 72
       object labelPort: TLabel
         Left = 136
         Top = 16
@@ -169,8 +165,6 @@ object formDBConfig: TformDBConfig
       Caption = 'panelServer'
       ShowCaption = False
       TabOrder = 2
-      ExplicitTop = 215
-      ExplicitHeight = 71
       object labelDatabase: TLabel
         Left = 136
         Top = 16
@@ -201,8 +195,6 @@ object formDBConfig: TformDBConfig
       Caption = 'panelServer'
       ShowCaption = False
       TabOrder = 3
-      ExplicitTop = 286
-      ExplicitHeight = 71
       object labelUser: TLabel
         Left = 136
         Top = 16
@@ -233,8 +225,6 @@ object formDBConfig: TformDBConfig
       Caption = 'panelServer'
       ShowCaption = False
       TabOrder = 4
-      ExplicitTop = 357
-      ExplicitHeight = 71
       object labelPassword: TLabel
         Left = 136
         Top = 16
@@ -271,8 +261,6 @@ object formDBConfig: TformDBConfig
       Caption = 'Salvar'
       TabOrder = 5
       OnClick = buttonSaveClick
-      ExplicitLeft = 128
-      ExplicitTop = 392
     end
   end
 end
