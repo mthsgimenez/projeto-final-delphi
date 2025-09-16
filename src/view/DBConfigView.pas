@@ -54,9 +54,13 @@ begin
 
   errors := DBConfigDTO.ValidateDTO;
 
-  if not TryStrToInt(Self.editPort.Text, DBConfigDTO.port) then errors.Add('campo "port" deve ser um número inteiro');
+  try
+    if not TryStrToInt(Self.editPort.Text, DBConfigDTO.port) then errors.Add('campo "port" deve ser um número inteiro');
 
-  if errors.Count > 0 then raise Exception.Create(errors.Text);
+    if errors.Count > 0 then raise Exception.Create(errors.Text);
+  finally
+    errors.Free;
+  end;
 
   Self.controller.ConfigureConnection(DBConfigDTO);
   Self.Close;
