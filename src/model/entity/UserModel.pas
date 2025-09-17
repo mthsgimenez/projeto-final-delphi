@@ -7,7 +7,6 @@ type TUserModel = class
     id: Integer;
     name: String;
     login: String;
-    password: String;
 end;
 
 implementation
