@@ -4,7 +4,7 @@ interface
 
 uses CrudRepositoryInterface, UserModel, RepositoryBase, Bcrypt, DBHelper, System.SysUtils;
 
-type TUserRepository = class(TRepositoryBase, TInterfacedObject, ICrudRepository<TUserModel>)
+type TUserRepository = class(TRepositoryBase, ICrudRepository<TUserModel>)
   public
     function Login(aLogin: String; aPassword: String): TUserModel;
     function RegisterUser(aUser: TUserModel; aPassword: String): TUserModel;

@@ -4,7 +4,7 @@ interface
 
 uses DBConnection, FireDAC.Comp.Client, FireDAC.DApt;
 
-type TRepositoryBase = class
+type TRepositoryBase = class(TInterfacedObject)
   protected
     Query: TFDQuery;
     Connection: TFDConnection;
