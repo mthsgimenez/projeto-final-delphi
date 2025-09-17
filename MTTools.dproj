@@ -150,6 +150,9 @@
         <DCCReference Include="src\model\entity\UserModel.pas"/>
         <DCCReference Include="src\model\repository\implementation\UserRepository.pas"/>
         <DCCReference Include="src\controller\LoginController.pas"/>
+        <DCCReference Include="src\model\repository\util\DBHelper.pas"/>
+        <DCCReference Include="src\model\repository\util\RepositoryBase.pas"/>
+        <DCCReference Include="src\model\repository\interface\CrudRepositoryInterface.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
