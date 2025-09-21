@@ -7,7 +7,6 @@ uses DBConnection, FireDAC.Comp.Client, FireDAC.DApt;
 type TRepositoryBase = class(TInterfacedObject)
   protected
     Query: TFDQuery;
-    Connection: TFDConnection;
   public
     constructor Create;
     destructor Destroy; override;
@@ -18,11 +17,13 @@ implementation
 { TRepositoryBase }
 
 constructor TRepositoryBase.Create;
+var
+  Connection: TFDConnection;
 begin
   inherited Create;
-  Self.Connection := DBConnection.Connection.FDConnection;
-  Self.Query := TFDQuery.Create(Self.Connection);
-  Self.Query.Connection := Self.Connection;
+  Connection := DBConnection.Connection.FDConnection;
+  Self.Query := TFDQuery.Create(Connection);
+  Self.Query.Connection := Connection;
 end;
 
 destructor TRepositoryBase.Destroy;
