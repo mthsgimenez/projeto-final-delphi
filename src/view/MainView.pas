@@ -8,7 +8,7 @@ uses
 
 type
   TformMain = class(TForm)
-    Panel1: TPanel;
+    panelMain: TPanel;
     procedure FormCreate(Sender: TObject);
   private
     configController: TConfigController;
@@ -45,8 +45,8 @@ begin
   end;
 
   if Self.configController.IsDBConnected then begin
-    loginForm := TformLogin.Create(Self.Panel1);
-    loginForm.Parent := Self.Panel1;
+    loginForm := TformLogin.Create(Self.panelMain);
+    loginForm.Parent := Self.panelMain;
     loginForm.BorderStyle := bsNone;
     loginForm.Show;
     Self.activeForm := loginForm;

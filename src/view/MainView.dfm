@@ -14,9 +14,10 @@ object formMain: TformMain
   Font.Height = -12
   Font.Name = 'Segoe UI'
   Font.Style = []
+  Position = poDesigned
   OnCreate = FormCreate
   TextHeight = 15
-  object Panel1: TPanel
+  object panelMain: TPanel
     AlignWithMargins = True
     Left = 0
     Top = 0
@@ -27,10 +28,8 @@ object formMain: TformMain
     Margins.Right = 0
     Margins.Bottom = 0
     Align = alClient
-    Caption = 'Panel1'
+    Caption = 'panelMain'
     ShowCaption = False
     TabOrder = 0
-    ExplicitWidth = 624
-    ExplicitHeight = 441
   end
 end
