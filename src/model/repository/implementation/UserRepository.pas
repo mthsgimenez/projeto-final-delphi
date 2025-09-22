@@ -2,12 +2,12 @@ unit UserRepository;
 
 interface
 
-uses CrudRepositoryInterface, UserModel, RepositoryBase, Bcrypt, DBHelper, System.SysUtils, System.Generics.Collections, Data.DB;
+uses CrudRepositoryInterface, UserModel, RepositoryBase, Bcrypt, DBHelper, System.SysUtils, System.Generics.Collections, Data.DB, UserDTO;
 
 type TUserRepository = class(TRepositoryBase, ICrudRepository<TUserModel>)
   public
     function Login(aLogin: String; aPassword: String): TUserModel;
-    function RegisterUser(aUser: TUserModel; aPassword: String): TUserModel;
+    function RegisterUser(aUserDTO: TUserDTO): TUserModel;
     function Save(aUser: TUserModel): TUserModel;
     function FindById(aId: Integer): TUserModel;
     function FindAll(): TObjectList<TUserModel>;
@@ -150,7 +150,7 @@ begin
   end;
 end;
 
-function TUserRepository.RegisterUser(aUser: TUserModel; aPassword: String): TUserModel;
+function TUserRepository.RegisterUser(aUserDTO: TUserDTO): TUserModel;
 var
   hash: String;
   user: TUserModel;
@@ -158,14 +158,14 @@ var
 begin
   Result := nil;
 
-  hash := TBCrypt.HashPassword(aPassword, 12);
+  hash := TBCrypt.HashPassword(aUserDTO.password, 12);
 
   Self.Query.SQL.Text := Format('INSERT INTO users ("name", login, hash) VALUES (%s, %s, %s) RETURNING id, "name", login',
-                          [QuotedStr(aUser.name), QuotedStr(aUser.login), QuotedStr(hash)]);
+                          [QuotedStr(aUserDTO.name), QuotedStr(aUserDTO.login), QuotedStr(hash)]);
   helper := TDBHelper.Create;
   try
-    if helper.CheckIfAlreadyExists('users', 'login', aUser.login) then
-      raise Exception.Create(Format('Já existe um usuário com o LOGIN "%s"', [aUser.login]));
+    if helper.CheckIfAlreadyExists('users', 'login', aUserDTO.login) then
+      raise Exception.Create(Format('Já existe um usuário com o LOGIN "%s"', [aUserDTO.login]));
 
     Self.Query.Open();
 
