@@ -122,13 +122,18 @@ end;
 function TUserRepository.Save(aUser: TUserModel): TUserModel;
 var
   user: TUserModel;
+  helper: TDBHelper;
 begin
   Result := nil;
 
-  Self.Query.SQL.Text := Format('UPDATE users SET "name"=%s WHERE id=%d RETURNING id, "name", login',
-                          [QuotedStr(aUser.name), aUser.id]);
-
+  Self.Query.SQL.Text := Format('UPDATE users SET "name"=%s, login=%s WHERE id=%d RETURNING id, "name", login',
+                          [QuotedStr(aUser.name), QuotedStr(aUser.login), aUser.id]);
+  helper := TDBHelper.Create;
   try
+    if helper.CheckIfAlreadyExistsExcludingId('users', 'login', aUser.login, aUser.id) then
+      raise Exception.Create(Format('Já existe um usuário com o LOGIN "%s"', [aUser.login]));
+
+
     Self.Query.Open();
 
     if not Self.Query.IsEmpty then begin
@@ -141,6 +146,7 @@ begin
     end;
   finally
     Self.Query.Close;
+    helper.Free;
   end;
 end;
 
@@ -148,6 +154,7 @@ function TUserRepository.RegisterUser(aUser: TUserModel; aPassword: String): TUs
 var
   hash: String;
   user: TUserModel;
+  helper: TDBHelper;
 begin
   Result := nil;
 
@@ -155,7 +162,11 @@ begin
 
   Self.Query.SQL.Text := Format('INSERT INTO users ("name", login, hash) VALUES (%s, %s, %s) RETURNING id, "name", login',
                           [QuotedStr(aUser.name), QuotedStr(aUser.login), QuotedStr(hash)]);
+  helper := TDBHelper.Create;
   try
+    if helper.CheckIfAlreadyExists('users', 'login', aUser.login) then
+      raise Exception.Create(Format('Já existe um usuário com o LOGIN "%s"', [aUser.login]));
+
     Self.Query.Open();
 
     if not Self.Query.IsEmpty then begin
@@ -168,6 +179,7 @@ begin
     end;
   finally
     Self.Query.Close;
+    helper.Free;
   end;
 end;
 
