@@ -17,7 +17,8 @@ uses
   LoginController in 'src\controller\LoginController.pas',
   DBHelper in 'src\model\repository\util\DBHelper.pas',
   RepositoryBase in 'src\model\repository\util\RepositoryBase.pas',
-  CrudRepositoryInterface in 'src\model\repository\interface\CrudRepositoryInterface.pas';
+  CrudRepositoryInterface in 'src\model\repository\interface\CrudRepositoryInterface.pas',
+  UserDTO in 'src\DTO\UserDTO.pas';
 
 {$R *.res}
 
@@ -26,7 +27,5 @@ begin
   Application.MainFormOnTaskbar := True;
   Application.CreateForm(TConnection, Connection);
   Application.CreateForm(TformMain, formMain);
-  Application.CreateForm(TformLogin, formLogin);
-  Application.CreateForm(TformDBConfig, formDBConfig);
   Application.Run;
 end.
