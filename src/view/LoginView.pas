@@ -5,7 +5,7 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.StdCtrls,
-  Vcl.Imaging.jpeg, Vcl.Buttons, Vcl.Imaging.pngimage, LoginController;
+  Vcl.Imaging.jpeg, Vcl.Buttons, Vcl.Imaging.pngimage, UserController, UserDTO, UserModel;
 
 type
   TformLogin = class(TForm)
@@ -30,7 +30,7 @@ type
     buttonLogin: TSpeedButton;
     procedure buttonLoginClick(Sender: TObject);
   private
-    loginController: TLoginController;
+    userController: TUserController;
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
@@ -45,24 +45,27 @@ implementation
 
 procedure TformLogin.buttonLoginClick(Sender: TObject);
 var
-  user, password: String;
+  userDTO: TUserDTO;
   errors: TStringList;
+  user: TUserModel;
 begin
-  user := Trim(editUser.Text);
-  password := Trim(editPassword.Text);
+  userDTO.login := Trim(editUser.Text);
+  userDTO.password := Trim(editPassword.Text);
 
   errors := TStringList.Create;
   try
-    if user = '' then begin
+    if userDTO.login = '' then begin
       errors.Add('Preencha o campo usuário');
     end;
-    if password = '' then begin
+    if userDTO.password = '' then begin
       errors.Add('Preencha o campo senha');
     end;
 
     if errors.Count > 0 then raise Exception.Create(errors.Text);
 
-    Self.loginController.Login(user, password);
+    user := Self.userController.Login(userDTO);
+    if user = nil then raise Exception.Create('Login ou senha incorretos');
+    user.Free;
   finally
     errors.Free;
   end;
@@ -71,12 +74,12 @@ end;
 constructor TformLogin.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
-  Self.loginController := TLoginController.Create;
+  Self.userController := TUserController.Create;
 end;
 
 destructor TformLogin.Destroy;
 begin
-  Self.loginController.Free;
+  Self.userController.Free;
   inherited Destroy;
 end;
 
