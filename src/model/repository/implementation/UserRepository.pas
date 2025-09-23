@@ -2,7 +2,9 @@ unit UserRepository;
 
 interface
 
-uses CrudRepositoryInterface, UserModel, RepositoryBase, Bcrypt, DBHelper, System.SysUtils, System.Generics.Collections, Data.DB, UserDTO;
+uses
+  RepositoryBase, CrudRepositoryInterface, UserModel, DBHelper,
+  System.SysUtils, System.Generics.Collections, Data.DB;
 
 type TUserRepository = class(TRepositoryBase, ICrudRepository<TUserModel>)
   public
