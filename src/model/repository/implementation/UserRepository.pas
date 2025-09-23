@@ -104,17 +104,16 @@ begin
   if aUser.id = 0 then begin
     Self.Query.SQL.Text := Format(
       'INSERT INTO users VALUES (DEFAULT, %s, %s, %s) RETURNING *',
-      [aUser.name, aUser.login, aUser.GetHash]);
+      [QuotedStr(aUser.name), QuotedStr(aUser.login), QuotedStr(aUser.GetHash)]);
   end else begin
     Self.Query.SQL.Text := Format(
       'UPDATE users SET "name" = %s, login = %s, hash = %s WHERE id = %d RETURNING *',
-      [aUser.name, aUser.login, aUser.GetHash, aUser.id]);
+      [QuotedStr(aUser.name), QuotedStr(aUser.login), QuotedStr(aUser.GetHash), aUser.id]);
   end;
 
   helper := TDBHelper.Create;
   try
-    if helper.CheckIfAlreadyExistsExcludingId('users', 'login', aUser.login, aUser.id) then
-      raise Exception.Create(Format('Já existe um usuário com o LOGIN "%s"', [aUser.login]));
+    // Verificar campo unique
 
     Self.Query.Open();
 
