@@ -11,6 +11,7 @@ type TUserRepository = class(TRepositoryBase, ICrudRepository<TUserModel>)
     function FindAll(): TObjectList<TUserModel>;
     function ExistsById(aId: Integer): Boolean;
     function DeleteById(aId: Integer): Boolean;
+    function FindByLogin(aLogin: String): TUserModel;
 end;
 
 implementation
@@ -88,6 +89,29 @@ begin
       user.SetHash(Self.Query.FieldByName('hash').AsString);
 
       Result := user;
+    end;
+  finally
+    Self.Query.Close;
+  end;
+end;
+
+function TUserRepository.FindByLogin(aLogin: String): TUserModel;
+begin
+  Result := nil;
+
+  Self.Query.SQL.Text := Format(
+    'SELECT * FROM users WHERE login = %s',
+    [QuotedStr(aLogin)]);
+
+  try
+    Self.Query.Open;
+
+    if not Self.Query.IsEmpty then begin
+      Result := TUserModel.Create;
+      Result.id := Self.Query.FieldByName('id').AsInteger;
+      Result.name := Self.Query.FieldByName('name').AsString;
+      Result.login := Self.Query.FieldByName('login').AsString;
+      Result.SetHash(Self.Query.FieldByName('hash').AsString);
     end;
   finally
     Self.Query.Close;
