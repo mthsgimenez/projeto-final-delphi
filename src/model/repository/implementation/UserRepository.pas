@@ -6,8 +6,6 @@ uses CrudRepositoryInterface, UserModel, RepositoryBase, Bcrypt, DBHelper, Syste
 
 type TUserRepository = class(TRepositoryBase, ICrudRepository<TUserModel>)
   public
-    function Login(aLogin: String; aPassword: String): TUserModel;
-    function RegisterUser(aUserDTO: TUserDTO): TUserModel;
     function Save(aUser: TUserModel): TUserModel;
     function FindById(aId: Integer): TUserModel;
     function FindAll(): TObjectList<TUserModel>;
@@ -21,7 +19,7 @@ implementation
 
 function TUserRepository.DeleteById(aId: Integer): Boolean;
 begin
-  Self.Query.SQL.Text := Format('DELETE FROM users WHERE id=%d', [aId]);
+  Self.Query.SQL.Text := Format('DELETE FROM users WHERE id = %d', [aId]);
 
   try
     Self.Query.ExecSQL;
@@ -47,7 +45,7 @@ var
 begin
   Result := nil;
 
-  Self.Query.SQL.Text := 'SELECT id, "name", login FROM users';
+  Self.Query.SQL.Text := 'SELECT * FROM users';
   try
     Self.Query.Open;
 
@@ -60,6 +58,7 @@ begin
         user.id := Self.Query.FieldByName('id').AsInteger;
         user.name := Self.Query.FieldByName('name').AsString;
         user.login := Self.Query.FieldByName('login').AsString;
+        user.SetHash(Self.Query.FieldByName('hash').AsString);
 
         users.Add(user);
 
@@ -77,7 +76,7 @@ var
 begin
   Result := nil;
 
-  Self.Query.SQL.Text := Format('SELECT id, "name", login FROM users WHERE id=%d', [aId]);
+  Self.Query.SQL.Text := Format('SELECT * FROM users WHERE id = %d', [aId]);
   try
     Self.Query.Open();
 
@@ -86,34 +85,10 @@ begin
       user.id := Self.Query.FieldByName('id').AsInteger;
       user.name := Self.Query.FieldByName('name').AsString;
       user.login := Self.Query.FieldByName('login').AsString;
+      user.SetHash(Self.Query.FieldByName('hash').AsString);
 
       Result := user;
     end;
-  finally
-    Self.Query.Close;
-  end;
-end;
-
-function TUserRepository.Login(aLogin, aPassword: String): TUserModel;
-var
-  hash: String;
-  rehashNeeded: Boolean;
-begin
-  Self.Query.SQL.Text := 'SELECT * FROM users WHERE login = ' + QuotedStr(aLogin);
-
-  try
-    Self.Query.Open;
-    if Self.Query.RecordCount < 1 then raise Exception.Create('Usuário não encontrado');
-
-    hash := Self.Query.FieldByName('hash').AsString;
-
-    if not TBCrypt.CheckPassword(aPassword, hash, rehashNeeded) then
-      raise Exception.Create('Senha incorreta');
-
-    Result := TUserModel.Create;
-    Result.id := Self.Query.FieldByName('id').AsInteger;
-    Result.name := Self.Query.FieldByName('name').AsString;
-    Result.login := Self.Query.FieldByName('login').AsString;
   finally
     Self.Query.Close;
   end;
@@ -126,14 +101,21 @@ var
 begin
   Result := nil;
 
-  Self.Query.SQL.Text := Format('UPDATE users SET "name"=%s, login=%s WHERE id=%d RETURNING id, "name", login',
-                          [QuotedStr(aUser.name), QuotedStr(aUser.login), aUser.id]);
+  if aUser.id = 0 then begin
+    Self.Query.SQL.Text := Format(
+      'INSERT INTO users VALUES (DEFAULT, %s, %s, %s) RETURNING *',
+      [aUser.name, aUser.login, aUser.GetHash]);
+  end else begin
+    Self.Query.SQL.Text := Format(
+      'UPDATE users SET "name" = %s, login = %s, hash = %s WHERE id = %d RETURNING *',
+      [aUser.name, aUser.login, aUser.GetHash, aUser.id]);
+  end;
+
   helper := TDBHelper.Create;
   try
     if helper.CheckIfAlreadyExistsExcludingId('users', 'login', aUser.login, aUser.id) then
       raise Exception.Create(Format('Já existe um usuário com o LOGIN "%s"', [aUser.login]));
 
-
     Self.Query.Open();
 
     if not Self.Query.IsEmpty then begin
@@ -141,39 +123,7 @@ begin
       user.id := Self.Query.FieldByName('id').AsInteger;
       user.name := Self.Query.FieldByName('name').AsString;
       user.login := Self.Query.FieldByName('login').AsString;
-
-      Result := user;
-    end;
-  finally
-    Self.Query.Close;
-    helper.Free;
-  end;
-end;
-
-function TUserRepository.RegisterUser(aUserDTO: TUserDTO): TUserModel;
-var
-  hash: String;
-  user: TUserModel;
-  helper: TDBHelper;
-begin
-  Result := nil;
-
-  hash := TBCrypt.HashPassword(aUserDTO.password, 12);
-
-  Self.Query.SQL.Text := Format('INSERT INTO users ("name", login, hash) VALUES (%s, %s, %s) RETURNING id, "name", login',
-                          [QuotedStr(aUserDTO.name), QuotedStr(aUserDTO.login), QuotedStr(hash)]);
-  helper := TDBHelper.Create;
-  try
-    if helper.CheckIfAlreadyExists('users', 'login', aUserDTO.login) then
-      raise Exception.Create(Format('Já existe um usuário com o LOGIN "%s"', [aUserDTO.login]));
-
-    Self.Query.Open();
-
-    if not Self.Query.IsEmpty then begin
-      user := TUserModel.Create;
-      user.id := Self.Query.FieldByName('id').AsInteger;
-      user.name := Self.Query.FieldByName('name').AsString;
-      user.login := Self.Query.FieldByName('login').AsString;
+      user.SetHash(Self.Query.FieldByName('hash').AsString);
 
       Result := user;
     end;
