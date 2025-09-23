@@ -4,7 +4,7 @@ interface
 
 uses
   RepositoryBase, CrudRepositoryInterface, UserModel, DBHelper,
-  System.SysUtils, System.Generics.Collections, Data.DB;
+  System.SysUtils, System.Generics.Collections, Data.DB, System.StrUtils;
 
 type TUserRepository = class(TRepositoryBase, ICrudRepository<TUserModel>)
   public
@@ -127,19 +127,17 @@ var
 begin
   Result := nil;
 
-  if aUser.id = 0 then begin
-    Self.Query.SQL.Text := Format(
-      'INSERT INTO users VALUES (DEFAULT, %s, %s, %s) RETURNING *',
-      [QuotedStr(aUser.name), QuotedStr(aUser.login), QuotedStr(aUser.GetHash)]);
-  end else begin
-    Self.Query.SQL.Text := Format(
-      'UPDATE users SET "name" = %s, login = %s, hash = %s WHERE id = %d RETURNING *',
-      [QuotedStr(aUser.name), QuotedStr(aUser.login), QuotedStr(aUser.GetHash), aUser.id]);
-  end;
+  Self.Query.SQL.Text := Format(
+    'INSERT INTO users VALUES (%s, %s, %s, %s) ' +
+    'ON CONFLICT (id) DO UPDATE SET name = EXCLUDED.name, login = EXCLUDED.login, hash = EXCLUDED.hash ' +
+    'RETURNING *',
+    [IfThen(aUser.id = 0, 'DEFAULT', IntToStr(aUser.id)), QuotedStr(aUser.name), QuotedStr(aUser.login), QuotedStr(aUser.GetHash)]
+  );
 
   helper := TDBHelper.Create;
   try
-    // Verificar campo unique
+    if helper.CheckIfAlreadyExistsExcludingId('users', 'login', aUser.login, aUser.id) then
+      raise Exception.Create('Já existe um usuário utilizando o login "' + aUser.login + '"');
 
     Self.Query.Open();
 
