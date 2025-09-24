@@ -12,7 +12,6 @@ type TViewController = class
   public
     class function GetInstance(aMainView: IMainView): TViewController;
     procedure ChangeForm(aForm: TFormClass);
-    procedure OpenForm(aForm: TFormClass);
 end;
 
 implementation
@@ -36,11 +35,6 @@ begin
     instance := TViewController.Create(aMainView);
 
   Result := instance;
-end;
-
-procedure TViewController.OpenForm(aForm: TFormClass);
-begin
-  Self.mainView.OpenForm(aForm);
 end;
 
 end.

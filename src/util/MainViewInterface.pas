@@ -9,7 +9,6 @@ uses Vcl.Forms;
 
 type IMainView = interface
   procedure ChangeForm(aForm: TFormClass);
-  procedure OpenForm(aForm: TFormClass);
 end;
 
 implementation

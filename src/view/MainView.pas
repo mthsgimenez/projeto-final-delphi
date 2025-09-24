@@ -10,13 +10,12 @@ type
   TformMain = class(TForm, IMainView)
     panelMain: TPanel;
     procedure FormCreate(Sender: TObject);
-    procedure ChangeForm(aForm: TFormClass);
-    procedure OpenForm(aForm: TFormClass);
   private
     configController: TConfigController;
     activeForm: TForm;
+    procedure OpenForm(aForm: TFormClass);
   public
-    { Public declarations }
+    procedure ChangeForm(aForm: TFormClass);
   end;
 
 var
