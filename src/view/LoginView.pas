@@ -5,7 +5,7 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.StdCtrls,
-  Vcl.Imaging.jpeg, Vcl.Buttons, Vcl.Imaging.pngimage, UserController, UserDTO, UserModel;
+  Vcl.Imaging.jpeg, Vcl.Buttons, Vcl.Imaging.pngimage, UserController, UserDTO, UserModel, ViewController, UserView;
 
 type
   TformLogin = class(TForm)
@@ -66,6 +66,8 @@ begin
     user := Self.userController.Login(userDTO);
     if user = nil then raise Exception.Create('Login ou senha incorretos');
     user.Free;
+
+    TViewController.GetInstance(nil).ChangeForm(TformUser);
   finally
     errors.Free;
   end;

@@ -14,12 +14,14 @@ uses
   Bcrypt in 'lib\Bcrypt.pas',
   UserModel in 'src\model\entity\UserModel.pas',
   UserRepository in 'src\model\repository\implementation\UserRepository.pas',
-  DBHelper in 'src\model\repository\util\DBHelper.pas',
-  RepositoryBase in 'src\model\repository\util\RepositoryBase.pas',
+  DBHelper in 'src\util\DBHelper.pas',
+  RepositoryBase in 'src\util\RepositoryBase.pas',
   CrudRepositoryInterface in 'src\model\repository\interface\CrudRepositoryInterface.pas',
   UserDTO in 'src\DTO\UserDTO.pas',
   UserController in 'src\controller\UserController.pas',
-  UserView in 'src\view\UserView.pas' {formUser};
+  UserView in 'src\view\UserView.pas' {formUser},
+  ViewController in 'src\controller\ViewController.pas',
+  MainViewInterface in 'src\util\MainViewInterface.pas';
 
 {$R *.res}
 

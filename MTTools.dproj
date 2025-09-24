@@ -149,8 +149,8 @@
         <DCCReference Include="lib\Bcrypt.pas"/>
         <DCCReference Include="src\model\entity\UserModel.pas"/>
         <DCCReference Include="src\model\repository\implementation\UserRepository.pas"/>
-        <DCCReference Include="src\model\repository\util\DBHelper.pas"/>
-        <DCCReference Include="src\model\repository\util\RepositoryBase.pas"/>
+        <DCCReference Include="src\util\DBHelper.pas"/>
+        <DCCReference Include="src\util\RepositoryBase.pas"/>
         <DCCReference Include="src\model\repository\interface\CrudRepositoryInterface.pas"/>
         <DCCReference Include="src\DTO\UserDTO.pas"/>
         <DCCReference Include="src\controller\UserController.pas"/>
@@ -158,6 +158,8 @@
             <Form>formUser</Form>
             <FormType>dfm</FormType>
         </DCCReference>
+        <DCCReference Include="src\controller\ViewController.pas"/>
+        <DCCReference Include="src\util\MainViewInterface.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
