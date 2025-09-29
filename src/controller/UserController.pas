@@ -2,7 +2,7 @@ unit UserController;
 
 interface
 
-uses UserRepository, UserModel, UserDTO, System.Generics.Collections;
+uses UserRepository, UserModel, UserDTO, System.Generics.Collections, System.SysUtils;
 
   type TUserController = class
     private
@@ -12,7 +12,10 @@ uses UserRepository, UserModel, UserDTO, System.Generics.Collections;
       destructor Destroy; override;
       function Login(aUser: TUserDTO): TUserModel;
       function EditUser(aId: Integer; aData: TUserDTO): TUserModel;
+      function GetUser(aId: Integer): TUserModel;
       function GetUsers: TObjectList<TUserModel>;
+      function DeleteUser(aId: Integer): Boolean;
+      function CreateUser(aUser: TUserDTO): TUserModel;
   end;
 
 implementation
@@ -31,18 +34,49 @@ begin
   inherited Destroy;
 end;
 
+function TUserController.CreateUser(aUser: TUserDTO): TUserModel;
+var
+  user: TUserModel;
+begin
+  Result := nil;
+
+  user := TUserModel.Create;
+  try
+    user.name := aUser.name;
+    user.login := aUser.login;
+    user.SetPassword(Trim(aUser.password));
+
+    Result := Self.repository.Save(user);
+  finally
+    user.Free;
+  end;
+end;
+
+function TUserController.DeleteUser(aId: Integer): Boolean;
+begin
+  Result := Self.repository.DeleteById(aId);
+end;
+
 function TUserController.EditUser(aId: Integer; aData: TUserDTO): TUserModel;
 var
   user: TUserModel;
 begin
   user := Self.repository.FindById(aId);
-  if not (user = nil) then begin
+
+  try
     user.name := aData.name;
     user.login := aData.login;
-    user.SetPassword(aData.password);
-    Self.repository.Save(user);
+    if Trim(aData.password) <> '' then user.SetPassword(Trim(aData.password));
+
+    Result := Self.repository.Save(user);
+  finally
+    user.Free;
   end;
-  Result := user;
+end;
+
+function TUserController.GetUser(aId: Integer): TUserModel;
+begin
+  Result := Self.repository.FindById(aId);
 end;
 
 function TUserController.GetUsers: TObjectList<TUserModel>;
