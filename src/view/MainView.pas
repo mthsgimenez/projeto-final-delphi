@@ -5,32 +5,19 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, System.IOUtils, Vcl.ExtCtrls, ConfigController, DBConfigView, LoginView,
-  Vcl.Buttons, Vcl.StdCtrls, Vcl.Imaging.pngimage, UserModel, UserView;
+  Vcl.Buttons, Vcl.StdCtrls, Vcl.Imaging.pngimage, UserModel, MenuView;
 
 type
   TformMain = class(TForm)
     panelMain: TPanel;
-    panelMenu: TPanel;
-    imgMenu: TImage;
-    Shape1: TShape;
-    panelUser: TPanel;
-    imgUser: TImage;
-    labelUser: TLabel;
-    buttonUserMenu: TSpeedButton;
     procedure FormCreate(Sender: TObject);
-    procedure imgMenuClick(Sender: TObject);
-    procedure buttonUserMenuClick(Sender: TObject);
   private
-    openWidth: Integer;
-    closedWidth: Integer;
-    isMenuOpen: Boolean;
     configController: TConfigController;
     activeForm: TForm;
     procedure OnLogin(user: TUserModel);
-    procedure ToggleMenu;
+    procedure OpenForm(aForm: TForm);
   public
     class var loggedUser: TUserModel;
-    procedure ChangeForm(aForm: TFormClass);
   end;
 
 var
@@ -40,16 +27,9 @@ implementation
 
 {$R *.dfm}
 
-procedure TformMain.buttonUserMenuClick(Sender: TObject);
+procedure TformMain.OpenForm(aForm: TForm);
 begin
-  Self.ChangeForm(TformUser);
-  if Self.isMenuOpen then Self.ToggleMenu;
-end;
-
-procedure TformMain.ChangeForm(aForm: TFormClass);
-begin
-  Self.activeForm.Free;
-  Self.activeForm := aForm.Create(Self.panelMain);
+  Self.activeForm := aForm;
   Self.activeForm.Parent := Self.panelMain;
   Self.activeForm.BorderStyle := bsNone;
   Self.activeForm.Show;
@@ -60,12 +40,6 @@ var
   configForm: TformDBConfig;
   loginForm: TformLogin;
 begin
-  Self.panelMenu.Visible := False;
-  Self.closedWidth := 50;
-  Self.openWidth := 250;
-  Self.isMenuOpen := False;
-  Self.panelMenu.Width := Self.closedWidth;
-
   Self.configController := TConfigController.Create;
   Self.configController.PrepareDirectory;
 
@@ -83,43 +57,25 @@ begin
 
   if Self.configController.IsDBConnected then begin
     loginForm := TformLogin.Create(Self.panelMain, Self.OnLogin);
-    Self.activeForm := loginForm;
-    Self.activeForm.Parent := Self.panelMain;
-    Self.activeForm.BorderStyle := bsNone;
-    Self.activeForm.Show;
+    Self.OpenForm(loginForm);
   end else begin
     Application.Terminate;
   end;
 end;
 
-procedure TformMain.imgMenuClick(Sender: TObject);
-begin
-  Self.ToggleMenu;
-end;
-
 procedure TformMain.OnLogin(user: TUserModel);
+var
+  menuForm: TformMenu;
 begin
   if not Assigned(user) then begin
     raise Exception.Create('Login ou senha inválidos');
   end;
 
   Self.loggedUser := user;
-  Self.panelMenu.Visible := True;
   Self.activeForm.Free;
-  Self.activeForm := nil;
-  Self.panelMain.Margins.Left := 50;
-end;
 
-procedure TformMain.ToggleMenu;
-begin
-  if Self.isMenuOpen then begin
-    Self.isMenuOpen := False;
-    Self.panelMenu.Width := Self.closedWidth;
-    Exit;
-  end;
-
-  Self.isMenuOpen := True;
-  Self.panelMenu.Width := Self.openWidth;
+  menuForm := TformMenu.Create(Self.panelMain, 50, 250);
+  Self.OpenForm(menuForm);
 end;
 
 end.

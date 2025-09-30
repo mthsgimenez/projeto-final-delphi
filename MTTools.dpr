@@ -19,7 +19,8 @@ uses
   CrudRepositoryInterface in 'src\model\repository\interface\CrudRepositoryInterface.pas',
   UserDTO in 'src\DTO\UserDTO.pas',
   UserController in 'src\controller\UserController.pas',
-  UserView in 'src\view\UserView.pas' {formUser};
+  UserView in 'src\view\UserView.pas' {formUser},
+  MenuView in 'src\view\MenuView.pas' {formMenu};
 
 {$R *.res}
 
@@ -28,5 +29,6 @@ begin
   Application.MainFormOnTaskbar := True;
   Application.CreateForm(TConnection, Connection);
   Application.CreateForm(TformMain, formMain);
+  Application.CreateForm(TformMenu, formMenu);
   Application.Run;
 end.
