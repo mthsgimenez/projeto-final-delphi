@@ -158,8 +158,6 @@
             <Form>formUser</Form>
             <FormType>dfm</FormType>
         </DCCReference>
-        <DCCReference Include="src\controller\ViewController.pas"/>
-        <DCCReference Include="src\util\MainViewInterface.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
