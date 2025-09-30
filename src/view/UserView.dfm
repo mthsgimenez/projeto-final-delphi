@@ -3,7 +3,7 @@ object formUser: TformUser
   Top = 0
   Caption = 'formUser'
   ClientHeight = 561
-  ClientWidth = 784
+  ClientWidth = 734
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -15,21 +15,22 @@ object formUser: TformUser
     AlignWithMargins = True
     Left = 0
     Top = 0
-    Width = 784
+    Width = 734
     Height = 561
     Margins.Left = 0
     Margins.Top = 0
     Margins.Right = 0
     Margins.Bottom = 0
-    ActivePage = tabList
+    ActivePage = tabCreate
     Align = alClient
     TabOrder = 0
+    ExplicitWidth = 784
     object tabList: TTabSheet
       Caption = 'tabList'
       TabVisible = False
       OnShow = tabListShow
       object gridUsers: TStringGrid
-        Left = 48
+        Left = 24
         Top = 48
         Width = 665
         Height = 345
@@ -37,7 +38,7 @@ object formUser: TformUser
         TabOrder = 0
       end
       object buttonCreate: TButton
-        Left = 48
+        Left = 24
         Top = 444
         Width = 145
         Height = 45
@@ -46,7 +47,7 @@ object formUser: TformUser
         OnClick = buttonCreateClick
       end
       object buttonDelete: TButton
-        Left = 560
+        Left = 536
         Top = 442
         Width = 153
         Height = 49
@@ -55,7 +56,7 @@ object formUser: TformUser
         OnClick = buttonDeleteClick
       end
       object buttonEdit: TButton
-        Left = 296
+        Left = 272
         Top = 442
         Width = 153
         Height = 49
@@ -69,7 +70,7 @@ object formUser: TformUser
       ImageIndex = 1
       TabVisible = False
       object editName: TEdit
-        Left = 296
+        Left = 272
         Top = 152
         Width = 145
         Height = 23
@@ -77,7 +78,7 @@ object formUser: TformUser
         TextHint = 'Name'
       end
       object editLogin: TEdit
-        Left = 296
+        Left = 272
         Top = 208
         Width = 145
         Height = 23
@@ -85,7 +86,7 @@ object formUser: TformUser
         TextHint = 'Login'
       end
       object editPassword: TEdit
-        Left = 296
+        Left = 272
         Top = 272
         Width = 145
         Height = 23
@@ -94,7 +95,7 @@ object formUser: TformUser
         TextHint = '********'
       end
       object buttonSave: TButton
-        Left = 384
+        Left = 360
         Top = 336
         Width = 145
         Height = 33
@@ -103,7 +104,7 @@ object formUser: TformUser
         OnClick = buttonSaveClick
       end
       object buttonCancel: TButton
-        Left = 208
+        Left = 184
         Top = 336
         Width = 145
         Height = 33

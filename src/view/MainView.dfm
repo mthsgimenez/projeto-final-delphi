@@ -42,7 +42,7 @@ object formMain: TformMain
   end
   object panelMenu: TPanel
     AlignWithMargins = True
-    Left = 8
+    Left = 0
     Top = 0
     Width = 250
     Height = 561

@@ -43,6 +43,7 @@ implementation
 procedure TformMain.buttonUserMenuClick(Sender: TObject);
 begin
   Self.ChangeForm(TformUser);
+  if Self.isMenuOpen then Self.ToggleMenu;
 end;
 
 procedure TformMain.ChangeForm(aForm: TFormClass);
@@ -106,6 +107,7 @@ begin
   Self.panelMenu.Visible := True;
   Self.activeForm.Free;
   Self.activeForm := nil;
+  Self.panelMain.Margins.Left := 50;
 end;
 
 procedure TformMain.ToggleMenu;
