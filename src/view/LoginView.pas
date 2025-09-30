@@ -5,13 +5,15 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.StdCtrls,
-  Vcl.Imaging.jpeg, Vcl.Buttons, Vcl.Imaging.pngimage, UserController, UserDTO, UserModel, ViewController, UserView;
+  Vcl.Imaging.jpeg, Vcl.Buttons, Vcl.Imaging.pngimage, UserController, UserDTO, UserModel;
 
 type
+  TLoginCallback = procedure(user: TUserModel) of object;
+
   TformLogin = class(TForm)
     panelBackground: TPanel;
     imageBackground: TImage;
-    gridPanelLayout: TGridPanel;
+    gridpanelLayout: TGridPanel;
     panelLoginForm: TPanel;
     shapeLoginForm: TShape;
     gridPanelLoginForm: TGridPanel;
@@ -32,7 +34,8 @@ type
   private
     userController: TUserController;
   public
-    constructor Create(AOwner: TComponent); override;
+    onLoginAttempt: TLoginCallback;
+    constructor Create(AOwner: TComponent; aCallback: TLoginCallback); reintroduce;
     destructor Destroy; override;
   end;
 
@@ -64,18 +67,18 @@ begin
     if errors.Count > 0 then raise Exception.Create(errors.Text);
 
     user := Self.userController.Login(userDTO);
-    if user = nil then raise Exception.Create('Login ou senha incorretos');
-    user.Free;
 
-    TViewController.GetInstance(nil).ChangeForm(TformUser);
+    onLoginAttempt(user);
   finally
     errors.Free;
   end;
 end;
 
-constructor TformLogin.Create(AOwner: TComponent);
+constructor TformLogin.Create(AOwner: TComponent; aCallback: TLoginCallback);
 begin
   inherited Create(AOwner);
+  if not Assigned(aCallback) then raise Exception.Create('Callback de login não específicado');
+  Self.onLoginAttempt := aCallback;
   Self.userController := TUserController.Create;
 end;
 

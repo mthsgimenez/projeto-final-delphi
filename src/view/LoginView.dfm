@@ -3260,7 +3260,7 @@ object formLogin: TformLogin
       ExplicitWidth = 105
       ExplicitHeight = 105
     end
-    object gridPanelLayout: TGridPanel
+    object gridpanelLayout: TGridPanel
       AlignWithMargins = True
       Left = 0
       Top = 0
