@@ -5,11 +5,9 @@ CREATE SCHEMA public AUTHORIZATION pg_database_owner;
 -- DROP SEQUENCE public.permissions_id_seq;
 
 CREATE SEQUENCE public.permissions_id_seq
-	INCREMENT BY 1
-	MINVALUE 1
-	MAXVALUE 2147483647
-	START 1
-	CACHE 1
+	MINVALUE 0
+	NO MAXVALUE
+	START 0
 	NO CYCLE;
 -- DROP SEQUENCE public.permissions_users_id_seq;
 
@@ -100,20 +98,7 @@ CREATE SEQUENCE public.users_id_seq
 	MAXVALUE 2147483647
 	START 1
 	CACHE 1
-	NO CYCLE;-- public.permissions definição
-
--- Drop table
-
--- DROP TABLE public.permissions;
-
-CREATE TABLE public.permissions (
-	id serial4 NOT NULL,
-	"name" varchar(100) NOT NULL,
-	CONSTRAINT permissions_pk PRIMARY KEY (id)
-);
-
-
--- public.storages definição
+	NO CYCLE;-- public.storages definição
 
 -- Drop table
 
@@ -160,19 +145,18 @@ CREATE TABLE public.users (
 );
 
 
--- public.permissions_users definição
+-- public.permissions definição
 
 -- Drop table
 
--- DROP TABLE public.permissions_users;
+-- DROP TABLE public.permissions;
 
-CREATE TABLE public.permissions_users (
-	id serial4 NOT NULL,
-	id_user int4 NOT NULL,
-	id_permission int4 NOT NULL,
-	CONSTRAINT permissions_users_pk PRIMARY KEY (id),
-	CONSTRAINT permissions_users_permissions_fk FOREIGN KEY (id_permission) REFERENCES public.permissions(id) ON DELETE CASCADE ON UPDATE CASCADE,
-	CONSTRAINT permissions_users_users_fk FOREIGN KEY (id_user) REFERENCES public.users(id) ON DELETE CASCADE ON UPDATE CASCADE
+CREATE TABLE public.permissions (
+	id int4 NOT NULL,
+	"name" varchar(100) NOT NULL,
+	description text NOT NULL,
+	CONSTRAINT permissions_pk PRIMARY KEY (id),
+	CONSTRAINT permissions_unique UNIQUE (name)
 );
 
 
@@ -224,6 +208,22 @@ CREATE TABLE public.tools_models (
 	CONSTRAINT tools_models_pk PRIMARY KEY (id),
 	CONSTRAINT tools_models_unique UNIQUE (code),
 	CONSTRAINT tools_models_suppliers_fk FOREIGN KEY (id_supplier) REFERENCES public.suppliers(id)
+);
+
+
+-- public.permissions_users definição
+
+-- Drop table
+
+-- DROP TABLE public.permissions_users;
+
+CREATE TABLE public.permissions_users (
+	id serial4 NOT NULL,
+	id_user int4 NOT NULL,
+	id_permission int4 NOT NULL,
+	CONSTRAINT permissions_users_pk PRIMARY KEY (id),
+	CONSTRAINT permissions_users_permissions_fk FOREIGN KEY (id_permission) REFERENCES public.permissions(id) ON DELETE CASCADE ON UPDATE CASCADE,
+	CONSTRAINT permissions_users_users_fk FOREIGN KEY (id_user) REFERENCES public.users(id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 
