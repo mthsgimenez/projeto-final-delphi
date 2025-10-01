@@ -3,10 +3,12 @@ unit UserRepository;
 interface
 
 uses
-  RepositoryBase, CrudRepositoryInterface, UserModel, DBHelper,
-  System.SysUtils, System.Generics.Collections, Data.DB, System.StrUtils;
+  RepositoryBase, CrudRepositoryInterface, UserModel, DBHelper, FireDAC.Comp.Client, FireDAC.DApt,
+  System.SysUtils, System.Generics.Collections, Data.DB, System.StrUtils, Permissions;
 
 type TUserRepository = class(TRepositoryBase, ICrudRepository<TUserModel>)
+  private
+    function GetUserPermissions(aId: Integer): TPermissionsSet;
   public
     function Save(aUser: TUserModel): TUserModel;
     function FindById(aId: Integer): TUserModel;
@@ -117,6 +119,37 @@ begin
     end;
   finally
     Self.Query.Close;
+  end;
+end;
+
+function TUserRepository.GetUserPermissions(aId: Integer): TPermissionsSet;
+var
+  permQuery: TFDQuery;
+  permissions: TPermissionsSet;
+  permId: Integer;
+begin
+  permQuery := TFDQuery.Create(Self.Query.Connection);
+  permQuery.Connection := Self.Query.Connection;
+
+  permQuery.SQL.Text := Format(
+    'SELECT p.id FROM users u ' +
+    'JOIN permissions_users pu ON pu.id_user = u.id ' +
+    'JOIN permissions p ON pu.id_permission = p.id ' +
+    'WHERE u.id = %d',
+    [aId]
+  );
+
+  try
+    Self.Query.Open();
+    while not Self.Query.Eof do begin
+      permId := Self.Query.FieldByName('id').AsInteger;
+      permissions := permissions + [IntToPermission(permId)];
+    end;
+
+    Result := permissions;
+  finally
+    permQuery.Close;
+    permQuery.Free;
   end;
 end;
 
