@@ -21,10 +21,9 @@ object formUser: TformUser
     Margins.Top = 0
     Margins.Right = 0
     Margins.Bottom = 0
-    ActivePage = tabCreate
+    ActivePage = tabList
     Align = alClient
     TabOrder = 0
-    ExplicitWidth = 784
     object tabList: TTabSheet
       Caption = 'tabList'
       TabVisible = False
@@ -56,13 +55,22 @@ object formUser: TformUser
         OnClick = buttonDeleteClick
       end
       object buttonEdit: TButton
-        Left = 272
+        Left = 192
         Top = 442
         Width = 153
         Height = 49
-        Caption = 'Editar usu'#225'rio'
+        Caption = 'Editar dados'
         TabOrder = 3
         OnClick = buttonEditClick
+      end
+      object buttonPermissions: TButton
+        Left = 361
+        Top = 442
+        Width = 153
+        Height = 49
+        Caption = 'Permiss'#245'es'
+        TabOrder = 4
+        OnClick = buttonPermissionsClick
       end
     end
     object tabCreate: TTabSheet
@@ -111,6 +119,45 @@ object formUser: TformUser
         Caption = 'Cancelar'
         TabOrder = 4
         OnClick = buttonCancelClick
+      end
+    end
+    object tabPermissions: TTabSheet
+      Caption = 'tabPermissions'
+      ImageIndex = 2
+      TabVisible = False
+      object buttonBack: TButton
+        Left = 24
+        Top = 488
+        Width = 129
+        Height = 41
+        Caption = 'Voltar'
+        TabOrder = 0
+        OnClick = buttonBackClick
+      end
+      object ListView1: TListView
+        Left = 280
+        Top = 232
+        Width = 185
+        Height = 73
+        Checkboxes = True
+        Columns = <>
+        Items.ItemData = {
+          05A00000000300000000000000FFFFFFFFFFFFFFFF00000000FFFFFFFF000000
+          000E750073006500720073005F00720065006700690073007400650072000000
+          0000FFFFFFFFFFFFFFFF00000000FFFFFFFF000000000A750073006500720073
+          005F00650064006900740000000000FFFFFFFFFFFFFFFF00000000FFFFFFFF00
+          00000011750073006500720073005F007000650072006D006900730073006900
+          6F006E007300}
+        TabOrder = 1
+        ViewStyle = vsSmallIcon
+      end
+      object buttonSavePermissions: TButton
+        Left = 272
+        Top = 336
+        Width = 193
+        Height = 33
+        Caption = 'Salvar'
+        TabOrder = 2
       end
     end
   end

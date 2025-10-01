@@ -20,12 +20,19 @@ type
     editPassword: TEdit;
     buttonSave: TButton;
     buttonCancel: TButton;
+    tabPermissions: TTabSheet;
+    buttonPermissions: TButton;
+    buttonBack: TButton;
+    ListView1: TListView;
+    buttonSavePermissions: TButton;
     procedure buttonCreateClick(Sender: TObject);
     procedure tabListShow(Sender: TObject);
     procedure buttonEditClick(Sender: TObject);
     procedure buttonSaveClick(Sender: TObject);
     procedure buttonDeleteClick(Sender: TObject);
     procedure buttonCancelClick(Sender: TObject);
+    procedure buttonPermissionsClick(Sender: TObject);
+    procedure buttonBackClick(Sender: TObject);
   private
     controller: TUserController;
     selectedUserId: Integer;
@@ -42,6 +49,11 @@ var
 implementation
 
 {$R *.dfm}
+
+procedure TformUser.buttonBackClick(Sender: TObject);
+begin
+  Self.pcontrolUser.ActivePage := Self.pcontrolUser.Pages[0];
+end;
 
 procedure TformUser.buttonCancelClick(Sender: TObject);
 begin
@@ -82,6 +94,11 @@ begin
   end;
 
   Self.pcontrolUser.ActivePage := Self.pcontrolUser.Pages[1];
+end;
+
+procedure TformUser.buttonPermissionsClick(Sender: TObject);
+begin
+  Self.pcontrolUser.ActivePage := Self.pcontrolUser.Pages[2];
 end;
 
 procedure TformUser.buttonSaveClick(Sender: TObject);
