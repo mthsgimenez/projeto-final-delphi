@@ -20,7 +20,8 @@ uses
   UserDTO in 'src\DTO\UserDTO.pas',
   UserController in 'src\controller\UserController.pas',
   UserView in 'src\view\UserView.pas' {formUser},
-  MenuView in 'src\view\MenuView.pas' {formMenu};
+  MenuView in 'src\view\MenuView.pas' {formMenu},
+  Permissions in 'src\model\entity\Permissions.pas';
 
 {$R *.res}
 

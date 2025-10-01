@@ -162,6 +162,7 @@
             <Form>formMenu</Form>
             <FormType>dfm</FormType>
         </DCCReference>
+        <DCCReference Include="src\model\entity\Permissions.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
