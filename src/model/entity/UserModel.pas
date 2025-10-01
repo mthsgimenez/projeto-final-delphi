@@ -2,7 +2,7 @@ unit UserModel;
 
 interface
 
-uses Bcrypt;
+uses Bcrypt, Permissions;
 
 type TUserModel = class
   private
@@ -11,6 +11,7 @@ type TUserModel = class
     id: Integer;
     name: String;
     login: String;
+    permissions: TPermissionsSet;
     procedure SetPassword(aPassword: String);
     function CheckPassword(aPassword: String): Boolean;
     procedure SetHash(aHash: String);
