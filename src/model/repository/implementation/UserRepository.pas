@@ -92,6 +92,8 @@ begin
       user.login := Self.Query.FieldByName('login').AsString;
       user.SetHash(Self.Query.FieldByName('hash').AsString);
 
+      user.permissions := Self.GetUserPermissions(user.id);
+
       Result := user;
     end;
   finally
@@ -140,10 +142,12 @@ begin
   );
 
   try
-    Self.Query.Open();
-    while not Self.Query.Eof do begin
-      permId := Self.Query.FieldByName('id').AsInteger;
+    permQuery.Open();
+    while not permQuery.Eof do begin
+      permId := permQuery.FieldByName('id').AsInteger;
       permissions := permissions + [IntToPermission(permId)];
+
+      permQuery.Next;
     end;
 
     Result := permissions;
