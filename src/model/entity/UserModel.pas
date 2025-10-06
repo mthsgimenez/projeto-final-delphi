@@ -16,6 +16,7 @@ type TUserModel = class
     function CheckPassword(aPassword: String): Boolean;
     procedure SetHash(aHash: String);
     function GetHash: String;
+    function hasPermission(aPermission: TPermissions): Boolean;
 end;
 
 implementation
@@ -32,6 +33,11 @@ end;
 function TUserModel.GetHash: String;
 begin
   Result := Self.hash;
+end;
+
+function TUserModel.hasPermission(aPermission: TPermissions): Boolean;
+begin
+  Result := aPermission in Self.permissions;
 end;
 
 procedure TUserModel.SetHash(aHash: String);

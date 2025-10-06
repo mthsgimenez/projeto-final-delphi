@@ -45,6 +45,7 @@ begin
     user.name := aUser.name;
     user.login := aUser.login;
     user.SetPassword(Trim(aUser.password));
+    user.permissions := aUser.permissions;
 
     Result := Self.repository.Save(user);
   finally
@@ -66,6 +67,7 @@ begin
   try
     user.name := aData.name;
     user.login := aData.login;
+    user.permissions := aData.permissions;
     if Trim(aData.password) <> '' then user.SetPassword(Trim(aData.password));
 
     Result := Self.repository.Save(user);

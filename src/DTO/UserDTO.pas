@@ -2,12 +2,13 @@ unit UserDTO;
 
 interface
 
-  uses System.SysUtils, System.Classes;
+  uses System.SysUtils, System.Classes, Permissions;
 
   type TUserDTO = record
     name: String;
     login: String;
     password: String;
+    permissions: TPermissionsSet;
     function ValidateDTO(ensurePassword: Boolean): TStringList;
   end;
 

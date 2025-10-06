@@ -4,11 +4,12 @@ interface
 
 uses
   RepositoryBase, CrudRepositoryInterface, UserModel, DBHelper, FireDAC.Comp.Client, FireDAC.DApt,
-  System.SysUtils, System.Generics.Collections, Data.DB, System.StrUtils, Permissions;
+  System.SysUtils, System.Generics.Collections, Data.DB, System.StrUtils, Permissions, System.Classes;
 
 type TUserRepository = class(TRepositoryBase, ICrudRepository<TUserModel>)
   private
     function GetUserPermissions(aId: Integer): TPermissionsSet;
+    procedure UpdatePermissions(aUser: TUserModel);
   public
     function Save(aUser: TUserModel): TUserModel;
     function FindById(aId: Integer): TUserModel;
@@ -65,6 +66,8 @@ begin
         user.login := Self.Query.FieldByName('login').AsString;
         user.SetHash(Self.Query.FieldByName('hash').AsString);
 
+        user.permissions := Self.GetUserPermissions(user.id);
+
         users.Add(user);
 
         Self.Query.Next;
@@ -118,6 +121,7 @@ begin
       Result.name := Self.Query.FieldByName('name').AsString;
       Result.login := Self.Query.FieldByName('login').AsString;
       Result.SetHash(Self.Query.FieldByName('hash').AsString);
+      Result.permissions := Self.GetUserPermissions(Result.id);
     end;
   finally
     Self.Query.Close;
@@ -134,10 +138,8 @@ begin
   permQuery.Connection := Self.Query.Connection;
 
   permQuery.SQL.Text := Format(
-    'SELECT p.id FROM users u ' +
-    'JOIN permissions_users pu ON pu.id_user = u.id ' +
-    'JOIN permissions p ON pu.id_permission = p.id ' +
-    'WHERE u.id = %d',
+    'SELECT id_permission AS id FROM permissions_users ' +
+    'WHERE id_user = %d',
     [aId]
   );
 
@@ -178,6 +180,8 @@ begin
 
     Self.Query.Open();
 
+    Self.UpdatePermissions(aUser);
+
     if not Self.Query.IsEmpty then begin
       user := TUserModel.Create;
       user.id := Self.Query.FieldByName('id').AsInteger;
@@ -185,12 +189,58 @@ begin
       user.login := Self.Query.FieldByName('login').AsString;
       user.SetHash(Self.Query.FieldByName('hash').AsString);
 
+      user.permissions := Self.GetUserPermissions(user.id);
+
       Result := user;
     end;
   finally
     Self.Query.Close;
     helper.Free;
   end;
+end;
+
+// TODO: Corrigir essa função que funciona quando quer
+procedure TUserRepository.UpdatePermissions(aUser: TUserModel);
+var
+  pQuery: TFDQuery;
+  perm: TPermissions;
+  currentPermissions, toAdd, toRemove: TPermissionsSet;
+begin
+  currentPermissions := Self.GetUserPermissions(aUser.id);
+
+  toAdd := aUser.permissions - currentPermissions;
+  toRemove := currentPermissions - aUser.permissions;
+
+  pQuery := TFDQuery.Create(Self.Query.Connection);
+  pQuery.Connection := Self.Query.Connection;
+
+  for perm in toAdd do begin
+    pQuery.SQL.Text := Format(
+      'INSERT INTO permissions_users (id_user, id_permission) VALUES (%d, %d)',
+      [aUser.id, Integer(perm)]
+    );
+
+    try
+      pQuery.ExecSQL;
+    finally
+      pQuery.Close;
+    end;
+  end;
+
+  for perm in toRemove do begin
+    pQuery.SQL.Text := Format(
+      'DELETE FROM permissions_users WHERE id_user = %d AND id_permission = %d',
+      [aUser.id, Integer(perm)]
+    );
+
+    try
+      pQuery.ExecSQL;
+    finally
+      pQuery.Close;
+    end;
+  end;
+
+  pQuery.Free;
 end;
 
 end.

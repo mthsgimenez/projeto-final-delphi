@@ -4,7 +4,7 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ComCtrls, Vcl.Grids, Vcl.StdCtrls, UserController, UserDTO, UserModel, System.Generics.Collections;
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ComCtrls, Vcl.Grids, Vcl.StdCtrls, UserController, UserDTO, UserModel, System.Generics.Collections, Permissions;
 
 type
   TformUser = class(TForm)
@@ -20,19 +20,13 @@ type
     editPassword: TEdit;
     buttonSave: TButton;
     buttonCancel: TButton;
-    tabPermissions: TTabSheet;
-    buttonPermissions: TButton;
-    buttonBack: TButton;
-    ListView1: TListView;
-    buttonSavePermissions: TButton;
+    listPermissions: TListView;
     procedure buttonCreateClick(Sender: TObject);
     procedure tabListShow(Sender: TObject);
     procedure buttonEditClick(Sender: TObject);
     procedure buttonSaveClick(Sender: TObject);
     procedure buttonDeleteClick(Sender: TObject);
     procedure buttonCancelClick(Sender: TObject);
-    procedure buttonPermissionsClick(Sender: TObject);
-    procedure buttonBackClick(Sender: TObject);
   private
     controller: TUserController;
     selectedUserId: Integer;
@@ -49,11 +43,6 @@ var
 implementation
 
 {$R *.dfm}
-
-procedure TformUser.buttonBackClick(Sender: TObject);
-begin
-  Self.pcontrolUser.ActivePage := Self.pcontrolUser.Pages[0];
-end;
 
 procedure TformUser.buttonCancelClick(Sender: TObject);
 begin
@@ -89,6 +78,9 @@ begin
   try
     Self.editName.Text := user.name;
     Self.editLogin.Text := user.login;
+    Self.listPermissions.Items[0].Checked := user.hasPermission(TPermissions.USERS_REGISTER);
+    Self.listPermissions.Items[1].Checked := user.hasPermission(TPermissions.USERS_EDIT);
+    Self.listPermissions.Items[2].Checked := user.hasPermission(TPermissions.USERS_PERMISSIONS);
   finally
     user.Free;
   end;
@@ -96,20 +88,21 @@ begin
   Self.pcontrolUser.ActivePage := Self.pcontrolUser.Pages[1];
 end;
 
-procedure TformUser.buttonPermissionsClick(Sender: TObject);
-begin
-  Self.pcontrolUser.ActivePage := Self.pcontrolUser.Pages[2];
-end;
-
 procedure TformUser.buttonSaveClick(Sender: TObject);
 var
   data: TUserDTO;
   user: TUserModel;
   errors: TStringList;
+  perm: TListItem;
 begin
   data.name := editName.Text;
   data.login := editLogin.Text;
   data.password := editPassword.Text;
+
+  for perm in Self.listPermissions.Items do begin
+    if perm.Checked then
+      data.permissions := data.permissions + [IntToPermission(perm.Index + 1)];
+  end;
 
   if Self.selectedUserId <> 0 then begin
     errors := data.ValidateDTO(False);

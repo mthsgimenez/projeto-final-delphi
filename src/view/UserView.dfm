@@ -55,22 +55,13 @@ object formUser: TformUser
         OnClick = buttonDeleteClick
       end
       object buttonEdit: TButton
-        Left = 192
+        Left = 272
         Top = 442
         Width = 153
         Height = 49
         Caption = 'Editar dados'
         TabOrder = 3
         OnClick = buttonEditClick
-      end
-      object buttonPermissions: TButton
-        Left = 361
-        Top = 442
-        Width = 153
-        Height = 49
-        Caption = 'Permiss'#245'es'
-        TabOrder = 4
-        OnClick = buttonPermissionsClick
       end
     end
     object tabCreate: TTabSheet
@@ -120,23 +111,9 @@ object formUser: TformUser
         TabOrder = 4
         OnClick = buttonCancelClick
       end
-    end
-    object tabPermissions: TTabSheet
-      Caption = 'tabPermissions'
-      ImageIndex = 2
-      TabVisible = False
-      object buttonBack: TButton
-        Left = 24
-        Top = 488
-        Width = 129
-        Height = 41
-        Caption = 'Voltar'
-        TabOrder = 0
-        OnClick = buttonBackClick
-      end
-      object ListView1: TListView
-        Left = 280
-        Top = 232
+      object listPermissions: TListView
+        Left = 256
+        Top = 48
         Width = 185
         Height = 73
         Checkboxes = True
@@ -148,16 +125,8 @@ object formUser: TformUser
           005F00650064006900740000000000FFFFFFFFFFFFFFFF00000000FFFFFFFF00
           00000011750073006500720073005F007000650072006D006900730073006900
           6F006E007300}
-        TabOrder = 1
+        TabOrder = 5
         ViewStyle = vsSmallIcon
-      end
-      object buttonSavePermissions: TButton
-        Left = 272
-        Top = 336
-        Width = 193
-        Height = 33
-        Caption = 'Salvar'
-        TabOrder = 2
       end
     end
   end
