@@ -163,6 +163,7 @@
             <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="src\model\entity\Permissions.pas"/>
+        <DCCReference Include="src\infra\Session.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

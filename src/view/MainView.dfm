@@ -37,7 +37,5 @@ object formMain: TformMain
     Caption = 'panelMain'
     ShowCaption = False
     TabOrder = 0
-    ExplicitLeft = -5
-    ExplicitTop = -5
   end
 end

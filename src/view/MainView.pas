@@ -5,7 +5,7 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, System.IOUtils, Vcl.ExtCtrls, ConfigController, DBConfigView, LoginView,
-  Vcl.Buttons, Vcl.StdCtrls, Vcl.Imaging.pngimage, UserModel, MenuView;
+  Vcl.Buttons, Vcl.StdCtrls, Vcl.Imaging.pngimage, UserModel, MenuView, Session;
 
 type
   TformMain = class(TForm)
@@ -16,8 +16,6 @@ type
     activeForm: TForm;
     procedure OnLogin(user: TUserModel);
     procedure OpenForm(aForm: TForm);
-  public
-    class var loggedUser: TUserModel;
   end;
 
 var
@@ -71,7 +69,8 @@ begin
     raise Exception.Create('Login ou senha inválidos');
   end;
 
-  Self.loggedUser := user;
+  TSession.GetInstance.SetUser(user);
+
   Self.activeForm.Free;
 
   menuForm := TformMenu.Create(Self.panelMain, 50, 250);

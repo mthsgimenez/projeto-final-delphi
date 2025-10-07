@@ -21,7 +21,8 @@ uses
   UserController in 'src\controller\UserController.pas',
   UserView in 'src\view\UserView.pas' {formUser},
   MenuView in 'src\view\MenuView.pas' {formMenu},
-  Permissions in 'src\model\entity\Permissions.pas';
+  Permissions in 'src\model\entity\Permissions.pas',
+  Session in 'src\infra\Session.pas';
 
 {$R *.res}
 
