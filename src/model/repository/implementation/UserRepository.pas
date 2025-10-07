@@ -180,8 +180,6 @@ begin
 
     Self.Query.Open();
 
-    Self.UpdatePermissions(aUser);
-
     if not Self.Query.IsEmpty then begin
       user := TUserModel.Create;
       user.id := Self.Query.FieldByName('id').AsInteger;
@@ -189,6 +187,8 @@ begin
       user.login := Self.Query.FieldByName('login').AsString;
       user.SetHash(Self.Query.FieldByName('hash').AsString);
 
+      user.permissions := aUser.permissions;
+      Self.UpdatePermissions(user);
       user.permissions := Self.GetUserPermissions(user.id);
 
       Result := user;
