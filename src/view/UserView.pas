@@ -107,6 +107,7 @@ begin
   data.name := editName.Text;
   data.login := editLogin.Text;
   data.password := editPassword.Text;
+  data.permissions := [];
 
   for perm in Self.listPermissions.Items do begin
     if perm.Checked then
