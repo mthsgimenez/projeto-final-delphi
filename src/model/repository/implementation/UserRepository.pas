@@ -214,29 +214,34 @@ begin
 
   pQuery := TFDQuery.Create(Self.Query.Connection);
   pQuery.Connection := Self.Query.Connection;
-
-  pQuery.SQL.Text := Format(
-    'DELETE FROM permissions_users WHERE id_user = %d',
-    [aUser.id]
-  );
+  pQuery.Connection.StartTransaction;
 
   try
-    pQuery.ExecSQL;
-  finally
-    pQuery.Close;
-  end;
-
-  pQuery.SQL.Text := Format(
-    'INSERT INTO permissions_users (id_user, id_permission) VALUES %s',
-    [arguments.DelimitedText]
-  );
-
-  try
-    if arguments.Count > 0 then
+    try
+      pQuery.SQL.Text := Format(
+        'DELETE FROM permissions_users WHERE id_user = %d',
+        [aUser.id]
+      );
       pQuery.ExecSQL;
+
+      if arguments.Count > 0 then begin
+        pQuery.SQL.Text := Format(
+          'INSERT INTO permissions_users (id_user, id_permission) VALUES %s',
+          [arguments.DelimitedText]
+        );
+        pQuery.ExecSQL;
+      end;
+
+      pQuery.Connection.Commit;
+    except
+      on e: Exception do begin
+        pQuery.Connection.Rollback;
+        raise Exception.Create('Erro ao atualizar as permissões do usuário ' + aUser.name + ': ' + e.Message);
+      end;
+    end;
   finally
-    pQuery.Free;
     arguments.Free;
+    pQuery.Free;
   end;
 end;
 
