@@ -58,14 +58,21 @@ begin
 end;
 
 procedure TformUser.buttonDeleteClick(Sender: TObject);
+var
+  confirmation: Integer;
 begin
-  Self.selectedUserId := StrToInt(Self.gridUsers.Cells[0, Self.gridUsers.Row]);
+  confirmation := MessageDlg(
+    'Tem certeza de que quer desativar o usuário selecionado?',
+    mtConfirmation,
+    [mbYes, mbNo],
+    0);
 
-  Self.controller.DeleteUser(Self.selectedUserId);
-
-  Self.selectedUserId := 0;
-
-  Self.tabListShow(nil);
+  if confirmation = mrYes then begin
+    Self.selectedUserId := StrToInt(Self.gridUsers.Cells[0, Self.gridUsers.Row]);
+    Self.controller.DeleteUser(Self.selectedUserId);
+    Self.selectedUserId := 0;
+    Self.tabListShow(nil);
+  end;
 end;
 
 procedure TformUser.buttonEditClick(Sender: TObject);
