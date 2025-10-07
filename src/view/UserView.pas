@@ -4,7 +4,7 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ComCtrls, Vcl.Grids, Vcl.StdCtrls, UserController, UserDTO, UserModel, System.Generics.Collections, Permissions;
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ComCtrls, Vcl.Grids, Vcl.StdCtrls, UserController, UserDTO, UserModel, System.Generics.Collections, Permissions, Session;
 
 type
   TformUser = class(TForm)
@@ -27,6 +27,7 @@ type
     procedure buttonSaveClick(Sender: TObject);
     procedure buttonDeleteClick(Sender: TObject);
     procedure buttonCancelClick(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
   private
     controller: TUserController;
     selectedUserId: Integer;
@@ -78,9 +79,10 @@ begin
   try
     Self.editName.Text := user.name;
     Self.editLogin.Text := user.login;
-    Self.listPermissions.Items[0].Checked := user.hasPermission(TPermissions.USERS_REGISTER);
-    Self.listPermissions.Items[1].Checked := user.hasPermission(TPermissions.USERS_EDIT);
-    Self.listPermissions.Items[2].Checked := user.hasPermission(TPermissions.USERS_PERMISSIONS);
+    Self.listPermissions.Items[0].Checked := user.hasPermission(TPermissions.USERS_CREATE);
+    Self.listPermissions.Items[1].Checked := user.hasPermission(TPermissions.USERS_UPDATE);
+    Self.listPermissions.Items[2].Checked := user.hasPermission(TPermissions.USERS_DELETE);
+    Self.listPermissions.Items[3].Checked := user.hasPermission(TPermissions.USERS_PERMISSIONS);
   finally
     user.Free;
   end;
@@ -137,6 +139,10 @@ begin
   Self.editName.Clear;
   Self.editLogin.Clear;
   Self.editPassword.Clear;
+
+  for var item in Self.listPermissions.Items do begin
+    item.Checked := False;
+  end;
 end;
 
 constructor TformUser.Create(AOwner: TComponent);
@@ -149,6 +155,18 @@ destructor TformUser.Destroy;
 begin
   Self.controller.Free;
   inherited Destroy;
+end;
+
+procedure TformUser.FormCreate(Sender: TObject);
+var
+  user: TUserModel;
+begin
+  user := TSession.GetInstance.GetUser;
+
+  Self.buttonCreate.Visible := user.hasPermission(TPermissions.USERS_CREATE);
+  Self.buttonEdit.Visible := user.hasPermission(TPermissions.USERS_UPDATE);
+  Self.buttonDelete.Visible := user.hasPermission(TPermissions.USERS_DELETE);
+  Self.listPermissions.Visible := user.hasPermission(TPermissions.USERS_PERMISSIONS);
 end;
 
 procedure TformUser.tabListShow(Sender: TObject);

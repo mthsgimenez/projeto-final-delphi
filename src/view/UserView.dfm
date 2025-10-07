@@ -10,6 +10,7 @@ object formUser: TformUser
   Font.Height = -12
   Font.Name = 'Segoe UI'
   Font.Style = []
+  OnCreate = FormCreate
   TextHeight = 15
   object pcontrolUser: TPageControl
     AlignWithMargins = True
@@ -70,7 +71,7 @@ object formUser: TformUser
       TabVisible = False
       object editName: TEdit
         Left = 272
-        Top = 152
+        Top = 200
         Width = 145
         Height = 23
         TabOrder = 0
@@ -78,7 +79,7 @@ object formUser: TformUser
       end
       object editLogin: TEdit
         Left = 272
-        Top = 208
+        Top = 256
         Width = 145
         Height = 23
         TabOrder = 1
@@ -86,7 +87,7 @@ object formUser: TformUser
       end
       object editPassword: TEdit
         Left = 272
-        Top = 272
+        Top = 320
         Width = 145
         Height = 23
         PasswordChar = '*'
@@ -95,7 +96,7 @@ object formUser: TformUser
       end
       object buttonSave: TButton
         Left = 360
-        Top = 336
+        Top = 384
         Width = 145
         Height = 33
         Caption = 'Salvar'
@@ -104,7 +105,7 @@ object formUser: TformUser
       end
       object buttonCancel: TButton
         Left = 184
-        Top = 336
+        Top = 384
         Width = 145
         Height = 33
         Caption = 'Cancelar'
@@ -112,19 +113,20 @@ object formUser: TformUser
         OnClick = buttonCancelClick
       end
       object listPermissions: TListView
-        Left = 256
-        Top = 48
+        Left = 248
+        Top = 56
         Width = 185
-        Height = 73
+        Height = 89
         Checkboxes = True
         Columns = <>
         Items.ItemData = {
-          05A00000000300000000000000FFFFFFFFFFFFFFFF00000000FFFFFFFF000000
-          000E750073006500720073005F00720065006700690073007400650072000000
-          0000FFFFFFFFFFFFFFFF00000000FFFFFFFF000000000A750073006500720073
-          005F00650064006900740000000000FFFFFFFFFFFFFFFF00000000FFFFFFFF00
-          00000011750073006500720073005F007000650072006D006900730073006900
-          6F006E007300}
+          05D20000000400000000000000FFFFFFFFFFFFFFFF00000000FFFFFFFF000000
+          000C750073006500720073005F0063007200650061007400650000000000FFFF
+          FFFFFFFFFFFF00000000FFFFFFFF000000000C750073006500720073005F0075
+          007000640061007400650000000000FFFFFFFFFFFFFFFF00000000FFFFFFFF00
+          0000000C750073006500720073005F00640065006C0065007400650000000000
+          FFFFFFFFFFFFFFFF00000000FFFFFFFF0000000011750073006500720073005F
+          007000650072006D0069007300730069006F006E007300}
         TabOrder = 5
         ViewStyle = vsSmallIcon
       end
