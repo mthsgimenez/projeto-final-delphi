@@ -5,9 +5,10 @@ interface
 uses System.SysUtils;
 
 type TPermissions = (
-    USERS_REGISTER = 1,
-    USERS_EDIT = 2,
-    USERS_PERMISSIONS = 3
+    USERS_CREATE = 1,
+    USERS_UPDATE = 2,
+    USERS_DELETE = 3,
+    USERS_PERMISSIONS = 4
 );
 
 type TPermissionsSet = set of TPermissions;
