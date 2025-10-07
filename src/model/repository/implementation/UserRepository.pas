@@ -199,48 +199,45 @@ begin
   end;
 end;
 
-// TODO: Corrigir essa função que funciona quando quer
 procedure TUserRepository.UpdatePermissions(aUser: TUserModel);
 var
   pQuery: TFDQuery;
   perm: TPermissions;
-  currentPermissions, toAdd, toRemove: TPermissionsSet;
+  arguments: TStringList;
 begin
-  currentPermissions := Self.GetUserPermissions(aUser.id);
+  arguments := TStringList.Create;
+  arguments.QuoteChar := #0;
 
-  toAdd := aUser.permissions - currentPermissions;
-  toRemove := currentPermissions - aUser.permissions;
+  for perm in aUser.permissions do begin
+    arguments.Add(Format('(%d, %d)', [aUser.id, Integer(perm)]));
+  end;
 
   pQuery := TFDQuery.Create(Self.Query.Connection);
   pQuery.Connection := Self.Query.Connection;
 
-  for perm in toAdd do begin
-    pQuery.SQL.Text := Format(
-      'INSERT INTO permissions_users (id_user, id_permission) VALUES (%d, %d)',
-      [aUser.id, Integer(perm)]
-    );
+  pQuery.SQL.Text := Format(
+    'DELETE FROM permissions_users WHERE id_user = %d',
+    [aUser.id]
+  );
 
-    try
-      pQuery.ExecSQL;
-    finally
-      pQuery.Close;
-    end;
+  try
+    pQuery.ExecSQL;
+  finally
+    pQuery.Close;
   end;
 
-  for perm in toRemove do begin
-    pQuery.SQL.Text := Format(
-      'DELETE FROM permissions_users WHERE id_user = %d AND id_permission = %d',
-      [aUser.id, Integer(perm)]
-    );
+  pQuery.SQL.Text := Format(
+    'INSERT INTO permissions_users (id_user, id_permission) VALUES %s',
+    [arguments.DelimitedText]
+  );
 
-    try
+  try
+    if arguments.Count > 0 then
       pQuery.ExecSQL;
-    finally
-      pQuery.Close;
-    end;
+  finally
+    pQuery.Free;
+    arguments.Free;
   end;
-
-  pQuery.Free;
 end;
 
 end.
