@@ -4,7 +4,7 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ComCtrls, Vcl.Grids, Vcl.StdCtrls, UserController, UserDTO, UserModel, System.Generics.Collections, Permissions, Session, System.UITypes;
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ComCtrls, Vcl.Grids, Vcl.StdCtrls, UserController, UserDTO, UserModel, System.Generics.Collections, Permissions, Session, MessageHelper;
 
 type
   TformUser = class(TForm)
@@ -34,6 +34,7 @@ type
     controller: TUserController;
     selectedUser: TUserModel;
     users: TObjectList<TUserModel>;
+    messageHelper: TMessageHelper;
     procedure UpdateGrid;
     procedure ClearEdits;
   public
@@ -60,24 +61,18 @@ begin
 end;
 
 procedure TformUser.buttonDeleteClick(Sender: TObject);
-var
-  confirmation: Integer;
 begin
-  if not Assigned(Self.selectedUser) then
-    raise Exception.Create('Nenhum usuário selecionado.');
-
-  if TSession.GetInstance.GetUser.id = Self.selectedUser.id then begin
-    raise Exception.Create('Você não pode deletar seu próprio usuário');
-    Self.selectedUser := nil;
+  if not Assigned(Self.selectedUser) then begin
+    Self.messageHelper.Warning('Nenhum usuário selecionado.');
+    Exit;
   end;
 
-  confirmation := MessageDlg(
-    'Tem certeza de que quer desativar o usuário ' + Self.selectedUser.name + '?',
-    mtConfirmation,
-    [mbYes, mbNo],
-    0);
+  if TSession.GetInstance.GetUser.id = Self.selectedUser.id then begin
+    Self.messageHelper.Error('Você não pode desativar seu próprio usuário');
+    Exit;
+  end;
 
-  if confirmation = mrYes then begin
+  if Self.messageHelper.Confirmation('Tem certeza de que quer desativar o usuário ' + Self.selectedUser.name + '?') then begin
     Self.controller.DeleteUser(Self.selectedUser.id);
     Self.users.Remove(Self.selectedUser);
     Self.selectedUser := nil;
@@ -87,8 +82,10 @@ end;
 
 procedure TformUser.buttonEditClick(Sender: TObject);
 begin
-  if not Assigned(Self.selectedUser) then
-    raise Exception.Create('Nenhum usuário selecionado.');
+  if not Assigned(Self.selectedUser) then begin
+    Self.messageHelper.Warning('Nenhum usuário selecionado.');
+    Exit;
+  end;
 
   Self.editName.Text := Self.selectedUser.name;
   Self.editLogin.Text := Self.selectedUser.login;
@@ -119,12 +116,16 @@ begin
 
   if Assigned(Self.selectedUser) then begin
     errors := data.ValidateDTO(False);
+
     try
-      if errors.Count > 0 then raise Exception.Create(errors.Text);    
+      if errors.Count > 0 then begin
+        Self.messageHelper.Error(errors.Text);
+        Exit;
+      end;
     finally
       errors.Free;
     end;
-    
+
     user := Self.controller.EditUser(Self.selectedUser.id, data);
 
     Self.users.Remove(Self.selectedUser);
@@ -134,7 +135,10 @@ begin
   end else begin
     errors := data.ValidateDTO(True);
     try
-      if errors.Count > 0 then raise Exception.Create(errors.Text);    
+      if errors.Count > 0 then begin
+        Self.messageHelper.Error(errors.Text);
+        Exit;
+      end;
     finally
       errors.Free;
     end;
@@ -163,6 +167,7 @@ begin
   inherited Create(AOwner);
   Self.controller := TUserController.Create;
   Self.users := Self.controller.GetUsers;
+  Self.messageHelper := TMessageHelper.GetInstance;
 end;
 
 destructor TformUser.Destroy;
