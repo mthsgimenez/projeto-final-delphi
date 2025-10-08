@@ -34,8 +34,10 @@ object formUser: TformUser
         Top = 48
         Width = 665
         Height = 345
-        ColCount = 3
+        ColCount = 2
+        FixedCols = 0
         TabOrder = 0
+        OnSelectCell = gridUsersSelectCell
       end
       object buttonCreate: TButton
         Left = 24

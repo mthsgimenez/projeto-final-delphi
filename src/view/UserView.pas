@@ -4,7 +4,7 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ComCtrls, Vcl.Grids, Vcl.StdCtrls, UserController, UserDTO, UserModel, System.Generics.Collections, Permissions, Session;
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ComCtrls, Vcl.Grids, Vcl.StdCtrls, UserController, UserDTO, UserModel, System.Generics.Collections, Permissions, Session, System.UITypes;
 
 type
   TformUser = class(TForm)
@@ -28,10 +28,13 @@ type
     procedure buttonDeleteClick(Sender: TObject);
     procedure buttonCancelClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
+    procedure gridUsersSelectCell(Sender: TObject; ACol, ARow: LongInt;
+      var CanSelect: Boolean);
   private
     controller: TUserController;
-    selectedUserId: Integer;
-    procedure UpdateGrid(aUsers: TObjectList<TUserModel>);
+    selectedUser: TUserModel;
+    users: TObjectList<TUserModel>;
+    procedure UpdateGrid;
     procedure ClearEdits;
   public
     constructor Create(AOwner: TComponent); override;
@@ -49,7 +52,6 @@ procedure TformUser.buttonCancelClick(Sender: TObject);
 begin
   Self.pcontrolUser.ActivePage := Self.pcontrolUser.Pages[0];
   Self.ClearEdits;
-  Self.selectedUserId := 0;
 end;
 
 procedure TformUser.buttonCreateClick(Sender: TObject);
@@ -61,38 +63,39 @@ procedure TformUser.buttonDeleteClick(Sender: TObject);
 var
   confirmation: Integer;
 begin
+  if not Assigned(Self.selectedUser) then
+    raise Exception.Create('Nenhum usuário selecionado.');
+
+  if TSession.GetInstance.GetUser.id = Self.selectedUser.id then begin
+    raise Exception.Create('Você não pode deletar seu próprio usuário');
+    Self.selectedUser := nil;
+  end;
+
   confirmation := MessageDlg(
-    'Tem certeza de que quer desativar o usuário selecionado?',
+    'Tem certeza de que quer desativar o usuário ' + Self.selectedUser.name + '?',
     mtConfirmation,
     [mbYes, mbNo],
     0);
 
   if confirmation = mrYes then begin
-    Self.selectedUserId := StrToInt(Self.gridUsers.Cells[0, Self.gridUsers.Row]);
-    Self.controller.DeleteUser(Self.selectedUserId);
-    Self.selectedUserId := 0;
-    Self.tabListShow(nil);
+    Self.controller.DeleteUser(Self.selectedUser.id);
+    Self.users.Remove(Self.selectedUser);
+    Self.selectedUser := nil;
+    Self.UpdateGrid;
   end;
 end;
 
 procedure TformUser.buttonEditClick(Sender: TObject);
-var
-  user: TUserModel;
 begin
-  Self.selectedUserId := StrToInt(Self.gridUsers.Cells[0, Self.gridUsers.Row]);
+  if not Assigned(Self.selectedUser) then
+    raise Exception.Create('Nenhum usuário selecionado.');
 
-  user := Self.controller.GetUser(Self.selectedUserId);
-
-  try
-    Self.editName.Text := user.name;
-    Self.editLogin.Text := user.login;
-    Self.listPermissions.Items[0].Checked := user.hasPermission(TPermissions.USERS_CREATE);
-    Self.listPermissions.Items[1].Checked := user.hasPermission(TPermissions.USERS_UPDATE);
-    Self.listPermissions.Items[2].Checked := user.hasPermission(TPermissions.USERS_DELETE);
-    Self.listPermissions.Items[3].Checked := user.hasPermission(TPermissions.USERS_PERMISSIONS);
-  finally
-    user.Free;
-  end;
+  Self.editName.Text := Self.selectedUser.name;
+  Self.editLogin.Text := Self.selectedUser.login;
+  Self.listPermissions.Items[0].Checked := Self.selectedUser.hasPermission(TPermissions.USERS_CREATE);
+  Self.listPermissions.Items[1].Checked := Self.selectedUser.hasPermission(TPermissions.USERS_UPDATE);
+  Self.listPermissions.Items[2].Checked := Self.selectedUser.hasPermission(TPermissions.USERS_DELETE);
+  Self.listPermissions.Items[3].Checked := Self.selectedUser.hasPermission(TPermissions.USERS_PERMISSIONS);
 
   Self.pcontrolUser.ActivePage := Self.pcontrolUser.Pages[1];
 end;
@@ -114,7 +117,7 @@ begin
       data.permissions := data.permissions + [IntToPermission(perm.Index + 1)];
   end;
 
-  if Self.selectedUserId <> 0 then begin
+  if Assigned(Self.selectedUser) then begin
     errors := data.ValidateDTO(False);
     try
       if errors.Count > 0 then raise Exception.Create(errors.Text);    
@@ -122,10 +125,12 @@ begin
       errors.Free;
     end;
     
-    user := Self.controller.EditUser(Self.selectedUserId, data);
-    user.Free;
+    user := Self.controller.EditUser(Self.selectedUser.id, data);
 
-    Self.selectedUserId := 0;
+    Self.users.Remove(Self.selectedUser);
+    Self.selectedUser := nil;
+
+    Self.users.Add(user);
   end else begin
     errors := data.ValidateDTO(True);
     try
@@ -135,7 +140,7 @@ begin
     end;
 
     user := Self.controller.CreateUser(data);
-    user.Free;
+    Self.users.Add(user);
   end;
 
   Self.ClearEdits;
@@ -157,10 +162,12 @@ constructor TformUser.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
   Self.controller := TUserController.Create;
+  Self.users := Self.controller.GetUsers;
 end;
 
 destructor TformUser.Destroy;
 begin
+  Self.users.Free;
   Self.controller.Free;
   inherited Destroy;
 end;
@@ -177,37 +184,42 @@ begin
   Self.listPermissions.Visible := user.hasPermission(TPermissions.USERS_PERMISSIONS);
 end;
 
-procedure TformUser.tabListShow(Sender: TObject);
-var
-  users: TObjectList<TUserModel>;
+procedure TformUser.gridUsersSelectCell(Sender: TObject; ACol, ARow: LongInt;
+  var CanSelect: Boolean);
 begin
-  users := Self.controller.GetUsers;
-  Self.UpdateGrid(users);
-  users.Free;
+  if ARow = 0 then begin
+    CanSelect := False;
+    Exit;
+  end;
+
+  Self.selectedUser := TUserModel(Self.gridUsers.Objects[0, ARow]);
 end;
 
-procedure TformUser.UpdateGrid(aUsers: TObjectList<TUserModel>);
+procedure TformUser.tabListShow(Sender: TObject);
+begin
+  Self.UpdateGrid;
+end;
+
+procedure TformUser.UpdateGrid;
 var
   user: TUserModel;
   i: Integer;
 begin
   with Self.gridUsers do begin
     RowCount := 1;
-    Cells[0, 0] := 'Id';
-    Cells[1, 0] := 'Name';
-    Cells[2, 0] := 'Login';
-    ColWidths[0] := 100;
-    ColWidths[1] := 250;
-    ColWidths[2] := 250;
+    Cells[0, 0] := 'Name';
+    Cells[1, 0] := 'Login';
+    ColWidths[0] := Width div 2;
+    ColWidths[1] := Width div 2;
 
-    if aUsers <> nil then
-    for user in aUsers do begin
-      i := RowCount;
-      RowCount := RowCount + 1;
-      Cells[0, i] := IntToStr(user.id);
-      Cells[1, i] := user.name;
-      Cells[2, i] := user.login;
-    end;
+    if Assigned(Self.users) then
+      for user in Self.users do begin
+        i := RowCount;
+        RowCount := RowCount + 1;
+        Objects[0, i] := user;
+        Cells[0, i] := user.name;
+        Cells[1, i] := user.login;
+      end;
   end;
 end;
 
