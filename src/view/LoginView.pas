@@ -5,7 +5,7 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.StdCtrls,
-  Vcl.Imaging.jpeg, Vcl.Buttons, Vcl.Imaging.pngimage, UserController, UserDTO, UserModel;
+  Vcl.Imaging.jpeg, Vcl.Buttons, Vcl.Imaging.pngimage, UserController, UserDTO, UserModel, MessageHelper;
 
 type
   TLoginCallback = procedure(user: TUserModel) of object;
@@ -33,6 +33,7 @@ type
     procedure buttonLoginClick(Sender: TObject);
   private
     userController: TUserController;
+    messageHelper: TMessageHelper;
   public
     onLoginAttempt: TLoginCallback;
     constructor Create(AOwner: TComponent; aCallback: TLoginCallback); reintroduce;
@@ -64,7 +65,10 @@ begin
       errors.Add('Preencha o campo senha');
     end;
 
-    if errors.Count > 0 then raise Exception.Create(errors.Text);
+    if errors.Count > 0 then begin
+      Self.messageHelper.Error(errors.Text);
+      Exit;
+    end;
 
     user := Self.userController.Login(userDTO);
 
