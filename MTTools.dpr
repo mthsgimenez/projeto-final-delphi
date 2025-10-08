@@ -22,7 +22,8 @@ uses
   UserView in 'src\view\UserView.pas' {formUser},
   MenuView in 'src\view\MenuView.pas' {formMenu},
   Permissions in 'src\model\entity\Permissions.pas',
-  Session in 'src\infra\Session.pas';
+  Session in 'src\infra\Session.pas',
+  MessageHelper in 'src\util\MessageHelper.pas';
 
 {$R *.res}
 
