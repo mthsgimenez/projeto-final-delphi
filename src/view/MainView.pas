@@ -5,7 +5,7 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, System.IOUtils, Vcl.ExtCtrls, ConfigController, DBConfigView, LoginView,
-  Vcl.Buttons, Vcl.StdCtrls, Vcl.Imaging.pngimage, UserModel, MenuView, Session;
+  Vcl.Buttons, Vcl.StdCtrls, Vcl.Imaging.pngimage, UserModel, MenuView, Session, Logging, MessageHelper;
 
 type
   TformMain = class(TForm)
@@ -41,12 +41,18 @@ begin
   Self.configController := TConfigController.Create;
   Self.configController.PrepareDirectory;
 
+  TLogger.GetLogger.setLevel(TLogLevels.DEBUG);
+
+  TLogger.GetLogger.Info('Iniciando o sistema');
+
   try
+    TLogger.GetLogger.Info('Carregando arquivo de configuração do banco');
     Self.configController.LoadDBConfig;
   except
     on e: Exception do begin
       ShowMessage(e.Message);
 
+      TLogger.GetLogger.Warn('Não foi possível carregar a configuração, exibindo formulário para configuração manual');
       configForm := TformDBConfig.Create(Self.configController, nil);
       configForm.ShowModal;
       configForm.Free;
@@ -54,9 +60,11 @@ begin
   end;
 
   if Self.configController.IsDBConnected then begin
+    TLogger.GetLogger.Info('Exibindo formulário de login');
     loginForm := TformLogin.Create(Self.panelMain, Self.OnLogin);
     Self.OpenForm(loginForm);
   end else begin
+    TLogger.GetLogger.Warn('Encerrando o sistema pois não foi possível se conectar ao banco');
     Application.Terminate;
   end;
 end;
@@ -72,6 +80,8 @@ begin
   TSession.GetInstance.SetUser(user);
 
   Self.activeForm.Free;
+
+  TLogger.GetLogger.Info('Login realizado: ' + TSession.GetInstance.GetUser.login);
 
   menuForm := TformMenu.Create(Self.panelMain, 50, 250);
   Self.OpenForm(menuForm);

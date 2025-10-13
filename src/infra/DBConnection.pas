@@ -7,7 +7,7 @@ uses
   FireDAC.Stan.Error, FireDAC.UI.Intf, FireDAC.Phys.Intf, FireDAC.Stan.Def,
   FireDAC.Stan.Pool, FireDAC.Stan.Async, FireDAC.Phys, FireDAC.Phys.PG,
   FireDAC.Phys.PGDef, FireDAC.VCLUI.Wait, Data.DB, FireDAC.Comp.Client,
-  Vcl.Dialogs, FireDAC.Phys.PGWrapper, DBConfigModel;
+  Vcl.Dialogs, FireDAC.Phys.PGWrapper, DBConfigModel, Logging;
 
 type
   TConnection = class(TDataModule)
@@ -44,13 +44,16 @@ begin
       Add('DriverID=PG');
     end;
     Self.FDConnection.Connected := True;
+    TLogger.GetLogger.Info('Conexão com banco estabelecida');
   except
   on e: EPgNativeException do begin
     Self.FDConnection.Connected := False;
+    TLogger.GetLogger.Error('Erro na conexão com banco de dados: ' + e.Message);
     raise Exception.Create('Erro na conexão: ' + e.Message);
   end;
   on e: Exception do begin
     Self.FDConnection.Connected := False;
+    TLogger.GetLogger.Error('Erro na conexão com banco de dados: ' + e.Message);
     raise Exception.Create('Erro: ' + e.Message);
   end;
   end;
