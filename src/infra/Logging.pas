@@ -21,6 +21,7 @@ type TLogger = class
     procedure Error(aMessage: String);
     procedure SetLevel(aLevel: TLogLevels);
     class function GetLogger: TLogger;
+    destructor Destroy; override;
 end;
 
 implementation
@@ -31,11 +32,19 @@ constructor TLogger.Create;
 begin
   Self.logPath := TPath.Combine(GetEnvironmentVariable('APPDATA'), 'MTTools', 'log.txt');
   Self.writer := TStreamWriter.Create(Self.logPath, True);
+  Self.writer.WriteLine;
 end;
 
 procedure TLogger.Debug(aMessage: String);
 begin
   Self.Log(TLogLevels.DEBUG, aMessage);
+end;
+
+destructor TLogger.Destroy;
+begin
+  Self.writer.Flush;
+  Self.writer.Free;
+  inherited;
 end;
 
 procedure TLogger.Error(aMessage: String);

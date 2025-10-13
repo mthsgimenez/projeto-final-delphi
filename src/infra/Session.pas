@@ -2,7 +2,7 @@ unit Session;
 
 interface
 
-uses UserModel;
+uses UserModel, Logging, System.SysUtils;
 
 type TSession = class
   private
@@ -13,6 +13,7 @@ type TSession = class
     class function GetInstance: TSession;
     function GetUser: TUserModel;
     procedure setUser(aUser: TUserModel);
+    destructor Destroy; override;
 end;
 
 implementation
@@ -22,6 +23,12 @@ implementation
 constructor TSession.Create;
 begin
 
+end;
+
+destructor TSession.Destroy;
+begin
+  Self.loggedUser.Free;
+  inherited Destroy;
 end;
 
 class function TSession.GetInstance: TSession;
@@ -39,6 +46,8 @@ end;
 
 procedure TSession.setUser(aUser: TUserModel);
 begin
+  TLogger.GetLogger.Debug('Sessão iniciada com usuário: ' + Format('%d %s', [aUser.id, aUser.login]));
+
   Self.loggedUser := aUser;
 end;
 

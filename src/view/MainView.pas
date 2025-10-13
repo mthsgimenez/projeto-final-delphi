@@ -11,6 +11,7 @@ type
   TformMain = class(TForm)
     panelMain: TPanel;
     procedure FormCreate(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
   private
     configController: TConfigController;
     activeForm: TForm;
@@ -33,11 +34,23 @@ begin
   Self.activeForm.Show;
 end;
 
+procedure TformMain.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+  TLogger.GetLogger.Info('Encerrando o sistema');
+  TLogger.GetLogger.Free;
+  TSession.GetInstance.Free;
+  TMessageHelper.GetInstance.Free;
+  Self.configController.Free;
+  Self.activeForm.Free;
+end;
+
 procedure TformMain.FormCreate(Sender: TObject);
 var
   configForm: TformDBConfig;
   loginForm: TformLogin;
 begin
+  ReportMemoryLeaksOnShutdown := True;
+
   Self.configController := TConfigController.Create;
   Self.configController.PrepareDirectory;
 
