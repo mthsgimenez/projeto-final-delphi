@@ -23,7 +23,8 @@ uses
   MenuView in 'src\view\MenuView.pas' {formMenu},
   Permissions in 'src\model\entity\Permissions.pas',
   Session in 'src\infra\Session.pas',
-  MessageHelper in 'src\util\MessageHelper.pas';
+  MessageHelper in 'src\util\MessageHelper.pas',
+  Logging in 'src\infra\Logging.pas';
 
 {$R *.res}
 
