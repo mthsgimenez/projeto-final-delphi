@@ -33,6 +33,5 @@ begin
   Application.MainFormOnTaskbar := True;
   Application.CreateForm(TConnection, Connection);
   Application.CreateForm(TformMain, formMain);
-  Application.CreateForm(TformMenu, formMenu);
   Application.Run;
 end.

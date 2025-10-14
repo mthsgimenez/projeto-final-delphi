@@ -38,8 +38,8 @@ procedure TformMain.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
   TLogger.GetLogger.Info('Encerrando o sistema');
   TLogger.GetLogger.Free;
-  TSession.GetInstance.Free;
   TMessageHelper.GetInstance.Free;
+  TSession.GetInstance.Free;
   Self.configController.Free;
   Self.activeForm.Free;
 end;
@@ -87,7 +87,8 @@ var
   menuForm: TformMenu;
 begin
   if not Assigned(user) then begin
-    raise Exception.Create('Login ou senha inválidos');
+    TMessageHelper.GetInstance.Error('Login ou senha inválidos');
+    Exit;
   end;
 
   TSession.GetInstance.SetUser(user);

@@ -6,7 +6,7 @@ object formMain: TformMain
   Margins.Top = 0
   Margins.Right = 0
   Margins.Bottom = 0
-  Caption = 'formMain'
+  Caption = 'MTTools'
   ClientHeight = 561
   ClientWidth = 784
   Color = clBtnFace
