@@ -1,125 +1,12 @@
--- DROP SCHEMA public;
-
-CREATE SCHEMA public AUTHORIZATION pg_database_owner;
-
--- DROP SEQUENCE public.permissions_id_seq;
-
-CREATE SEQUENCE public.permissions_id_seq
-	MINVALUE 0
-	NO MAXVALUE
-	START 0
-	NO CYCLE;
--- DROP SEQUENCE public.permissions_users_id_seq;
-
-CREATE SEQUENCE public.permissions_users_id_seq
-	INCREMENT BY 1
-	MINVALUE 1
-	MAXVALUE 2147483647
-	START 1
-	CACHE 1
-	NO CYCLE;
--- DROP SEQUENCE public.purchase_order_tools_id_seq;
-
-CREATE SEQUENCE public.purchase_order_tools_id_seq
-	INCREMENT BY 1
-	MINVALUE 1
-	MAXVALUE 2147483647
-	START 1
-	CACHE 1
-	NO CYCLE;
--- DROP SEQUENCE public.purchase_orders_id_seq;
-
-CREATE SEQUENCE public.purchase_orders_id_seq
-	INCREMENT BY 1
-	MINVALUE 1
-	MAXVALUE 2147483647
-	START 1
-	CACHE 1
-	NO CYCLE;
--- DROP SEQUENCE public.service_order_tools_id_seq;
-
-CREATE SEQUENCE public.service_order_tools_id_seq
-	INCREMENT BY 1
-	MINVALUE 1
-	MAXVALUE 2147483647
-	START 1
-	CACHE 1
-	NO CYCLE;
--- DROP SEQUENCE public.service_orders_id_seq;
-
-CREATE SEQUENCE public.service_orders_id_seq
-	INCREMENT BY 1
-	MINVALUE 1
-	MAXVALUE 2147483647
-	START 1
-	CACHE 1
-	NO CYCLE;
--- DROP SEQUENCE public.storages_id_seq;
-
-CREATE SEQUENCE public.storages_id_seq
-	INCREMENT BY 1
-	MINVALUE 1
-	MAXVALUE 2147483647
-	START 1
-	CACHE 1
-	NO CYCLE;
--- DROP SEQUENCE public.suppliers_id_seq;
-
-CREATE SEQUENCE public.suppliers_id_seq
-	INCREMENT BY 1
-	MINVALUE 1
-	MAXVALUE 2147483647
-	START 1
-	CACHE 1
-	NO CYCLE;
--- DROP SEQUENCE public.tools_id_seq;
-
-CREATE SEQUENCE public.tools_id_seq
-	INCREMENT BY 1
-	MINVALUE 1
-	MAXVALUE 2147483647
-	START 1
-	CACHE 1
-	NO CYCLE;
--- DROP SEQUENCE public.tools_models_id_seq;
-
-CREATE SEQUENCE public.tools_models_id_seq
-	INCREMENT BY 1
-	MINVALUE 1
-	MAXVALUE 2147483647
-	START 1
-	CACHE 1
-	NO CYCLE;
--- DROP SEQUENCE public.users_id_seq;
-
-CREATE SEQUENCE public.users_id_seq
-	INCREMENT BY 1
-	MINVALUE 1
-	MAXVALUE 2147483647
-	START 1
-	CACHE 1
-	NO CYCLE;-- public.storages definição
-
--- Drop table
-
--- DROP TABLE public.storages;
-
-CREATE TABLE public.storages (
-	id serial4 NOT NULL,
+CREATE TABLE storages (
+	id serial NOT NULL,
 	"name" varchar(50) NOT NULL,
 	CONSTRAINT storages_pk PRIMARY KEY (id),
 	CONSTRAINT storages_unique UNIQUE (name)
 );
 
-
--- public.suppliers definição
-
--- Drop table
-
--- DROP TABLE public.suppliers;
-
-CREATE TABLE public.suppliers (
-	id serial4 NOT NULL,
+CREATE TABLE suppliers (
+	id serial NOT NULL,
 	"name" varchar(70) NOT NULL,
 	cnpj varchar(14) NOT NULL,
 	cep varchar(8) NOT NULL,
@@ -128,15 +15,8 @@ CREATE TABLE public.suppliers (
 	CONSTRAINT suppliers_unique_1 UNIQUE (cnpj)
 );
 
-
--- public.users definição
-
--- Drop table
-
--- DROP TABLE public.users;
-
-CREATE TABLE public.users (
-	id serial4 NOT NULL,
+CREATE TABLE users (
+	id serial NOT NULL,
 	"name" varchar(50) NOT NULL,
 	login varchar(25) NOT NULL,
 	hash varchar(60) NOT NULL,
@@ -144,136 +24,92 @@ CREATE TABLE public.users (
 	CONSTRAINT users_unique UNIQUE (login)
 );
 
-
--- public.permissions definição
-
--- Drop table
-
--- DROP TABLE public.permissions;
-
-CREATE TABLE public.permissions (
-	id int4 NOT NULL,
+CREATE TABLE permissions (
+	id int NOT NULL,
 	"name" varchar(100) NOT NULL,
 	description text NOT NULL,
 	CONSTRAINT permissions_pk PRIMARY KEY (id),
 	CONSTRAINT permissions_unique UNIQUE (name)
 );
 
-
--- public.purchase_orders definição
-
--- Drop table
-
--- DROP TABLE public.purchase_orders;
-
-CREATE TABLE public.purchase_orders (
-	id serial4 NOT NULL,
-	id_supplier int4 NOT NULL,
+CREATE TABLE purchase_orders (
+	id serial NOT NULL,
+	id_supplier int NOT NULL,
 	status varchar(15) DEFAULT 'open'::character varying NOT NULL,
 	CONSTRAINT purchase_orders_pk PRIMARY KEY (id),
-	CONSTRAINT purchase_orders_suppliers_fk FOREIGN KEY (id_supplier) REFERENCES public.suppliers(id) ON DELETE RESTRICT ON UPDATE CASCADE
+	CONSTRAINT purchase_orders_suppliers_fk FOREIGN KEY (id_supplier) REFERENCES suppliers(id) ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
-
--- public.service_orders definição
-
--- Drop table
-
--- DROP TABLE public.service_orders;
-
-CREATE TABLE public.service_orders (
-	id serial4 NOT NULL,
-	id_supplier int4 NOT NULL,
+CREATE TABLE service_orders (
+	id serial NOT NULL,
+	id_supplier int NOT NULL,
 	status varchar(15) DEFAULT 'open'::character varying NOT NULL,
 	CONSTRAINT service_orders_pk PRIMARY KEY (id),
-	CONSTRAINT service_orders_suppliers_fk FOREIGN KEY (id_supplier) REFERENCES public.suppliers(id) ON DELETE RESTRICT ON UPDATE CASCADE
+	CONSTRAINT service_orders_suppliers_fk FOREIGN KEY (id_supplier) REFERENCES suppliers(id) ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
-
--- public.tools_models definição
-
--- Drop table
-
--- DROP TABLE public.tools_models;
-
-CREATE TABLE public.tools_models (
-	id serial4 NOT NULL,
+CREATE TABLE tools_models (
+	id serial NOT NULL,
 	code varchar(20) NOT NULL,
 	description varchar(100) NOT NULL,
 	"family" varchar(15) NOT NULL,
 	"usage" varchar(15) NOT NULL,
-	id_supplier int4 NOT NULL,
+	id_supplier int NOT NULL,
 	price money NOT NULL,
 	image varchar(100) NULL,
 	CONSTRAINT tools_models_pk PRIMARY KEY (id),
 	CONSTRAINT tools_models_unique UNIQUE (code),
-	CONSTRAINT tools_models_suppliers_fk FOREIGN KEY (id_supplier) REFERENCES public.suppliers(id)
+	CONSTRAINT tools_models_suppliers_fk FOREIGN KEY (id_supplier) REFERENCES suppliers(id)
 );
 
-
--- public.permissions_users definição
-
--- Drop table
-
--- DROP TABLE public.permissions_users;
-
-CREATE TABLE public.permissions_users (
-	id serial4 NOT NULL,
-	id_user int4 NOT NULL,
-	id_permission int4 NOT NULL,
+CREATE TABLE permissions_users (
+	id serial NOT NULL,
+	id_user int NOT NULL,
+	id_permission int NOT NULL,
 	CONSTRAINT permissions_users_pk PRIMARY KEY (id),
-	CONSTRAINT permissions_users_permissions_fk FOREIGN KEY (id_permission) REFERENCES public.permissions(id) ON DELETE CASCADE ON UPDATE CASCADE,
-	CONSTRAINT permissions_users_users_fk FOREIGN KEY (id_user) REFERENCES public.users(id) ON DELETE CASCADE ON UPDATE CASCADE
+	CONSTRAINT permissions_users_permissions_fk FOREIGN KEY (id_permission) REFERENCES permissions(id) ON DELETE CASCADE ON UPDATE CASCADE,
+	CONSTRAINT permissions_users_users_fk FOREIGN KEY (id_user) REFERENCES users(id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
-
--- public.purchase_order_tools definição
-
--- Drop table
-
--- DROP TABLE public.purchase_order_tools;
-
-CREATE TABLE public.purchase_order_tools (
-	id serial4 NOT NULL,
-	id_tool_model int4 NOT NULL,
-	id_purchase_order int4 NOT NULL,
-	tool_quantity int4 NOT NULL,
+CREATE TABLE purchase_order_tools (
+	id serial NOT NULL,
+	id_tool_model int NOT NULL,
+	id_purchase_order int NOT NULL,
+	tool_quantity int NOT NULL,
 	CONSTRAINT purchase_order_tools_pk PRIMARY KEY (id),
-	CONSTRAINT purchase_order_tools_purchase_orders_fk FOREIGN KEY (id_purchase_order) REFERENCES public.purchase_orders(id) ON DELETE CASCADE ON UPDATE CASCADE,
-	CONSTRAINT purchase_order_tools_tools_models_fk FOREIGN KEY (id_tool_model) REFERENCES public.tools_models(id) ON DELETE RESTRICT ON UPDATE CASCADE
+	CONSTRAINT purchase_order_tools_purchase_orders_fk FOREIGN KEY (id_purchase_order) REFERENCES purchase_orders(id) ON DELETE CASCADE ON UPDATE CASCADE,
+	CONSTRAINT purchase_order_tools_tools_models_fk FOREIGN KEY (id_tool_model) REFERENCES tools_models(id) ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
-
--- public.tools definição
-
--- Drop table
-
--- DROP TABLE public.tools;
-
-CREATE TABLE public.tools (
-	id serial4 NOT NULL,
-	id_tool_model int4 NOT NULL,
+CREATE TABLE tools (
+	id serial NOT NULL,
+	id_tool_model int NOT NULL,
 	state varchar(15) DEFAULT 'new'::character varying NOT NULL,
 	batch varchar(30) NOT NULL,
-	honing_num int4 DEFAULT 0 NOT NULL,
-	id_storage int4 NOT NULL,
+	honing_num int DEFAULT 0 NOT NULL,
+	id_storage int NOT NULL,
 	CONSTRAINT tools_pk PRIMARY KEY (id),
-	CONSTRAINT tools_storages_fk FOREIGN KEY (id_storage) REFERENCES public.storages(id) ON DELETE RESTRICT ON UPDATE CASCADE,
-	CONSTRAINT tools_tools_models_fk FOREIGN KEY (id_tool_model) REFERENCES public.tools_models(id) ON DELETE RESTRICT ON UPDATE CASCADE
+	CONSTRAINT tools_storages_fk FOREIGN KEY (id_storage) REFERENCES storages(id) ON DELETE RESTRICT ON UPDATE CASCADE,
+	CONSTRAINT tools_tools_models_fk FOREIGN KEY (id_tool_model) REFERENCES tools_models(id) ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
-
--- public.service_order_tools definição
-
--- Drop table
-
--- DROP TABLE public.service_order_tools;
-
-CREATE TABLE public.service_order_tools (
-	id serial4 NOT NULL,
-	id_tool int4 NOT NULL,
-	id_service_order int4 NOT NULL,
+CREATE TABLE service_order_tools (
+	id serial NOT NULL,
+	id_tool int NOT NULL,
+	id_service_order int NOT NULL,
 	CONSTRAINT service_order_tools_pk PRIMARY KEY (id),
-	CONSTRAINT service_order_tools_service_orders_fk FOREIGN KEY (id_service_order) REFERENCES public.service_orders(id) ON DELETE CASCADE ON UPDATE CASCADE,
-	CONSTRAINT service_order_tools_tools_fk FOREIGN KEY (id_tool) REFERENCES public.tools(id) ON DELETE RESTRICT ON UPDATE CASCADE
+	CONSTRAINT service_order_tools_service_orders_fk FOREIGN KEY (id_service_order) REFERENCES service_orders(id) ON DELETE CASCADE ON UPDATE CASCADE,
+	CONSTRAINT service_order_tools_tools_fk FOREIGN KEY (id_tool) REFERENCES tools(id) ON DELETE RESTRICT ON UPDATE CASCADE
 );
+
+-- DROP TABLE service_order_tools;
+-- DROP TABLE purchase_order_tools;
+-- DROP TABLE permissions_users;
+-- DROP TABLE tools;
+-- DROP TABLE tools_models;
+-- DROP TABLE service_orders;
+-- DROP TABLE purchase_orders;
+-- DROP TABLE suppliers;
+-- DROP TABLE storages;
+-- DROP TABLE permissions;
+-- DROP TABLE users;
