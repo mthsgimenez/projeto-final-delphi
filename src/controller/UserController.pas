@@ -93,8 +93,14 @@ begin
   Result := nil;
 
   user := Self.repository.FindByLogin(aUser.login);
-  if not (user = nil) then
-    if user.CheckPassword(aUser.password) then Result := user;
+  if not (user = nil) then begin
+    if user.CheckPassword(aUser.password) then begin
+      Result := user;
+      Exit;
+    end;
+
+    user.Free;
+  end;
 end;
 
 end.
