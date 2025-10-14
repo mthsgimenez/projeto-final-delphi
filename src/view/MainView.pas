@@ -83,6 +83,9 @@ begin
 end;
 
 procedure TformMain.OnLogin(user: TUserModel);
+const
+  closedWidth = 50;
+  openWidth = 250;
 var
   menuForm: TformMenu;
 begin
@@ -97,7 +100,7 @@ begin
 
   TLogger.GetLogger.Info('Login realizado: ' + TSession.GetInstance.GetUser.login);
 
-  menuForm := TformMenu.Create(Self.panelMain, 50, 250);
+  menuForm := TformMenu.Create(Self.panelMain, closedWidth, openWidth);
   Self.OpenForm(menuForm);
 end;
 
