@@ -57,6 +57,7 @@ end;
 
 procedure TformUser.buttonCreateClick(Sender: TObject);
 begin
+  Self.selectedUser := nil;
   Self.pcontrolUser.ActivePage := Self.pcontrolUser.Pages[1];
 end;
 
