@@ -1,266 +1,480 @@
 object formDBConfig: TformDBConfig
   Left = 0
   Top = 0
-  Caption = 'formDBConfig'
-  ClientHeight = 429
-  ClientWidth = 409
+  Caption = 'MTTools'
+  ClientHeight = 396
+  ClientWidth = 360
   Color = clBtnFace
+  Constraints.MaxHeight = 435
+  Constraints.MaxWidth = 376
+  Constraints.MinHeight = 435
+  Constraints.MinWidth = 376
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
   Font.Height = -12
   Font.Name = 'Segoe UI'
   Font.Style = []
   TextHeight = 15
-  object gridPanelDBConfig: TGridPanel
+  object panelDBConfig: TPanel
     AlignWithMargins = True
     Left = 0
     Top = 0
-    Width = 409
-    Height = 429
+    Width = 360
+    Height = 396
     Margins.Left = 0
     Margins.Top = 0
     Margins.Right = 0
     Margins.Bottom = 0
     Align = alClient
-    Caption = 'gridPanelDBConfig'
-    ColumnCollection = <
-      item
-        Value = 100.000000000000000000
-      end>
-    ControlCollection = <
-      item
-        Column = 0
-        Control = panelServer
-        Row = 1
-      end
-      item
-        Column = 0
-        Control = panelPort
-        Row = 2
-      end
-      item
-        Column = 0
-        Control = panelDatabase
-        Row = 3
-      end
-      item
-        Column = 0
-        Control = panelUser
-        Row = 4
-      end
-      item
-        Column = 0
-        Control = panelPassword
-        Row = 5
-      end
-      item
-        Column = 0
-        Control = labelTitle
-        Row = 0
-      end
-      item
-        Column = 0
-        Control = buttonSave
-        Row = 6
-      end>
-    RowCollection = <
-      item
-        Value = 14.285714285714290000
-      end
-      item
-        Value = 14.285714285714290000
-      end
-      item
-        Value = 14.285714285714290000
-      end
-      item
-        Value = 14.285714285714290000
-      end
-      item
-        Value = 14.285714285714290000
-      end
-      item
-        Value = 14.285714285714290000
-      end
-      item
-        Value = 14.285714285714270000
-      end>
+    BevelOuter = bvNone
+    Caption = 'panelDBConfig'
+    Color = clSnow
+    ParentBackground = False
     ShowCaption = False
     TabOrder = 0
     DesignSize = (
-      409
-      429)
-    object panelServer: TPanel
-      AlignWithMargins = True
-      Left = 1
-      Top = 62
-      Width = 407
-      Height = 61
-      Margins.Left = 0
-      Margins.Top = 0
-      Margins.Right = 0
-      Margins.Bottom = 0
-      Align = alClient
-      Caption = 'panelServer'
+      360
+      396)
+    object labelTitle: TLabel
+      Left = 20
+      Top = 20
+      Width = 293
+      Height = 25
+      Caption = 'Conecte-se ao banco de dados'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -21
+      Font.Name = 'Roboto'
+      Font.Style = []
+      ParentFont = False
+    end
+    object panelContainerPassword: TPanel
+      Left = 0
+      Top = 260
+      Width = 362
+      Height = 55
+      BevelOuter = bvNone
+      Caption = 'panelContainerPassword'
+      ShowCaption = False
+      TabOrder = 3
+      object labelPassword: TLabel
+        Left = 20
+        Top = 0
+        Width = 47
+        Height = 18
+        Caption = 'Senha:'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -15
+        Font.Name = 'Roboto'
+        Font.Style = []
+        ParentFont = False
+      end
+      object panelEditPassword: TPanel
+        AlignWithMargins = True
+        Left = 0
+        Top = 22
+        Width = 362
+        Height = 32
+        Margins.Left = 0
+        Margins.Top = 30
+        Margins.Right = 0
+        Margins.Bottom = 0
+        BevelOuter = bvNone
+        Caption = 'Panel3'
+        ShowCaption = False
+        TabOrder = 0
+        object shapeEditPassword: TShape
+          AlignWithMargins = True
+          Left = 20
+          Top = 0
+          Width = 322
+          Height = 32
+          Margins.Left = 20
+          Margins.Top = 0
+          Margins.Right = 20
+          Margins.Bottom = 0
+          Align = alClient
+          Brush.Color = clSnow
+          Pen.Color = clSilver
+          Shape = stRoundRect
+          ExplicitLeft = 48
+          ExplicitWidth = 281
+        end
+        object editPassword: TEdit
+          AlignWithMargins = True
+          Left = 30
+          Top = 7
+          Width = 302
+          Height = 24
+          Margins.Left = 30
+          Margins.Top = 7
+          Margins.Right = 30
+          Margins.Bottom = 1
+          Align = alClient
+          BorderStyle = bsNone
+          Color = clSnow
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -15
+          Font.Name = 'Roboto'
+          Font.Style = []
+          ParentFont = False
+          PasswordChar = '*'
+          TabOrder = 0
+          TextHint = '*********'
+        end
+      end
+    end
+    object panelContainerUser: TPanel
+      Left = 0
+      Top = 195
+      Width = 362
+      Height = 55
+      BevelOuter = bvNone
+      Caption = 'panelContainerPassword'
+      ShowCaption = False
+      TabOrder = 2
+      object labelUser: TLabel
+        Left = 20
+        Top = 0
+        Width = 57
+        Height = 18
+        Caption = 'Usu'#225'rio:'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -15
+        Font.Name = 'Roboto'
+        Font.Style = []
+        ParentFont = False
+      end
+      object panelEditUser: TPanel
+        AlignWithMargins = True
+        Left = 0
+        Top = 22
+        Width = 362
+        Height = 32
+        Margins.Left = 0
+        Margins.Top = 30
+        Margins.Right = 0
+        Margins.Bottom = 0
+        BevelOuter = bvNone
+        Caption = 'Panel3'
+        ShowCaption = False
+        TabOrder = 0
+        object shapeEditUser: TShape
+          AlignWithMargins = True
+          Left = 20
+          Top = 0
+          Width = 322
+          Height = 32
+          Margins.Left = 20
+          Margins.Top = 0
+          Margins.Right = 20
+          Margins.Bottom = 0
+          Align = alClient
+          Brush.Color = clSnow
+          Pen.Color = clSilver
+          Shape = stRoundRect
+          ExplicitLeft = 48
+          ExplicitWidth = 281
+        end
+        object editUser: TEdit
+          AlignWithMargins = True
+          Left = 30
+          Top = 7
+          Width = 302
+          Height = 24
+          Margins.Left = 30
+          Margins.Top = 7
+          Margins.Right = 30
+          Margins.Bottom = 1
+          Align = alClient
+          BorderStyle = bsNone
+          Color = clSnow
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -15
+          Font.Name = 'Roboto'
+          Font.Style = []
+          ParentFont = False
+          TabOrder = 0
+          TextHint = 'postgres'
+        end
+      end
+    end
+    object panelContainerDatabase: TPanel
+      Left = -2
+      Top = 130
+      Width = 362
+      Height = 55
+      BevelOuter = bvNone
+      Caption = 'panelContainerPassword'
+      ShowCaption = False
+      TabOrder = 1
+      object labelDatabase: TLabel
+        Left = 22
+        Top = 0
+        Width = 114
+        Height = 18
+        Caption = 'Nome do banco:'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -15
+        Font.Name = 'Roboto'
+        Font.Style = []
+        ParentFont = False
+      end
+      object panelEditDatabase: TPanel
+        AlignWithMargins = True
+        Left = 0
+        Top = 23
+        Width = 362
+        Height = 32
+        Margins.Left = 0
+        Margins.Top = 30
+        Margins.Right = 0
+        Margins.Bottom = 0
+        BevelOuter = bvNone
+        Caption = 'Panel3'
+        ShowCaption = False
+        TabOrder = 0
+        object shapeEditDatabase: TShape
+          AlignWithMargins = True
+          Left = 20
+          Top = 0
+          Width = 322
+          Height = 32
+          Margins.Left = 20
+          Margins.Top = 0
+          Margins.Right = 20
+          Margins.Bottom = 0
+          Align = alClient
+          Brush.Color = clSnow
+          Pen.Color = clSilver
+          Shape = stRoundRect
+          ExplicitLeft = 48
+          ExplicitWidth = 281
+        end
+        object editDatabase: TEdit
+          AlignWithMargins = True
+          Left = 30
+          Top = 7
+          Width = 302
+          Height = 24
+          Margins.Left = 30
+          Margins.Top = 7
+          Margins.Right = 30
+          Margins.Bottom = 1
+          Align = alClient
+          BorderStyle = bsNone
+          Color = clSnow
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -15
+          Font.Name = 'Roboto'
+          Font.Style = []
+          ParentFont = False
+          TabOrder = 0
+          TextHint = 'mttools'
+        end
+      end
+    end
+    object panelContainerAddress: TPanel
+      Left = 0
+      Top = 65
+      Width = 362
+      Height = 55
+      BevelOuter = bvNone
+      Caption = 'panelContainerPassword'
       ShowCaption = False
       TabOrder = 0
       object labelServer: TLabel
-        Left = 136
-        Top = 16
-        Width = 114
-        Height = 15
-        Caption = 'Endere'#231'o do servidor:'
+        Left = 20
+        Top = 0
+        Width = 125
+        Height = 18
+        Caption = 'Endere'#231'o do host:'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -15
+        Font.Name = 'Roboto'
+        Font.Style = []
+        ParentFont = False
       end
-      object editServer: TEdit
-        Left = 136
-        Top = 37
-        Width = 121
-        Height = 23
-        TabOrder = 0
-        TextHint = '127.0.0.1'
-      end
-    end
-    object panelPort: TPanel
-      AlignWithMargins = True
-      Left = 1
-      Top = 123
-      Width = 407
-      Height = 61
-      Margins.Left = 0
-      Margins.Top = 0
-      Margins.Right = 0
-      Margins.Bottom = 0
-      Align = alClient
-      Caption = 'panelServer'
-      ShowCaption = False
-      TabOrder = 1
       object labelPort: TLabel
-        Left = 136
-        Top = 16
-        Width = 93
-        Height = 15
-        Caption = 'Porta do servidor:'
+        Left = 202
+        Top = 0
+        Width = 41
+        Height = 18
+        Caption = 'Porta:'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -15
+        Font.Name = 'Roboto'
+        Font.Style = []
+        ParentFont = False
       end
-      object editPort: TEdit
-        Left = 136
-        Top = 37
-        Width = 121
-        Height = 23
-        NumbersOnly = True
+      object panelEditServer: TPanel
+        AlignWithMargins = True
+        Left = 20
+        Top = 23
+        Width = 172
+        Height = 32
+        Margins.Left = 20
+        Margins.Top = 23
+        Margins.Right = 0
+        Margins.Bottom = 0
+        Align = alLeft
+        BevelOuter = bvNone
+        Caption = 'Panel3'
+        ShowCaption = False
         TabOrder = 0
-        TextHint = '5432'
+        object shapeEditServer: TShape
+          AlignWithMargins = True
+          Left = 0
+          Top = 0
+          Width = 172
+          Height = 32
+          Margins.Left = 0
+          Margins.Top = 0
+          Margins.Right = 0
+          Margins.Bottom = 0
+          Align = alClient
+          Brush.Color = clSnow
+          Pen.Color = clSilver
+          Shape = stRoundRect
+          ExplicitLeft = 48
+          ExplicitWidth = 281
+        end
+        object editServer: TEdit
+          AlignWithMargins = True
+          Left = 10
+          Top = 7
+          Width = 152
+          Height = 24
+          Margins.Left = 10
+          Margins.Top = 7
+          Margins.Right = 10
+          Margins.Bottom = 1
+          Align = alClient
+          BorderStyle = bsNone
+          Color = clSnow
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -15
+          Font.Name = 'Roboto'
+          Font.Style = []
+          ParentFont = False
+          TabOrder = 0
+          TextHint = '127.0.0.1'
+        end
+      end
+      object panelEditPort: TPanel
+        AlignWithMargins = True
+        Left = 202
+        Top = 23
+        Width = 140
+        Height = 32
+        Margins.Left = 0
+        Margins.Top = 23
+        Margins.Right = 20
+        Margins.Bottom = 0
+        Align = alRight
+        BevelOuter = bvNone
+        Caption = 'Panel3'
+        ShowCaption = False
+        TabOrder = 1
+        object shapeEditPort: TShape
+          AlignWithMargins = True
+          Left = 0
+          Top = 0
+          Width = 140
+          Height = 32
+          Margins.Left = 0
+          Margins.Top = 0
+          Margins.Right = 0
+          Margins.Bottom = 0
+          Align = alClient
+          Brush.Color = clSnow
+          Pen.Color = clSilver
+          Shape = stRoundRect
+          ExplicitLeft = 48
+          ExplicitWidth = 281
+        end
+        object editPort: TEdit
+          AlignWithMargins = True
+          Left = 10
+          Top = 7
+          Width = 120
+          Height = 24
+          Margins.Left = 10
+          Margins.Top = 7
+          Margins.Right = 10
+          Margins.Bottom = 1
+          Align = alClient
+          BorderStyle = bsNone
+          Color = clSnow
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -15
+          Font.Name = 'Roboto'
+          Font.Style = []
+          NumbersOnly = True
+          ParentFont = False
+          TabOrder = 0
+          TextHint = '5432'
+        end
       end
     end
-    object panelDatabase: TPanel
-      AlignWithMargins = True
-      Left = 1
-      Top = 184
-      Width = 407
-      Height = 61
-      Margins.Left = 0
-      Margins.Top = 0
-      Margins.Right = 0
-      Margins.Bottom = 0
-      Align = alClient
-      Caption = 'panelServer'
-      ShowCaption = False
-      TabOrder = 2
-      object labelDatabase: TLabel
-        Left = 136
-        Top = 16
-        Width = 137
-        Height = 15
-        Caption = 'Nome do banco de dados'
-      end
-      object editDatabase: TEdit
-        Left = 136
-        Top = 37
-        Width = 121
-        Height = 23
-        TabOrder = 0
-        TextHint = 'mttools'
-      end
-    end
-    object panelUser: TPanel
-      AlignWithMargins = True
-      Left = 1
-      Top = 245
-      Width = 407
-      Height = 61
-      Margins.Left = 0
-      Margins.Top = 0
-      Margins.Right = 0
-      Margins.Bottom = 0
-      Align = alClient
-      Caption = 'panelServer'
-      ShowCaption = False
-      TabOrder = 3
-      object labelUser: TLabel
-        Left = 136
-        Top = 16
-        Width = 43
-        Height = 15
-        Caption = 'Usu'#225'rio:'
-      end
-      object editUser: TEdit
-        Left = 136
-        Top = 37
-        Width = 121
-        Height = 23
-        TabOrder = 0
-        TextHint = 'postgres'
-      end
-    end
-    object panelPassword: TPanel
-      AlignWithMargins = True
-      Left = 1
-      Top = 306
-      Width = 407
-      Height = 61
-      Margins.Left = 0
-      Margins.Top = 0
-      Margins.Right = 0
-      Margins.Bottom = 0
-      Align = alClient
-      Caption = 'panelServer'
+    object panelButtonSave: TPanel
+      Left = 92
+      Top = 335
+      Width = 185
+      Height = 40
+      Anchors = []
+      BevelOuter = bvNone
+      Caption = 'panelButtonSave'
       ShowCaption = False
       TabOrder = 4
-      object labelPassword: TLabel
-        Left = 136
-        Top = 16
-        Width = 35
-        Height = 15
-        Caption = 'Senha:'
+      object shapeButtonSave: TShape
+        Left = 0
+        Top = 0
+        Width = 185
+        Height = 40
+        Align = alClient
+        Brush.Color = clRoyalblue
+        Pen.Style = psClear
+        Shape = stRoundRect
+        ExplicitLeft = 56
+        ExplicitWidth = 65
+        ExplicitHeight = 65
       end
-      object editPassword: TEdit
-        Left = 136
-        Top = 37
-        Width = 121
-        Height = 23
-        PasswordChar = '*'
-        TabOrder = 0
-        TextHint = '****'
+      object buttonSave: TSpeedButton
+        AlignWithMargins = True
+        Left = 0
+        Top = 0
+        Width = 185
+        Height = 40
+        Margins.Left = 0
+        Margins.Top = 0
+        Margins.Right = 0
+        Margins.Bottom = 0
+        Align = alClient
+        Caption = 'Salvar'
+        Flat = True
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clSnow
+        Font.Height = -16
+        Font.Name = 'Roboto'
+        Font.Style = []
+        ParentFont = False
+        OnClick = buttonSaveClick
+        ExplicitLeft = 72
+        ExplicitTop = 8
+        ExplicitWidth = 23
+        ExplicitHeight = 22
       end
-    end
-    object labelTitle: TLabel
-      Left = 116
-      Top = 24
-      Width = 176
-      Height = 15
-      Anchors = []
-      Caption = 'Configura'#231#227'o do banco de dados'
-      ExplicitLeft = 119
-      ExplicitTop = 29
-    end
-    object buttonSave: TButton
-      Left = 167
-      Top = 385
-      Width = 75
-      Height = 25
-      Anchors = []
-      Caption = 'Salvar'
-      TabOrder = 5
-      OnClick = buttonSaveClick
     end
   end
 end

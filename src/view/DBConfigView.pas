@@ -4,28 +4,40 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.StdCtrls, ConfigController, DBConfigDTO;
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.StdCtrls, ConfigController, DBConfigDTO,
+  Vcl.Buttons;
 
 type
   TformDBConfig = class(TForm)
-    gridPanelDBConfig: TGridPanel;
-    panelServer: TPanel;
-    panelPort: TPanel;
-    panelDatabase: TPanel;
-    panelUser: TPanel;
-    panelPassword: TPanel;
-    labelServer: TLabel;
-    editServer: TEdit;
-    labelPort: TLabel;
-    editPort: TEdit;
-    labelTitle: TLabel;
-    labelDatabase: TLabel;
-    editDatabase: TEdit;
-    labelUser: TLabel;
-    editUser: TEdit;
-    labelPassword: TLabel;
+    panelDBConfig: TPanel;
+    panelEditPassword: TPanel;
+    shapeEditPassword: TShape;
     editPassword: TEdit;
-    buttonSave: TButton;
+    panelContainerPassword: TPanel;
+    labelPassword: TLabel;
+    panelContainerUser: TPanel;
+    labelUser: TLabel;
+    panelEditUser: TPanel;
+    shapeEditUser: TShape;
+    editUser: TEdit;
+    panelContainerDatabase: TPanel;
+    labelDatabase: TLabel;
+    panelEditDatabase: TPanel;
+    shapeEditDatabase: TShape;
+    editDatabase: TEdit;
+    panelContainerAddress: TPanel;
+    labelServer: TLabel;
+    panelEditServer: TPanel;
+    shapeEditServer: TShape;
+    editServer: TEdit;
+    panelEditPort: TPanel;
+    shapeEditPort: TShape;
+    editPort: TEdit;
+    labelPort: TLabel;
+    labelTitle: TLabel;
+    panelButtonSave: TPanel;
+    shapeButtonSave: TShape;
+    buttonSave: TSpeedButton;
     procedure buttonSaveClick(Sender: TObject);
   private
     controller: TConfigController;
