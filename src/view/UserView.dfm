@@ -46,6 +46,7 @@ object formUser: TformUser
         Height = 45
         Caption = 'Cadastrar usu'#225'rio'
         TabOrder = 1
+        Visible = False
         OnClick = buttonCreateClick
       end
       object buttonDelete: TButton
@@ -55,6 +56,7 @@ object formUser: TformUser
         Height = 49
         Caption = 'Remover usu'#225'rio'
         TabOrder = 2
+        Visible = False
         OnClick = buttonDeleteClick
       end
       object buttonEdit: TButton
@@ -64,6 +66,7 @@ object formUser: TformUser
         Height = 49
         Caption = 'Editar dados'
         TabOrder = 3
+        Visible = False
         OnClick = buttonEditClick
       end
     end
@@ -73,7 +76,7 @@ object formUser: TformUser
       TabVisible = False
       object editName: TEdit
         Left = 272
-        Top = 200
+        Top = 160
         Width = 145
         Height = 23
         TabOrder = 0
@@ -81,7 +84,7 @@ object formUser: TformUser
       end
       object editLogin: TEdit
         Left = 272
-        Top = 256
+        Top = 208
         Width = 145
         Height = 23
         TabOrder = 1
@@ -89,7 +92,7 @@ object formUser: TformUser
       end
       object editPassword: TEdit
         Left = 272
-        Top = 320
+        Top = 264
         Width = 145
         Height = 23
         PasswordChar = '*'
@@ -114,23 +117,14 @@ object formUser: TformUser
         TabOrder = 4
         OnClick = buttonCancelClick
       end
-      object listPermissions: TListView
-        Left = 248
-        Top = 56
-        Width = 185
-        Height = 89
-        Checkboxes = True
-        Columns = <>
-        Items.ItemData = {
-          05D20000000400000000000000FFFFFFFFFFFFFFFF00000000FFFFFFFF000000
-          000C750073006500720073005F0063007200650061007400650000000000FFFF
-          FFFFFFFFFFFF00000000FFFFFFFF000000000C750073006500720073005F0075
-          007000640061007400650000000000FFFFFFFFFFFFFFFF00000000FFFFFFFF00
-          0000000C750073006500720073005F00640065006C0065007400650000000000
-          FFFFFFFFFFFFFFFF00000000FFFFFFFF0000000011750073006500720073005F
-          007000650072006D0069007300730069006F006E007300}
+      object editPermissionGroup: TEdit
+        Left = 272
+        Top = 315
+        Width = 145
+        Height = 23
+        ReadOnly = True
         TabOrder = 5
-        ViewStyle = vsSmallIcon
+        TextHint = 'Login'
       end
     end
   end

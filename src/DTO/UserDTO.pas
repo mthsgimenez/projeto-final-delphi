@@ -8,7 +8,6 @@ interface
     name: String;
     login: String;
     password: String;
-    permissions: TPermissionsSet;
     function ValidateDTO(ensurePassword: Boolean): TStringList;
   end;
 

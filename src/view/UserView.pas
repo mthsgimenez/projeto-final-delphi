@@ -20,7 +20,7 @@ type
     editPassword: TEdit;
     buttonSave: TButton;
     buttonCancel: TButton;
-    listPermissions: TListView;
+    editPermissionGroup: TEdit;
     procedure buttonCreateClick(Sender: TObject);
     procedure tabListShow(Sender: TObject);
     procedure buttonEditClick(Sender: TObject);
@@ -90,10 +90,8 @@ begin
 
   Self.editName.Text := Self.selectedUser.name;
   Self.editLogin.Text := Self.selectedUser.login;
-  Self.listPermissions.Items[0].Checked := Self.selectedUser.hasPermission(TPermissions.USERS_CREATE);
-  Self.listPermissions.Items[1].Checked := Self.selectedUser.hasPermission(TPermissions.USERS_UPDATE);
-  Self.listPermissions.Items[2].Checked := Self.selectedUser.hasPermission(TPermissions.USERS_DELETE);
-  Self.listPermissions.Items[3].Checked := Self.selectedUser.hasPermission(TPermissions.USERS_PERMISSIONS);
+  if Assigned(Self.selectedUser.permissionGroup) then
+    Self.editPermissionGroup.Text := Self.selectedUser.permissionGroup.name;
 
   Self.pcontrolUser.ActivePage := Self.pcontrolUser.Pages[1];
 end;
@@ -108,12 +106,6 @@ begin
   data.name := editName.Text;
   data.login := editLogin.Text;
   data.password := editPassword.Text;
-  data.permissions := [];
-
-  for perm in Self.listPermissions.Items do begin
-    if perm.Checked then
-      data.permissions := data.permissions + [IntToPermission(perm.Index + 1)];
-  end;
 
   if Assigned(Self.selectedUser) then begin
     errors := data.ValidateDTO(False);
@@ -157,10 +149,7 @@ begin
   Self.editName.Clear;
   Self.editLogin.Clear;
   Self.editPassword.Clear;
-
-  for var item in Self.listPermissions.Items do begin
-    item.Checked := False;
-  end;
+  Self.editPermissionGroup.Clear;
 end;
 
 constructor TformUser.Create(AOwner: TComponent);
@@ -184,10 +173,11 @@ var
 begin
   user := TSession.GetInstance.GetUser;
 
-  Self.buttonCreate.Visible := user.hasPermission(TPermissions.USERS_CREATE);
-  Self.buttonEdit.Visible := user.hasPermission(TPermissions.USERS_UPDATE);
-  Self.buttonDelete.Visible := user.hasPermission(TPermissions.USERS_DELETE);
-  Self.listPermissions.Visible := user.hasPermission(TPermissions.USERS_PERMISSIONS);
+  if Assigned(user.permissionGroup) then begin
+    Self.buttonCreate.Visible := user.permissionGroup.hasPermission(TPermissions.USERS_CREATE);
+    Self.buttonEdit.Visible := user.permissionGroup.hasPermission(TPermissions.USERS_UPDATE);
+    Self.buttonDelete.Visible := user.permissionGroup.hasPermission(TPermissions.USERS_DELETE);
+  end;
 end;
 
 procedure TformUser.gridUsersSelectCell(Sender: TObject; ACol, ARow: LongInt;
