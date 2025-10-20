@@ -147,11 +147,10 @@ begin
   Result := nil;
 
   if Assigned(aUser.permissionGroup) then begin
-    permGroup := aUser.permissionGroup.name;
+    permGroup := IntToStr(aUser.permissionGroup.id);
   end else begin
     permGroup := 'NULL';
   end;
-
 
   Self.Query.SQL.Text := Format(
     'INSERT INTO users(id, name, login, hash, id_pgroup) VALUES (%s, %s, %s, %s, %s) ' +
