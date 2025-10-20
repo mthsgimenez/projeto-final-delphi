@@ -166,6 +166,8 @@
         <DCCReference Include="src\infra\Session.pas"/>
         <DCCReference Include="src\util\MessageHelper.pas"/>
         <DCCReference Include="src\infra\Logging.pas"/>
+        <DCCReference Include="src\model\repository\implementation\PermissionGroupRepository.pas"/>
+        <DCCReference Include="src\model\entity\PermissionGroupModel.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

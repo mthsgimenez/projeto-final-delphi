@@ -15,13 +15,22 @@ CREATE TABLE suppliers (
 	CONSTRAINT suppliers_unique_1 UNIQUE (cnpj)
 );
 
+CREATE TABLE permission_groups (
+	id serial NOT NULL,
+	"name" varchar(50) NOT NULL,
+	CONSTRAINT permission_groups_pk PRIMARY KEY (id),
+	CONSTRAINT permission_groups_unique UNIQUE (name)
+);
+
 CREATE TABLE users (
 	id serial NOT NULL,
 	"name" varchar(50) NOT NULL,
 	login varchar(25) NOT NULL,
 	hash varchar(60) NOT NULL,
+	id_pgroup int NULL,
 	CONSTRAINT users_pk PRIMARY KEY (id),
-	CONSTRAINT users_unique UNIQUE (login)
+	CONSTRAINT users_unique UNIQUE (login),
+	CONSTRAINT users_pgroup_fk FOREIGN KEY (id_pgroup) REFERENCES permission_groups(id) ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
 CREATE TABLE permissions (
@@ -59,16 +68,16 @@ CREATE TABLE tools_models (
 	image varchar(100) NULL,
 	CONSTRAINT tools_models_pk PRIMARY KEY (id),
 	CONSTRAINT tools_models_unique UNIQUE (code),
-	CONSTRAINT tools_models_suppliers_fk FOREIGN KEY (id_supplier) REFERENCES suppliers(id)
+	CONSTRAINT tools_models_suppliers_fk FOREIGN KEY (id_supplier) REFERENCES suppliers(id) ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
-CREATE TABLE permissions_users (
+CREATE TABLE permission_groups_permissions (
 	id serial NOT NULL,
-	id_user int NOT NULL,
 	id_permission int NOT NULL,
-	CONSTRAINT permissions_users_pk PRIMARY KEY (id),
-	CONSTRAINT permissions_users_permissions_fk FOREIGN KEY (id_permission) REFERENCES permissions(id) ON DELETE CASCADE ON UPDATE CASCADE,
-	CONSTRAINT permissions_users_users_fk FOREIGN KEY (id_user) REFERENCES users(id) ON DELETE CASCADE ON UPDATE CASCADE
+	id_pgroup int NOT NULL,
+	CONSTRAINT permission_groups_permissions_pk PRIMARY KEY (id),
+	CONSTRAINT permission_groups_permissions_permissions_fk FOREIGN KEY (id_permission) REFERENCES permissions(id) ON DELETE RESTRICT ON UPDATE CASCADE,
+	CONSTRAINT permission_groups_permissions_pgroup_fk FOREIGN KEY (id_pgroup) REFERENCES permission_groups(id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TABLE purchase_order_tools (
@@ -104,7 +113,7 @@ CREATE TABLE service_order_tools (
 
 -- DROP TABLE service_order_tools;
 -- DROP TABLE purchase_order_tools;
--- DROP TABLE permissions_users;
+-- DROP TABLE permission_groups_permissions;
 -- DROP TABLE tools;
 -- DROP TABLE tools_models;
 -- DROP TABLE service_orders;
@@ -113,3 +122,4 @@ CREATE TABLE service_order_tools (
 -- DROP TABLE storages;
 -- DROP TABLE permissions;
 -- DROP TABLE users;
+-- DROP TABLE permission_groups;

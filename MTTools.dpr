@@ -24,7 +24,9 @@ uses
   Permissions in 'src\model\entity\Permissions.pas',
   Session in 'src\infra\Session.pas',
   MessageHelper in 'src\util\MessageHelper.pas',
-  Logging in 'src\infra\Logging.pas';
+  Logging in 'src\infra\Logging.pas',
+  PermissionGroupRepository in 'src\model\repository\implementation\PermissionGroupRepository.pas',
+  PermissionGroupModel in 'src\model\entity\PermissionGroupModel.pas';
 
 {$R *.res}
 

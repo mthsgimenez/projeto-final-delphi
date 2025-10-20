@@ -3,13 +3,10 @@ unit UserRepository;
 interface
 
 uses
-  RepositoryBase, CrudRepositoryInterface, UserModel, DBHelper, FireDAC.Comp.Client, FireDAC.DApt,
-  System.SysUtils, System.Generics.Collections, Data.DB, System.StrUtils, Permissions, System.Classes;
+  RepositoryBase, CrudRepositoryInterface, UserModel, DBHelper, PermissionGroupRepository,
+  System.SysUtils, System.Generics.Collections, Data.DB, System.StrUtils, System.Classes;
 
 type TUserRepository = class(TRepositoryBase, ICrudRepository<TUserModel>)
-  private
-    function GetUserPermissions(aId: Integer): TPermissionsSet;
-    procedure UpdatePermissions(aUser: TUserModel);
   public
     function Save(aUser: TUserModel): TUserModel;
     function FindById(aId: Integer): TUserModel;
@@ -66,7 +63,11 @@ begin
         user.login := Self.Query.FieldByName('login').AsString;
         user.SetHash(Self.Query.FieldByName('hash').AsString);
 
-        user.permissions := Self.GetUserPermissions(user.id);
+        user.permissionGroup := nil;
+        if not Self.Query.FieldByName('id_pgroup').IsNull then
+          user.permissionGroup := TPermissionGroupRepository.GetInstance.FindById(
+            Self.Query.FieldByName('id_pgroup').AsInteger
+          );
 
         users.Add(user);
 
@@ -95,7 +96,11 @@ begin
       user.login := Self.Query.FieldByName('login').AsString;
       user.SetHash(Self.Query.FieldByName('hash').AsString);
 
-      user.permissions := Self.GetUserPermissions(user.id);
+      user.permissionGroup := nil;
+      if not Self.Query.FieldByName('id_pgroup').IsNull then
+        user.permissionGroup := TPermissionGroupRepository.GetInstance.FindById(
+          Self.Query.FieldByName('id_pgroup').AsInteger
+        );
 
       Result := user;
     end;
@@ -121,41 +126,15 @@ begin
       Result.name := Self.Query.FieldByName('name').AsString;
       Result.login := Self.Query.FieldByName('login').AsString;
       Result.SetHash(Self.Query.FieldByName('hash').AsString);
-      Result.permissions := Self.GetUserPermissions(Result.id);
+
+      Result.permissionGroup := nil;
+      if not Self.Query.FieldByName('id_pgroup').IsNull then
+        Result.permissionGroup := TPermissionGroupRepository.GetInstance.FindById(
+          Self.Query.FieldByName('id_pgroup').AsInteger
+        );
     end;
   finally
     Self.Query.Close;
-  end;
-end;
-
-function TUserRepository.GetUserPermissions(aId: Integer): TPermissionsSet;
-var
-  permQuery: TFDQuery;
-  permissions: TPermissionsSet;
-  permId: Integer;
-begin
-  permQuery := TFDQuery.Create(Self.Query.Connection);
-  permQuery.Connection := Self.Query.Connection;
-
-  permQuery.SQL.Text := Format(
-    'SELECT id_permission AS id FROM permissions_users ' +
-    'WHERE id_user = %d',
-    [aId]
-  );
-
-  try
-    permQuery.Open();
-    while not permQuery.Eof do begin
-      permId := permQuery.FieldByName('id').AsInteger;
-      permissions := permissions + [IntToPermission(permId)];
-
-      permQuery.Next;
-    end;
-
-    Result := permissions;
-  finally
-    permQuery.Close;
-    permQuery.Free;
   end;
 end;
 
@@ -167,10 +146,10 @@ begin
   Result := nil;
 
   Self.Query.SQL.Text := Format(
-    'INSERT INTO users VALUES (%s, %s, %s, %s) ' +
-    'ON CONFLICT (id) DO UPDATE SET name = EXCLUDED.name, login = EXCLUDED.login, hash = EXCLUDED.hash ' +
+    'INSERT INTO users(id, name, login, hash, id_pgroup) VALUES (%s, %s, %s, %s, %s) ' +
+    'ON CONFLICT (id) DO UPDATE SET name = EXCLUDED.name, login = EXCLUDED.login, hash = EXCLUDED.hash, id_pgroup = EXCLUDED.id_pgroup ' +
     'RETURNING *',
-    [IfThen(aUser.id = 0, 'DEFAULT', IntToStr(aUser.id)), QuotedStr(aUser.name), QuotedStr(aUser.login), QuotedStr(aUser.GetHash)]
+    [IfThen(aUser.id = 0, 'DEFAULT', IntToStr(aUser.id)), QuotedStr(aUser.name), QuotedStr(aUser.login), QuotedStr(aUser.GetHash), IfThen(not Assigned(aUser.permissionGroup), 'NULL', IntToStr(aUser.permissionGroup.id))]
   );
 
   helper := TDBHelper.Create;
@@ -187,61 +166,17 @@ begin
       user.login := Self.Query.FieldByName('login').AsString;
       user.SetHash(Self.Query.FieldByName('hash').AsString);
 
-      user.permissions := aUser.permissions;
-      Self.UpdatePermissions(user);
-      user.permissions := Self.GetUserPermissions(user.id);
+      user.permissionGroup := nil;
+      if not Self.Query.FieldByName('id_pgroup').IsNull then
+        user.permissionGroup := TPermissionGroupRepository.GetInstance.FindById(
+          Self.Query.FieldByName('id_pgroup').AsInteger
+        );
 
       Result := user;
     end;
   finally
     Self.Query.Close;
     helper.Free;
-  end;
-end;
-
-procedure TUserRepository.UpdatePermissions(aUser: TUserModel);
-var
-  pQuery: TFDQuery;
-  perm: TPermissions;
-  arguments: TStringList;
-begin
-  arguments := TStringList.Create;
-  arguments.QuoteChar := #0;
-
-  for perm in aUser.permissions do begin
-    arguments.Add(Format('(%d, %d)', [aUser.id, Integer(perm)]));
-  end;
-
-  pQuery := TFDQuery.Create(Self.Query.Connection);
-  pQuery.Connection := Self.Query.Connection;
-  pQuery.Connection.StartTransaction;
-
-  try
-    try
-      pQuery.SQL.Text := Format(
-        'DELETE FROM permissions_users WHERE id_user = %d',
-        [aUser.id]
-      );
-      pQuery.ExecSQL;
-
-      if arguments.Count > 0 then begin
-        pQuery.SQL.Text := Format(
-          'INSERT INTO permissions_users (id_user, id_permission) VALUES %s',
-          [arguments.DelimitedText]
-        );
-        pQuery.ExecSQL;
-      end;
-
-      pQuery.Connection.Commit;
-    except
-      on e: Exception do begin
-        pQuery.Connection.Rollback;
-        raise Exception.Create('Erro ao atualizar as permissões do usuário ' + aUser.name + ': ' + e.Message);
-      end;
-    end;
-  finally
-    arguments.Free;
-    pQuery.Free;
   end;
 end;
 
