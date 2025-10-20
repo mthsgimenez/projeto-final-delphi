@@ -142,14 +142,22 @@ function TUserRepository.Save(aUser: TUserModel): TUserModel;
 var
   user: TUserModel;
   helper: TDBHelper;
+  permGroup: String;
 begin
   Result := nil;
+
+  if Assigned(aUser.permissionGroup) then begin
+    permGroup := aUser.permissionGroup.name;
+  end else begin
+    permGroup := 'NULL';
+  end;
+
 
   Self.Query.SQL.Text := Format(
     'INSERT INTO users(id, name, login, hash, id_pgroup) VALUES (%s, %s, %s, %s, %s) ' +
     'ON CONFLICT (id) DO UPDATE SET name = EXCLUDED.name, login = EXCLUDED.login, hash = EXCLUDED.hash, id_pgroup = EXCLUDED.id_pgroup ' +
     'RETURNING *',
-    [IfThen(aUser.id = 0, 'DEFAULT', IntToStr(aUser.id)), QuotedStr(aUser.name), QuotedStr(aUser.login), QuotedStr(aUser.GetHash), IfThen(not Assigned(aUser.permissionGroup), 'NULL', IntToStr(aUser.permissionGroup.id))]
+    [IfThen(aUser.id = 0, 'DEFAULT', IntToStr(aUser.id)), QuotedStr(aUser.name), QuotedStr(aUser.login), QuotedStr(aUser.GetHash), permGroup]
   );
 
   helper := TDBHelper.Create;
