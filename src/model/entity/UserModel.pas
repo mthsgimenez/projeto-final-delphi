@@ -16,6 +16,7 @@ type TUserModel = class
     function CheckPassword(aPassword: String): Boolean;
     procedure SetHash(aHash: String);
     function GetHash: String;
+    destructor Destroy; override;
 end;
 
 implementation
@@ -27,6 +28,12 @@ var
   needsRehash: Boolean;
 begin
   Result := TBCrypt.CheckPassword(aPassword, Self.hash, needsRehash);
+end;
+
+destructor TUserModel.Destroy;
+begin
+  Self.permissionGroup.Free;
+  inherited Destroy;
 end;
 
 function TUserModel.GetHash: String;

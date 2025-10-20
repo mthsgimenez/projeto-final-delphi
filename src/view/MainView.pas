@@ -5,7 +5,7 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, System.IOUtils, Vcl.ExtCtrls, ConfigController, DBConfigView, LoginView,
-  Vcl.Buttons, Vcl.StdCtrls, Vcl.Imaging.pngimage, UserModel, MenuView, Session, Logging, MessageHelper;
+  Vcl.Buttons, Vcl.StdCtrls, Vcl.Imaging.pngimage, UserModel, MenuView, Session, Logging, MessageHelper, PermissionGroupRepository;
 
 type
   TformMain = class(TForm)
@@ -40,6 +40,7 @@ begin
   TLogger.GetLogger.Free;
   TMessageHelper.GetInstance.Free;
   TSession.GetInstance.Free;
+  TPermissionGroupRepository.GetInstance.Free;
   Self.configController.Free;
   Self.activeForm.Free;
 end;

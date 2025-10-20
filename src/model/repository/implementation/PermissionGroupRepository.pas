@@ -2,7 +2,7 @@ unit PermissionGroupRepository;
 
 interface
 
-uses RepositoryBase, CrudRepositoryInterface, PermissionGroupModel, Permissions, System.SysUtils, FireDAC.Comp.Client, FireDAC.DApt, System.Classes, System.Generics.Collections, DBHelper, System.StrUtils;
+uses RepositoryBase, CrudRepositoryInterface, PermissionGroupModel, Permissions, System.SysUtils, FireDAC.Comp.Client, FireDAC.DApt, System.Classes, System.Generics.Collections, DBHelper, System.StrUtils, Data.DB;
 type TPermissionGroupRepository = class(TRepositoryBase, ICrudRepository<TPermissionGroup>)
   private
     class var instance: TPermissionGroupRepository;
