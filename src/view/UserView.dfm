@@ -34,7 +34,7 @@ object formUser: TformUser
         Top = 48
         Width = 665
         Height = 345
-        ColCount = 2
+        ColCount = 3
         FixedCols = 0
         TabOrder = 0
         OnSelectCell = gridUsersSelectCell
@@ -74,9 +74,30 @@ object formUser: TformUser
       Caption = 'tabCreate'
       ImageIndex = 1
       TabVisible = False
+      object labelName: TLabel
+        Left = 272
+        Top = 171
+        Width = 95
+        Height = 15
+        Caption = 'Nome do usu'#225'rio:'
+      end
+      object labelLogin: TLabel
+        Left = 272
+        Top = 235
+        Width = 92
+        Height = 15
+        Caption = 'Login do usu'#225'rio:'
+      end
+      object labelPassword: TLabel
+        Left = 272
+        Top = 299
+        Width = 35
+        Height = 15
+        Caption = 'Senha:'
+      end
       object editName: TEdit
         Left = 272
-        Top = 160
+        Top = 192
         Width = 145
         Height = 23
         TabOrder = 0
@@ -84,7 +105,7 @@ object formUser: TformUser
       end
       object editLogin: TEdit
         Left = 272
-        Top = 208
+        Top = 256
         Width = 145
         Height = 23
         TabOrder = 1
@@ -92,7 +113,7 @@ object formUser: TformUser
       end
       object editPassword: TEdit
         Left = 272
-        Top = 264
+        Top = 320
         Width = 145
         Height = 23
         PasswordChar = '*'
@@ -116,15 +137,6 @@ object formUser: TformUser
         Caption = 'Cancelar'
         TabOrder = 4
         OnClick = buttonCancelClick
-      end
-      object editPermissionGroup: TEdit
-        Left = 272
-        Top = 315
-        Width = 145
-        Height = 23
-        ReadOnly = True
-        TabOrder = 5
-        TextHint = 'Login'
       end
     end
   end

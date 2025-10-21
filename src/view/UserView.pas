@@ -20,7 +20,9 @@ type
     editPassword: TEdit;
     buttonSave: TButton;
     buttonCancel: TButton;
-    editPermissionGroup: TEdit;
+    labelName: TLabel;
+    labelLogin: TLabel;
+    labelPassword: TLabel;
     procedure buttonCreateClick(Sender: TObject);
     procedure tabListShow(Sender: TObject);
     procedure buttonEditClick(Sender: TObject);
@@ -90,8 +92,6 @@ begin
 
   Self.editName.Text := Self.selectedUser.name;
   Self.editLogin.Text := Self.selectedUser.login;
-  if Assigned(Self.selectedUser.permissionGroup) then
-    Self.editPermissionGroup.Text := Self.selectedUser.permissionGroup.name;
 
   Self.pcontrolUser.ActivePage := Self.pcontrolUser.Pages[1];
 end;
@@ -101,7 +101,6 @@ var
   data: TUserDTO;
   user: TUserModel;
   errors: TStringList;
-  perm: TListItem;
 begin
   data.name := editName.Text;
   data.login := editLogin.Text;
@@ -149,7 +148,6 @@ begin
   Self.editName.Clear;
   Self.editLogin.Clear;
   Self.editPassword.Clear;
-  Self.editPermissionGroup.Clear;
 end;
 
 constructor TformUser.Create(AOwner: TComponent);
@@ -205,8 +203,10 @@ begin
     RowCount := 1;
     Cells[0, 0] := 'Name';
     Cells[1, 0] := 'Login';
-    ColWidths[0] := Width div 2;
-    ColWidths[1] := Width div 2;
+    Cells[2, 0] := 'Grupo';
+    ColWidths[0] := Width div 3;
+    ColWidths[1] := Width div 3;
+    ColWidths[2] := Width div 3;
 
     if Assigned(Self.users) then
       for user in Self.users do begin
@@ -215,6 +215,9 @@ begin
         Objects[0, i] := user;
         Cells[0, i] := user.name;
         Cells[1, i] := user.login;
+        Cells[2, i] := '';
+        if Assigned(user.permissionGroup) then
+          Cells[2, i] := user.permissionGroup.name;
       end;
   end;
 end;
