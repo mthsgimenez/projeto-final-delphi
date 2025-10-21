@@ -5,7 +5,8 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.StdCtrls,
-  Vcl.Imaging.jpeg, Vcl.Buttons, Vcl.Imaging.pngimage, UserController, UserDTO, UserModel, MessageHelper;
+  Vcl.Imaging.jpeg, Vcl.Buttons, Vcl.Imaging.pngimage, UserController, UserDTO, UserModel, MessageHelper,
+  Vcl.Skia;
 
 type
   TLoginCallback = procedure(user: TUserModel) of object;
