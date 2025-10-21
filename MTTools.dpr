@@ -26,7 +26,9 @@ uses
   MessageHelper in 'src\util\MessageHelper.pas',
   Logging in 'src\infra\Logging.pas',
   PermissionGroupRepository in 'src\model\repository\implementation\PermissionGroupRepository.pas',
-  PermissionGroupModel in 'src\model\entity\PermissionGroupModel.pas';
+  PermissionGroupModel in 'src\model\entity\PermissionGroupModel.pas',
+  PermissionsView in 'src\view\PermissionsView.pas' {formPermissions},
+  PermissionsController in 'src\controller\PermissionsController.pas';
 
 {$R *.res}
 

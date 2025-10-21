@@ -168,6 +168,11 @@
         <DCCReference Include="src\infra\Logging.pas"/>
         <DCCReference Include="src\model\repository\implementation\PermissionGroupRepository.pas"/>
         <DCCReference Include="src\model\entity\PermissionGroupModel.pas"/>
+        <DCCReference Include="src\view\PermissionsView.pas">
+            <Form>formPermissions</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="src\controller\PermissionsController.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

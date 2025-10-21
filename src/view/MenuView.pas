@@ -5,7 +5,7 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Buttons, Vcl.StdCtrls, Vcl.ExtCtrls,
-  Vcl.Imaging.pngimage, UserView, Vcl.Skia;
+  Vcl.Imaging.pngimage, UserView, Vcl.Skia, PermissionsView;
 
 type
   TformMenu = class(TForm)
@@ -17,8 +17,13 @@ type
     imgUser: TImage;
     labelUser: TLabel;
     buttonUserMenu: TSpeedButton;
+    panelPermissions: TPanel;
+    imgPermissions: TImage;
+    labelPermissions: TLabel;
+    buttonPermissions: TSpeedButton;
     procedure imgMenuClick(Sender: TObject);
     procedure buttonUserMenuClick(Sender: TObject);
+    procedure buttonPermissionsClick(Sender: TObject);
   private
     openWidth: Integer;
     closedWidth: Integer;
@@ -38,6 +43,12 @@ implementation
 {$R *.dfm}
 
 { TformMenu }
+
+procedure TformMenu.buttonPermissionsClick(Sender: TObject);
+begin
+  Self.ChangeForm(TformPermissions);
+  if Self.isMenuOpen then Self.ToggleMenu;
+end;
 
 procedure TformMenu.buttonUserMenuClick(Sender: TObject);
 begin
