@@ -13,25 +13,26 @@ type
 
   TformLogin = class(TForm)
     panelBackground: TPanel;
-    imageBackground: TImage;
-    gridpanelLayout: TGridPanel;
-    panelLoginForm: TPanel;
-    shapeLoginForm: TShape;
-    gridPanelLoginForm: TGridPanel;
-    labelTitle: TLabel;
-    panelEdits: TPanel;
-    panelEditUser: TPanel;
-    shapeEditUser: TShape;
-    imageUserIcon: TImage;
-    editUser: TEdit;
+    panelContainer: TPanel;
+    panelEditLogin: TPanel;
+    shapeEditLogin: TShape;
+    imgLoginIcon: TImage;
+    editLogin: TEdit;
     panelEditPassword: TPanel;
-    shapeEditPassword: TShape;
-    imageLockIcon: TImage;
     editPassword: TEdit;
+    shapeEditPassword: TShape;
+    imgPasswordIcon: TImage;
+    imgButtonVisibility: TImage;
     panelButtonLogin: TPanel;
     shapeButtonLogin: TShape;
     buttonLogin: TSpeedButton;
+    shapeContainer: TShape;
+    labelTitle: TLabel;
+    imgVisibilityOn: TImage;
+    imgVisibilityOff: TImage;
     procedure buttonLoginClick(Sender: TObject);
+    procedure imgButtonVisibilityClick(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
   private
     userController: TUserController;
     messageHelper: TMessageHelper;
@@ -54,7 +55,7 @@ var
   errors: TStringList;
   user: TUserModel;
 begin
-  userDTO.login := Trim(editUser.Text);
+  userDTO.login := Trim(editLogin.Text);
   userDTO.password := Trim(editPassword.Text);
 
   errors := TStringList.Create;
@@ -91,6 +92,22 @@ destructor TformLogin.Destroy;
 begin
   Self.userController.Free;
   inherited Destroy;
+end;
+
+procedure TformLogin.FormCreate(Sender: TObject);
+begin
+  Self.imgButtonVisibility.Picture := Self.imgVisibilityOff.Picture;
+end;
+
+procedure TformLogin.imgButtonVisibilityClick(Sender: TObject);
+begin
+  if Self.editPassword.PasswordChar <> #0 then begin
+    Self.editPassword.PasswordChar := #0;
+    Self.imgButtonVisibility.Picture := Self.imgVisibilityOn.Picture;
+  end else begin
+    Self.editPassword.PasswordChar := '*';
+    Self.imgButtonVisibility.Picture := Self.imgVisibilityOff.Picture;
+  end;
 end;
 
 end.
