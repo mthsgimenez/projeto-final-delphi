@@ -47,11 +47,15 @@ var
   config: TDBConfigModel;
 begin
   try
-    config := repository.Get;
-    Connection.Configure(config);
-    config.Free;
-  except
-    raise;
+    try
+      config := Self.repository.Get;
+      Connection.Configure(config);
+    except
+      raise;
+    end;
+  finally
+    if Assigned(config) then
+      config.Free;
   end;
 end;
 

@@ -52,6 +52,8 @@ var
 begin
   ReportMemoryLeaksOnShutdown := True;
 
+  Self.activeForm := nil;
+
   Self.configController := TConfigController.Create;
   Self.configController.PrepareDirectory;
 
@@ -67,7 +69,7 @@ begin
       ShowMessage(e.Message);
 
       TLogger.GetLogger.Warn('Não foi possível carregar a configuração, exibindo formulário para configuração manual');
-      configForm := TformDBConfig.Create(Self.configController, nil);
+      configForm := TformDBConfig.Create(Self.configController, Self);
       configForm.ShowModal;
       configForm.Free;
     end;
@@ -97,7 +99,8 @@ begin
 
   TSession.GetInstance.SetUser(user);
 
-  Self.activeForm.Free;
+  if Assigned(Self.activeForm) then
+    Self.activeForm.Free;
 
   TLogger.GetLogger.Info('Login realizado: ' + TSession.GetInstance.GetUser.login);
 
