@@ -28,7 +28,8 @@ uses
   PermissionGroupRepository in 'src\model\repository\implementation\PermissionGroupRepository.pas',
   PermissionGroupModel in 'src\model\entity\PermissionGroupModel.pas',
   PermissionsView in 'src\view\PermissionsView.pas' {formPermissions},
-  PermissionsController in 'src\controller\PermissionsController.pas';
+  PermissionsController in 'src\controller\PermissionsController.pas',
+  Vcl.Styles; // Aparentemente resolve um access violation ¯\_(?)_/¯
 
 {$R *.res}
 

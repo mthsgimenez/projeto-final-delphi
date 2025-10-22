@@ -130,7 +130,6 @@
         </DCCReference>
         <DCCReference Include="src\infra\DBConnection.pas">
             <Form>Connection</Form>
-            <FormType>dfm</FormType>
             <DesignClass>TDataModule</DesignClass>
         </DCCReference>
         <DCCReference Include="src\DTO\DBConfigDTO.pas"/>
@@ -140,11 +139,9 @@
         <DCCReference Include="src\controller\ConfigController.pas"/>
         <DCCReference Include="src\view\MainView.pas">
             <Form>formMain</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="src\view\DBConfigView.pas">
             <Form>formDBConfig</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="lib\Bcrypt.pas"/>
         <DCCReference Include="src\model\entity\UserModel.pas"/>
@@ -156,11 +153,9 @@
         <DCCReference Include="src\controller\UserController.pas"/>
         <DCCReference Include="src\view\UserView.pas">
             <Form>formUser</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="src\view\MenuView.pas">
             <Form>formMenu</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="src\model\entity\Permissions.pas"/>
         <DCCReference Include="src\infra\Session.pas"/>
@@ -170,9 +165,10 @@
         <DCCReference Include="src\model\entity\PermissionGroupModel.pas"/>
         <DCCReference Include="src\view\PermissionsView.pas">
             <Form>formPermissions</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
-        <DCCReference Include="src\controller\PermissionsController.pas"/>
+        <DCCReference Include="src\controller\PermissionsController.pas">
+            <Form>$R *.res</Form>
+        </DCCReference>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
