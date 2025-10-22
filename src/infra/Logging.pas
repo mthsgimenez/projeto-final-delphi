@@ -30,7 +30,7 @@ implementation
 
 constructor TLogger.Create;
 begin
-  Self.logPath := TPath.Combine(GetEnvironmentVariable('APPDATA'), 'MTTools', 'log.txt');
+  Self.logPath := TPath.Combine(GetEnvironmentVariable('APPDATA'), 'MTTools', FormatDateTime('dd-mm-yyyy', Now) + '.txt');
   Self.writer := TStreamWriter.Create(Self.logPath, True);
   Self.writer.WriteLine;
 end;
