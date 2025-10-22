@@ -140,7 +140,7 @@ object formMenu: TformMenu
         Align = alClient
         Flat = True
         OnClick = buttonUserMenuClick
-        ExplicitTop = -4
+        ExplicitTop = 1
       end
     end
     object panelPermissions: TPanel
