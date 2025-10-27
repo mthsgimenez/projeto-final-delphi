@@ -128,6 +128,8 @@ var
   permissions: TPermissionsSet;
   permId: Integer;
 begin
+  permissions := [];
+
   permQuery := TFDQuery.Create(Self.Query.Connection);
   permQuery.Connection := Self.Query.Connection;
 
@@ -180,6 +182,7 @@ begin
       group.id := Self.Query.FieldByName('id').AsInteger;
       group.name := Self.Query.FieldByName('name').AsString;
 
+      group.permissions := [];
       group.permissions := aGroup.permissions;
       Self.UpdatePermissions(group);
       group.permissions := Self.GetPermissions(group.id);

@@ -10,9 +10,8 @@ object formPermissions: TformPermissions
   Font.Height = -12
   Font.Name = 'Segoe UI'
   Font.Style = []
-  OnShow = FormShow
   TextHeight = 15
-  object panelContainer: TPanel
+  object pcontrolPermissions: TPageControl
     AlignWithMargins = True
     Left = 0
     Top = 0
@@ -22,35 +21,124 @@ object formPermissions: TformPermissions
     Margins.Top = 0
     Margins.Right = 0
     Margins.Bottom = 0
+    ActivePage = tabList
     Align = alClient
-    BevelOuter = bvNone
-    Caption = 'panelContainer'
-    ShowCaption = False
     TabOrder = 0
-    ExplicitLeft = 24
-    ExplicitTop = -5
-    object listGroups: TListBox
-      Left = 24
-      Top = 32
-      Width = 329
-      Height = 249
-      ItemHeight = 15
-      TabOrder = 0
-      OnClick = listGroupsClick
+    ExplicitLeft = 88
+    ExplicitTop = 8
+    ExplicitWidth = 289
+    ExplicitHeight = 193
+    object tabList: TTabSheet
+      Caption = 'tabList'
+      TabVisible = False
+      OnShow = tabListShow
+      object listGroups: TListBox
+        Left = 20
+        Top = 20
+        Width = 333
+        Height = 445
+        ItemHeight = 15
+        TabOrder = 0
+        OnClick = listGroupsClick
+      end
+      object listPermissionsView: TCheckListBox
+        Left = 373
+        Top = 20
+        Width = 333
+        Height = 445
+        Enabled = False
+        ItemHeight = 17
+        Items.Strings = (
+          'USERS_CREATE'
+          'USERS_UPDATE'
+          'USERS_DELETE'
+          'USERS_PERMISSIONS')
+        TabOrder = 1
+      end
+      object buttonCreate: TButton
+        Left = 20
+        Top = 491
+        Width = 156
+        Height = 41
+        Caption = 'Adicionar grupo'
+        TabOrder = 2
+        OnClick = buttonCreateClick
+      end
+      object buttonEdit: TButton
+        Left = 197
+        Top = 491
+        Width = 156
+        Height = 41
+        Caption = 'Editar grupo'
+        TabOrder = 3
+        OnClick = buttonEditClick
+      end
+      object buttonDelete: TButton
+        Left = 373
+        Top = 491
+        Width = 156
+        Height = 41
+        Caption = 'Remover grupo'
+        TabOrder = 4
+        OnClick = buttonDeleteClick
+      end
+      object buttonUsers: TButton
+        Left = 550
+        Top = 491
+        Width = 156
+        Height = 41
+        Caption = 'Atribuir/Remover usu'#225'rios'
+        TabOrder = 5
+      end
     end
-    object listPermissions: TCheckListBox
-      Left = 392
-      Top = 32
-      Width = 313
-      Height = 249
-      Enabled = False
-      ItemHeight = 17
-      Items.Strings = (
-        'USERS_CREATE'
-        'USERS_UPDATE'
-        'USERS_DELETE'
-        'USERS_PERMISSIONS')
-      TabOrder = 1
+    object tabCreate: TTabSheet
+      Caption = 'tabCreate'
+      ImageIndex = 1
+      TabVisible = False
+      object labelName: TLabel
+        Left = 192
+        Top = 144
+        Width = 88
+        Height = 15
+        Caption = 'Nome do grupo:'
+      end
+      object labelPermissions: TLabel
+        Left = 192
+        Top = 211
+        Width = 114
+        Height = 15
+        Caption = 'Permiss'#245'es do grupo:'
+      end
+      object editName: TEdit
+        Left = 192
+        Top = 165
+        Width = 121
+        Height = 23
+        TabOrder = 0
+        TextHint = 'Almoxarifado'
+      end
+      object listPermissions: TCheckListBox
+        Left = 192
+        Top = 232
+        Width = 305
+        Height = 89
+        ItemHeight = 17
+        Items.Strings = (
+          'USERS_CREATE'
+          'USERS_UPDATE'
+          'USERS_DELETE'
+          'USERS_PERMISSIONS')
+        TabOrder = 1
+      end
+      object buttonSave: TButton
+        Left = 256
+        Top = 344
+        Width = 185
+        Height = 41
+        Caption = 'Salvar'
+        TabOrder = 2
+        OnClick = buttonSaveClick
+      end
     end
   end
 end

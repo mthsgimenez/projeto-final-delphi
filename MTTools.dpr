@@ -29,7 +29,8 @@ uses
   PermissionGroupModel in 'src\model\entity\PermissionGroupModel.pas',
   PermissionsView in 'src\view\PermissionsView.pas' {formPermissions},
   PermissionsController in 'src\controller\PermissionsController.pas',
-  Vcl.Styles; // Aparentemente resolve um access violation ¯\_(?)_/¯
+  PermissionGroupDTO in 'src\DTO\PermissionGroupDTO.pas',
+  Vcl.Styles;
 
 {$R *.res}
 

@@ -167,6 +167,12 @@
             <Form>formPermissions</Form>
         </DCCReference>
         <DCCReference Include="src\controller\PermissionsController.pas">
+            <Form>,
+  PermissionGroupDTO in &apos;src\DTO\PermissionGroupDTO.pas&apos;;
+
+{$R *.res</Form>
+        </DCCReference>
+        <DCCReference Include="src\DTO\PermissionGroupDTO.pas">
             <Form>$R *.res</Form>
         </DCCReference>
         <BuildConfiguration Include="Base">
