@@ -36,8 +36,12 @@ begin
   );
 
   try
-    Self.Query.ExecSQL;
-    Result := Self.Query.RowsAffected > 0;
+    try
+      Self.Query.ExecSQL;
+      Result := Self.Query.RowsAffected > 0;
+    except
+      Result := False;
+    end;
   finally
     Self.Query.Close;
   end;

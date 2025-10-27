@@ -25,8 +25,12 @@ begin
   Self.Query.SQL.Text := Format('DELETE FROM users WHERE id = %d', [aId]);
 
   try
-    Self.Query.ExecSQL;
-    Result := Self.Query.RowsAffected > 0;
+    try
+      Self.Query.ExecSQL;
+      Result := Self.Query.RowsAffected > 0;
+    except
+      Result := False;
+    end;
   finally
     Self.Query.Close;
   end;
