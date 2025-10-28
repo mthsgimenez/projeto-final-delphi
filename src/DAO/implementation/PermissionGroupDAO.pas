@@ -1,38 +1,33 @@
-unit PermissionGroupRepository;
+unit PermissionGroupDAO;
 
 interface
 
-uses RepositoryBase, CrudRepositoryInterface, PermissionGroupModel, Permissions, System.SysUtils, FireDAC.Comp.Client, FireDAC.DApt, System.Classes, System.Generics.Collections, DBHelper, System.StrUtils, Data.DB;
-type TPermissionGroupRepository = class(TRepositoryBase, ICrudRepository<TPermissionGroup>)
-  private
-    class var instance: TPermissionGroupRepository;
-    function GetPermissions(aId: Integer): TPermissionsSet;
-    procedure UpdatePermissions(aGroup: TPermissionGroup);
-    constructor Create;
-  public
-    class function GetInstance: TPermissionGroupRepository;
-    function Save(aGroup: TPermissionGroup): TPermissionGroup;
-    function FindById(aId: Integer): TPermissionGroup;
-    function FindAll: TObjectList<TPermissionGroup>;
-    function ExistsById(aId: Integer): Boolean;
-    function DeleteById(aId: Integer): Boolean;
-end;
+uses DAOInterface, DAOBase, Permissions, PermissionGroupModel,
+System.SysUtils, System.Classes, System.Generics.Collections, System.StrUtils,
+DBHelper, Data.DB, FireDAC.Comp.Client, FireDAC.DApt;
 
+type TPermissionGroupDAO = class(TDAOBase, IDAO<TPermissionGroup>)
+  private
+    function GetPermissions(aGroupId: Integer): TPermissionsSet;
+    procedure UpdatePermissions(aGroup: TPermissionGroup);
+  public
+    function Insert(aGroup: TPermissionGroup): TPermissionGroup;
+    function SelectById(aGroupId: Integer): TPermissionGroup;
+    function SelectAll(): TObjectList<TPermissionGroup>;
+    function Update(aGroup: TPermissionGroup): TPermissionGroup;
+    function DeleteById(aGroupId: Integer): Boolean;
+    function SelectByUserId(aUserId: Integer): TPermissionGroup;
+end;
 
 implementation
 
-{ TPermissionGroupRepository }
+{ TPermissionGroupDAO }
 
-constructor TPermissionGroupRepository.Create;
-begin
-  inherited Create;
-end;
-
-function TPermissionGroupRepository.DeleteById(aId: Integer): Boolean;
+function TPermissionGroupDAO.DeleteById(aGroupId: Integer): Boolean;
 begin
   Self.Query.SQL.Text := Format(
     'DELETE FROM permission_groups WHERE id = %d',
-    [aId]
+    [aGroupId]
   );
 
   try
@@ -47,16 +42,77 @@ begin
   end;
 end;
 
-function TPermissionGroupRepository.ExistsById(aId: Integer): Boolean;
+function TPermissionGroupDAO.GetPermissions(aGroupId: Integer): TPermissionsSet;
 var
-  helper: TDBHelper;
+  permQuery: TFDQuery;
+  permissions: TPermissionsSet;
+  permId: Integer;
 begin
-  helper := TDBHelper.Create;
-  Result := helper.CheckIfAlreadyExists('permission_groups', 'id', aId);
-  helper.Free;
+  permissions := [];
+
+  permQuery := TFDQuery.Create(Self.Query.Connection);
+  permQuery.Connection := Self.Query.Connection;
+
+  permQuery.SQL.Text := Format(
+    'SELECT id_permission AS id FROM permission_groups_permissions ' +
+    'WHERE id_pgroup = %d',
+    [aGroupId]
+  );
+
+  try
+    permQuery.Open();
+    while not permQuery.Eof do begin
+      permId := permQuery.FieldByName('id').AsInteger;
+      permissions := permissions + [IntToPermission(permId)];
+
+      permQuery.Next;
+    end;
+
+    Result := permissions;
+  finally
+    permQuery.Close;
+    permQuery.Free;
+  end;
 end;
 
-function TPermissionGroupRepository.FindAll: TObjectList<TPermissionGroup>;
+function TPermissionGroupDAO.Insert(aGroup: TPermissionGroup): TPermissionGroup;
+var
+  group: TPermissionGroup;
+  helper: TDBHelper;
+begin
+  Result := nil;
+
+  Self.Query.SQL.Text := Format(
+    'INSERT INTO permission_groups ("name") VALUES (%s) RETURNING *;',
+    [QuotedStr(aGroup.name)]
+  );
+
+  helper := TDBHelper.Create;
+  try
+    if helper.CheckIfAlreadyExists('permission_groups', 'name', aGroup.name) then
+      raise Exception.Create('Já existe um grupo com o nome "' + aGroup.name + '"');
+
+    Self.Query.Open();
+
+    if not Self.Query.IsEmpty then begin
+      group := TPermissionGroup.Create;
+      group.id := Self.Query.FieldByName('id').AsInteger;
+      group.name := Self.Query.FieldByName('name').AsString;
+
+      group.permissions := [];
+      group.permissions := aGroup.permissions;
+      Self.UpdatePermissions(group);
+      group.permissions := Self.GetPermissions(group.id);
+
+      Result := group;
+    end;
+  finally
+    Self.Query.Close;
+    helper.Free;
+  end;
+end;
+
+function TPermissionGroupDAO.SelectAll: TObjectList<TPermissionGroup>;
 var
   groups: TObjectList<TPermissionGroup>;
   group: TPermissionGroup;
@@ -87,7 +143,7 @@ begin
   end;
 end;
 
-function TPermissionGroupRepository.FindById(aId: Integer): TPermissionGroup;
+function TPermissionGroupDAO.SelectById(aGroupId: Integer): TPermissionGroup;
 var
   group: TPermissionGroup;
 begin
@@ -95,7 +151,7 @@ begin
 
   Self.Query.SQL.Text := Format(
     'SELECT * FROM permission_groups WHERE id = %d',
-    [aId]
+    [aGroupId]
   );
 
   try
@@ -114,49 +170,36 @@ begin
   end;
 end;
 
-class function TPermissionGroupRepository.GetInstance: TPermissionGroupRepository;
-begin
-  if not Assigned(instance) then
-    instance := TPermissionGroupRepository.Create;
-  Result := instance;
-end;
-
-function TPermissionGroupRepository.GetPermissions(
-  aId: Integer): TPermissionsSet;
+function TPermissionGroupDAO.SelectByUserId(aUserId: Integer): TPermissionGroup;
 var
-  permQuery: TFDQuery;
-  permissions: TPermissionsSet;
-  permId: Integer;
+  group: TPermissionGroup;
 begin
-  permissions := [];
+  Result := nil;
 
-  permQuery := TFDQuery.Create(Self.Query.Connection);
-  permQuery.Connection := Self.Query.Connection;
-
-  permQuery.SQL.Text := Format(
-    'SELECT id_permission AS id FROM permission_groups_permissions ' +
-    'WHERE id_pgroup = %d',
-    [aId]
+  Self.Query.SQL.Text := Format(
+    'SELECT pgroup.* FROM users AS u ' +
+    'JOIN permission_groups AS pgroup ' +
+    'ON pgroup.id = u.id_pgroup ' +
+    'WHERE u.id = %d',
+    [aUserId]
   );
 
   try
-    permQuery.Open();
-    while not permQuery.Eof do begin
-      permId := permQuery.FieldByName('id').AsInteger;
-      permissions := permissions + [IntToPermission(permId)];
+    Self.Query.Open;
+    if not Self.Query.IsEmpty then begin
+      group := TPermissionGroup.Create;
+      group.id := Self.Query.FieldByName('id').AsInteger;
+      group.name := Self.Query.FieldByName('name').AsString;
+      group.permissions := Self.GetPermissions(group.id);
 
-      permQuery.Next;
+      Result := group;
     end;
-
-    Result := permissions;
   finally
-    permQuery.Close;
-    permQuery.Free;
+    Self.Query.Close;
   end;
 end;
 
-function TPermissionGroupRepository.Save(
-  aGroup: TPermissionGroup): TPermissionGroup;
+function TPermissionGroupDAO.Update(aGroup: TPermissionGroup): TPermissionGroup;
 var
   group: TPermissionGroup;
   helper: TDBHelper;
@@ -164,10 +207,8 @@ begin
   Result := nil;
 
   Self.Query.SQL.Text := Format(
-    'INSERT INTO permission_groups VALUES (%s, %s) ' +
-    'ON CONFLICT (id) DO UPDATE SET name = EXCLUDED.name ' +
-    'RETURNING *',
-    [IfThen(aGroup.id = 0, 'DEFAULT', IntToStr(aGroup.id)), QuotedStr(aGroup.name)]
+    'UPDATE permission_groups SET "name" = %s WHERE id = %d RETURNING *',
+    [QuotedStr(aGroup.name), aGroup.id]
   );
 
   helper := TDBHelper.Create;
@@ -195,8 +236,7 @@ begin
   end;
 end;
 
-procedure TPermissionGroupRepository.UpdatePermissions(
-  aGroup: TPermissionGroup);
+procedure TPermissionGroupDAO.UpdatePermissions(aGroup: TPermissionGroup);
 var
   pQuery: TFDQuery;
   perm: TPermissions;

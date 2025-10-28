@@ -2,9 +2,9 @@ unit DBHelper;
 
 interface
 
-uses RepositoryBase, System.SysUtils;
+uses DAOBase, System.SysUtils;
 
-type TDBHelper = class(TRepositoryBase)
+type TDBHelper = class(TDAOBase)
   private
 
   public

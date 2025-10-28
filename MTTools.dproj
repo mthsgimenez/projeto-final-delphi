@@ -133,9 +133,6 @@
             <DesignClass>TDataModule</DesignClass>
         </DCCReference>
         <DCCReference Include="src\DTO\DBConfigDTO.pas"/>
-        <DCCReference Include="src\model\repository\interface\DBConfigRepositoryInterface.pas"/>
-        <DCCReference Include="src\model\entity\DBConfigModel.pas"/>
-        <DCCReference Include="src\model\repository\implementation\DBConfigRepositoryJSON.pas"/>
         <DCCReference Include="src\controller\ConfigController.pas"/>
         <DCCReference Include="src\view\MainView.pas">
             <Form>formMain</Form>
@@ -144,11 +141,8 @@
             <Form>formDBConfig</Form>
         </DCCReference>
         <DCCReference Include="lib\Bcrypt.pas"/>
-        <DCCReference Include="src\model\entity\UserModel.pas"/>
-        <DCCReference Include="src\model\repository\implementation\UserRepository.pas"/>
         <DCCReference Include="src\util\DBHelper.pas"/>
-        <DCCReference Include="src\util\RepositoryBase.pas"/>
-        <DCCReference Include="src\model\repository\interface\CrudRepositoryInterface.pas"/>
+        <DCCReference Include="src\util\DAOBase.pas"/>
         <DCCReference Include="src\DTO\UserDTO.pas"/>
         <DCCReference Include="src\controller\UserController.pas"/>
         <DCCReference Include="src\view\UserView.pas">
@@ -157,24 +151,50 @@
         <DCCReference Include="src\view\MenuView.pas">
             <Form>formMenu</Form>
         </DCCReference>
-        <DCCReference Include="src\model\entity\Permissions.pas"/>
         <DCCReference Include="src\infra\Session.pas"/>
         <DCCReference Include="src\util\MessageHelper.pas"/>
         <DCCReference Include="src\infra\Logging.pas"/>
-        <DCCReference Include="src\model\repository\implementation\PermissionGroupRepository.pas"/>
-        <DCCReference Include="src\model\entity\PermissionGroupModel.pas"/>
         <DCCReference Include="src\view\PermissionsView.pas">
             <Form>formPermissions</Form>
         </DCCReference>
         <DCCReference Include="src\controller\PermissionsController.pas">
-            <Form>,
-  PermissionGroupDTO in &apos;src\DTO\PermissionGroupDTO.pas&apos;;
+            <Form>DBConfigModel in &apos;src\model\DBConfigModel.pas&apos;,
+  PermissionGroupModel in &apos;src\model\PermissionGroupModel.pas&apos;,
+  Permissions in &apos;src\model\Permissions.pas&apos;,
+  UserModel in &apos;src\model\UserModel.pas&apos;,
+  DBConfigRepositoryJSON in &apos;src\repository\implementation\DBConfigRepositoryJSON.pas&apos;,
+  UserRepository in &apos;src\repository\implementation\UserRepository.pas&apos;,
+  CrudRepositoryInterface in &apos;src\repository\interface\CrudRepositoryInterface.pas&apos;,
+  PermissionGroupDTO in &apos;src\DTO\PermissionGroupDTO.pas&apos;,
+  DBConfigModel in &apos;src\model\DBConfigModel.pas&apos;,
+  PermissionGroupModel in &apos;src\model\PermissionGroupModel.pas&apos;,
+  Permissions in &apos;src\model\Permissions.pas&apos;,
+  UserModel in &apos;src\model\UserModel.pas&apos;,
+  DBConfigRepositoryJSON in &apos;src\repository\implementation\DBConfigRepositoryJSON.pas&apos;,
+  UserRepository in &apos;src\repository\implementation\UserRepository.pas&apos;,
+  CrudRepositoryInterface in &apos;src\repository\interface\CrudRepositoryInterface.pas&apos;,
+  DBConfigRepositoryInterface in &apos;src\repository\interface\DBConfigRepositoryInterface.pas&apos;,
+  DAOInterface in &apos;src\DAO\interface\DAOInterface.pas&apos;,
+  PermissionGroupDAO in &apos;src\DAO\implementation\PermissionGroupDAO.pas&apos;,
+  UserDAO in &apos;src\DAO\implementation\UserDAO.pas&apos;,
+  PermissionGroupRepository in &apos;src\repository\implementation\PermissionGroupRepository.pas&apos;,
+  Vcl.Styles;
 
 {$R *.res</Form>
         </DCCReference>
-        <DCCReference Include="src\DTO\PermissionGroupDTO.pas">
-            <Form>$R *.res</Form>
-        </DCCReference>
+        <DCCReference Include="src\model\DBConfigModel.pas"/>
+        <DCCReference Include="src\model\PermissionGroupModel.pas"/>
+        <DCCReference Include="src\model\Permissions.pas"/>
+        <DCCReference Include="src\model\UserModel.pas"/>
+        <DCCReference Include="src\repository\implementation\DBConfigRepositoryJSON.pas"/>
+        <DCCReference Include="src\repository\implementation\UserRepository.pas"/>
+        <DCCReference Include="src\repository\interface\CrudRepositoryInterface.pas"/>
+        <DCCReference Include="src\DTO\PermissionGroupDTO.pas"/>
+        <DCCReference Include="src\repository\interface\DBConfigRepositoryInterface.pas"/>
+        <DCCReference Include="src\DAO\interface\DAOInterface.pas"/>
+        <DCCReference Include="src\DAO\implementation\PermissionGroupDAO.pas"/>
+        <DCCReference Include="src\DAO\implementation\UserDAO.pas"/>
+        <DCCReference Include="src\repository\implementation\PermissionGroupRepository.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

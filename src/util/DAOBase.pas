@@ -1,10 +1,10 @@
-unit RepositoryBase;
+unit DAOBase;
 
 interface
 
 uses DBConnection, FireDAC.Comp.Client, FireDAC.DApt;
 
-type TRepositoryBase = class(TInterfacedObject)
+type TDAOBase = class(TInterfacedObject)
   protected
     Query: TFDQuery;
   public
@@ -16,7 +16,7 @@ implementation
 
 { TRepositoryBase }
 
-constructor TRepositoryBase.Create;
+constructor TDAOBase.Create;
 var
   Connection: TFDConnection;
 begin
@@ -26,7 +26,7 @@ begin
   Self.Query.Connection := Connection;
 end;
 
-destructor TRepositoryBase.Destroy;
+destructor TDAOBase.Destroy;
 begin
   Self.Query.Free;
   inherited Destroy;
