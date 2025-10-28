@@ -5,7 +5,8 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, PermissionsController, System.Generics.Collections, PermissionGroupModel,
-  Vcl.CheckLst, Permissions, Vcl.ComCtrls, MessageHelper, PermissionGroupDTO;
+  Vcl.CheckLst, Permissions, Vcl.ComCtrls, MessageHelper, PermissionGroupDTO,
+  Vcl.Grids;
 
 type
   TformPermissions = class(TForm)
@@ -23,6 +24,10 @@ type
     labelName: TLabel;
     labelPermissions: TLabel;
     buttonSave: TButton;
+    tabUsers: TTabSheet;
+    gridUsers: TStringGrid;
+    buttonRemoveUser: TButton;
+    buttonAddUser: TButton;
     procedure listGroupsClick(Sender: TObject);
     procedure buttonEditClick(Sender: TObject);
     procedure buttonSaveClick(Sender: TObject);

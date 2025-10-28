@@ -21,13 +21,9 @@ object formPermissions: TformPermissions
     Margins.Top = 0
     Margins.Right = 0
     Margins.Bottom = 0
-    ActivePage = tabList
+    ActivePage = tabUsers
     Align = alClient
     TabOrder = 0
-    ExplicitLeft = 88
-    ExplicitTop = 8
-    ExplicitWidth = 289
-    ExplicitHeight = 193
     object tabList: TTabSheet
       Caption = 'tabList'
       TabVisible = False
@@ -138,6 +134,38 @@ object formPermissions: TformPermissions
         Caption = 'Salvar'
         TabOrder = 2
         OnClick = buttonSaveClick
+      end
+    end
+    object tabUsers: TTabSheet
+      Caption = 'tabUsers'
+      ImageIndex = 2
+      TabVisible = False
+      object gridUsers: TStringGrid
+        Left = 20
+        Top = 20
+        Width = 686
+        Height = 450
+        ColCount = 2
+        FixedCols = 0
+        TabOrder = 0
+      end
+      object buttonRemoveUser: TButton
+        Left = 205
+        Top = 495
+        Width = 156
+        Height = 41
+        Caption = 'Remover usu'#225'rio'
+        TabOrder = 1
+        OnClick = buttonDeleteClick
+      end
+      object buttonAddUser: TButton
+        Left = 20
+        Top = 495
+        Width = 156
+        Height = 41
+        Caption = 'Adicionar usu'#225'rio'
+        TabOrder = 2
+        OnClick = buttonDeleteClick
       end
     end
   end
