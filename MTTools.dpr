@@ -33,7 +33,11 @@ uses
   PermissionGroupDAO in 'src\DAO\implementation\PermissionGroupDAO.pas',
   UserDAO in 'src\DAO\implementation\UserDAO.pas',
   PermissionGroupRepository in 'src\repository\implementation\PermissionGroupRepository.pas',
-  Vcl.Styles;
+  UserDAOInterface in 'src\DAO\interface\UserDAOInterface.pas',
+  PermissionGroupDAOInterface in 'src\DAO\interface\PermissionGroupDAOInterface.pas',
+  Dependencies in 'src\infra\Dependencies.pas',
+  Vcl.Styles,
+  Vcl.Themes;
 
 {$R *.res}
 

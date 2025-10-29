@@ -21,7 +21,7 @@ object formPermissions: TformPermissions
     Margins.Top = 0
     Margins.Right = 0
     Margins.Bottom = 0
-    ActivePage = tabList
+    ActivePage = tabUsers
     Align = alClient
     TabOrder = 0
     object tabList: TTabSheet
@@ -85,6 +85,7 @@ object formPermissions: TformPermissions
         Height = 41
         Caption = 'Atribuir/Remover usu'#225'rios'
         TabOrder = 5
+        OnClick = buttonUsersClick
       end
     end
     object tabCreate: TTabSheet
@@ -148,24 +149,42 @@ object formPermissions: TformPermissions
         ColCount = 2
         FixedCols = 0
         TabOrder = 0
+        OnDrawCell = gridUsersDrawCell
+        OnSelectCell = gridUsersSelectCell
       end
       object buttonRemoveUser: TButton
-        Left = 205
+        Left = 240
         Top = 495
-        Width = 156
+        Width = 136
         Height = 41
         Caption = 'Remover usu'#225'rio'
         TabOrder = 1
-        OnClick = buttonDeleteClick
+        OnClick = buttonRemoveUserClick
       end
       object buttonAddUser: TButton
-        Left = 20
+        Left = 392
         Top = 495
-        Width = 156
+        Width = 136
         Height = 41
         Caption = 'Adicionar usu'#225'rio'
         TabOrder = 2
-        OnClick = buttonDeleteClick
+      end
+      object buttonBack: TButton
+        Left = 584
+        Top = 495
+        Width = 122
+        Height = 41
+        Caption = 'Voltar'
+        TabOrder = 3
+        OnClick = buttonBackClick
+      end
+      object comboUsers: TComboBox
+        Left = 20
+        Top = 504
+        Width = 197
+        Height = 23
+        Style = csDropDownList
+        TabOrder = 4
       end
     end
   end
