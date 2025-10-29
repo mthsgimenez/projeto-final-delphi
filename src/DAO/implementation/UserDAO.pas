@@ -2,10 +2,10 @@ unit UserDAO;
 
 interface
 
-uses DAOBase, DAOInterface, UserModel, DBHelper,
-  System.Generics.Collections, System.SysUtils;
+uses DAOBase, UserDAOInterface, UserModel, DBHelper,
+  System.Generics.Collections, System.SysUtils, Data.DB;
 
-type TUserDAO = class(TDAOBase, IDAO<TUserModel>)
+type TUserDAO = class(TDAOBase, IUserDAO)
   public
     function Insert(aUser: TUserModel): TUserModel;
     function SelectById(aUserId: Integer): TUserModel;

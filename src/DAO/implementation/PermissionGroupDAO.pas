@@ -2,11 +2,11 @@ unit PermissionGroupDAO;
 
 interface
 
-uses DAOInterface, DAOBase, Permissions, PermissionGroupModel,
+uses PermissionGroupDAOInterface, DAOBase, Permissions, PermissionGroupModel,
 System.SysUtils, System.Classes, System.Generics.Collections, System.StrUtils,
 DBHelper, Data.DB, FireDAC.Comp.Client, FireDAC.DApt;
 
-type TPermissionGroupDAO = class(TDAOBase, IDAO<TPermissionGroup>)
+type TPermissionGroupDAO = class(TDAOBase, IPermissionGroupDAO)
   private
     function GetPermissions(aGroupId: Integer): TPermissionsSet;
     procedure UpdatePermissions(aGroup: TPermissionGroup);
