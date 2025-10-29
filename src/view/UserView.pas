@@ -32,6 +32,8 @@ type
     procedure FormCreate(Sender: TObject);
     procedure gridUsersSelectCell(Sender: TObject; ACol, ARow: LongInt;
       var CanSelect: Boolean);
+    procedure gridUsersDrawCell(Sender: TObject; ACol, ARow: LongInt;
+      Rect: TRect; State: TGridDrawState);
   private
     controller: TUserController;
     selectedUser: TUserModel;
@@ -177,6 +179,22 @@ begin
   end;
 end;
 
+procedure TformUser.gridUsersDrawCell(Sender: TObject; ACol, ARow: LongInt;
+  Rect: TRect; State: TGridDrawState);
+var
+  grid: TStringGrid;
+begin
+  grid := TStringGrid(Sender);
+
+  if ARow = 0 then begin
+    grid.Canvas.Brush.Color := RGB($41, $69, $E1);
+    grid.Canvas.Font.Color := RGB($FF, $FF, $FF);
+  end;
+
+  grid.Canvas.FillRect(Rect);
+  grid.Canvas.TextOut(Rect.Left + 4, Rect.Top + 4, grid.Cells[ACol, ARow]);
+end;
+
 procedure TformUser.gridUsersSelectCell(Sender: TObject; ACol, ARow: LongInt;
   var CanSelect: Boolean);
 begin
@@ -205,7 +223,7 @@ begin
     Cells[2, 0] := 'Grupo';
     ColWidths[0] := Width div 3;
     ColWidths[1] := Width div 3;
-    ColWidths[2] := Width div 3;
+    ColWidths[2] := Width div 3 - 5;
 
     if Assigned(Self.users) then
       for user in Self.users do begin

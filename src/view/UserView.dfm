@@ -37,6 +37,7 @@ object formUser: TformUser
         ColCount = 3
         FixedCols = 0
         TabOrder = 0
+        OnDrawCell = gridUsersDrawCell
         OnSelectCell = gridUsersSelectCell
       end
       object buttonCreate: TButton
