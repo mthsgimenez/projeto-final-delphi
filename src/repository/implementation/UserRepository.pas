@@ -3,13 +3,13 @@ unit UserRepository;
 interface
 
 uses
-  CrudRepositoryInterface, UserModel, DBHelper, UserDAO, PermissionGroupDAO,
+  CrudRepositoryInterface, UserModel, DBHelper, UserDAOInterface, PermissionGroupDAOInterface,
   System.Generics.Collections;
 
 type TUserRepository = class(TInterfacedObject, ICrudRepository<TUserModel>)
   private
-    userDAO: TUserDAO;
-    permissionDAO: TPermissionGroupDAO;
+    userDAO: IUserDAO;
+    permissionDAO: IPermissionGroupDAO;
     helper: TDBHelper;
   public
     function Save(aUser: TUserModel): TUserModel;
@@ -18,18 +18,19 @@ type TUserRepository = class(TInterfacedObject, ICrudRepository<TUserModel>)
     function ExistsById(aId: Integer): Boolean;
     function DeleteById(aId: Integer): Boolean;
     function FindByLogin(aLogin: String): TUserModel;
-    constructor Create;
-    destructor Destroy;
+    constructor Create(aUserDAO: IUserDAO; aPermissionDAO: IPermissionGroupDAO);
+    destructor Destroy; override;
 end;
 
 implementation
 
 { TUserRepository }
 
-constructor TUserRepository.Create;
+constructor TUserRepository.Create(aUserDAO: IUserDAO;
+  aPermissionDAO: IPermissionGroupDAO);
 begin
-  Self.userDAO := TUserDAO.Create;
-  Self.permissionDAO := TPermissionGroupDAO.Create;
+  Self.userDAO := aUserDAO;
+  Self.permissionDAO := aPermissionDAO;
   Self.helper := TDBHelper.Create;
 end;
 
@@ -40,9 +41,8 @@ end;
 
 destructor TUserRepository.Destroy;
 begin
-  Self.userDAO.Free;
-  Self.permissionDAO.Free;
   Self.helper.Free;
+  inherited;
 end;
 
 function TUserRepository.ExistsById(aId: Integer): Boolean;

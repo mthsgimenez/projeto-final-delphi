@@ -5,7 +5,7 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, PermissionsController, System.Generics.Collections, PermissionGroupModel,
-  Vcl.CheckLst, Permissions, Vcl.ComCtrls, MessageHelper, PermissionGroupDTO,
+  Vcl.CheckLst, Permissions, Vcl.ComCtrls, MessageHelper, PermissionGroupDTO, Dependencies,
   Vcl.Grids;
 
 type
@@ -147,7 +147,7 @@ end;
 constructor TformPermissions.Create(AOwner: TComponent);
 begin
   inherited;
-  Self.permissionController := TPermissionController.Create;
+  Self.permissionController := TDependencies.GetInstance.GetPermissionController;
   Self.selectedGroup := nil;
   Self.groups := Self.permissionController.GetGroups;
   Self.messageHelper := TMessageHelper.GetInstance;
@@ -157,7 +157,6 @@ end;
 destructor TformPermissions.Destroy;
 begin
   Self.groups.Free;
-  Self.permissionController.Free;
   inherited;
 end;
 

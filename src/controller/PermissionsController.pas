@@ -6,10 +6,10 @@ uses PermissionGroupRepository, PermissionGroupModel, Permissions, PermissionGro
 
 type TPermissionController = class
   private
-    PermissionRepository: TPermissionGroupRepository;
+    permissionRepository: TPermissionGroupRepository;
   public
     function GetGroups: TObjectList<TPermissionGroup>;
-    constructor Create;
+    constructor Create(aPermissionRepository: TPermissionGroupRepository);
     function CreateGroup(aGroup: TPermissionGroupDTO): TPermissionGroup;
     function EditGroup(aGroupId: Integer; aData: TPermissionGroupDTO): TPermissionGroup;
     function DeleteGroup(aGroupId: Integer): Boolean;
@@ -19,9 +19,9 @@ implementation
 
 { TPermissionController }
 
-constructor TPermissionController.Create;
+constructor TPermissionController.Create(aPermissionRepository: TPermissionGroupRepository);
 begin
-  Self.PermissionRepository := TPermissionGroupRepository.GetInstance;
+  Self.permissionRepository := aPermissionRepository;
 end;
 
 function TPermissionController.CreateGroup(
@@ -35,7 +35,7 @@ begin
   try
     group.name := aGroup.name;
     group.permissions := aGroup.permissions;
-    Result := Self.PermissionRepository.Save(group);
+    Result := Self.permissionRepository.Save(group);
   finally
     group.Free;
   end;
@@ -43,7 +43,7 @@ end;
 
 function TPermissionController.DeleteGroup(aGroupId: Integer): Boolean;
 begin
-  Result := Self.PermissionRepository.DeleteById(aGroupId);
+  Result := Self.permissionRepository.DeleteById(aGroupId);
 end;
 
 function TPermissionController.EditGroup(aGroupId: Integer;
@@ -53,11 +53,11 @@ var
 begin
   Result := nil;
 
-  group := Self.PermissionRepository.FindById(aGroupId);
+  group := Self.permissionRepository.FindById(aGroupId);
   try
     group.name := aData.name;
     group.permissions := aData.permissions;
-    Result := Self.PermissionRepository.Save(group);
+    Result := Self.permissionRepository.Save(group);
   finally
     group.Free;
   end;
@@ -65,7 +65,7 @@ end;
 
 function TPermissionController.GetGroups: TObjectList<TPermissionGroup>;
 begin
-  Result := Self.PermissionRepository.FindAll;
+  Result := Self.permissionRepository.FindAll;
 end;
 
 end.

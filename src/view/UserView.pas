@@ -3,7 +3,7 @@ unit UserView;
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics, Dependencies,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ComCtrls, Vcl.Grids, Vcl.StdCtrls, UserController, UserDTO, UserModel, System.Generics.Collections, Permissions, Session, MessageHelper;
 
 type
@@ -153,7 +153,7 @@ end;
 constructor TformUser.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
-  Self.controller := TUserController.Create;
+  Self.controller := TDependencies.GetInstance.GetUserController;
   Self.users := Self.controller.GetUsers;
   Self.messageHelper := TMessageHelper.GetInstance;
 end;
@@ -161,7 +161,6 @@ end;
 destructor TformUser.Destroy;
 begin
   Self.users.Free;
-  Self.controller.Free;
   inherited Destroy;
 end;
 

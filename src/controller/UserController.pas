@@ -6,10 +6,9 @@ uses UserRepository, UserModel, UserDTO, System.Generics.Collections, System.Sys
 
   type TUserController = class
     private
-      repository: TUserRepository;
+      userRepository: TUserRepository;
     public
-      constructor Create;
-      destructor Destroy; override;
+      constructor Create(aUserRepository: TUserRepository);
       function Login(aUser: TUserDTO): TUserModel;
       function EditUser(aId: Integer; aData: TUserDTO): TUserModel;
       function GetUser(aId: Integer): TUserModel;
@@ -22,16 +21,10 @@ implementation
 
 { TUserController }
 
-constructor TUserController.Create;
+constructor TUserController.Create(aUserRepository: TUserRepository);
 begin
   inherited Create;
-  Self.repository := TUserRepository.Create;
-end;
-
-destructor TUserController.Destroy;
-begin
-  Self.repository.Free;
-  inherited Destroy;
+  Self.userRepository := aUserRepository;
 end;
 
 function TUserController.CreateUser(aUser: TUserDTO): TUserModel;
@@ -46,7 +39,7 @@ begin
     user.login := aUser.login;
     user.SetPassword(Trim(aUser.password));
 
-    Result := Self.repository.Save(user);
+    Result := Self.userRepository.Save(user);
   finally
     user.Free;
   end;
@@ -54,21 +47,21 @@ end;
 
 function TUserController.DeleteUser(aId: Integer): Boolean;
 begin
-  Result := Self.repository.DeleteById(aId);
+  Result := Self.userRepository.DeleteById(aId);
 end;
 
 function TUserController.EditUser(aId: Integer; aData: TUserDTO): TUserModel;
 var
   user: TUserModel;
 begin
-  user := Self.repository.FindById(aId);
+  user := Self.userRepository.FindById(aId);
 
   try
     user.name := aData.name;
     user.login := aData.login;
     if Trim(aData.password) <> '' then user.SetPassword(Trim(aData.password));
 
-    Result := Self.repository.Save(user);
+    Result := Self.userRepository.Save(user);
   finally
     user.Free;
   end;
@@ -76,12 +69,12 @@ end;
 
 function TUserController.GetUser(aId: Integer): TUserModel;
 begin
-  Result := Self.repository.FindById(aId);
+  Result := Self.userRepository.FindById(aId);
 end;
 
 function TUserController.GetUsers: TObjectList<TUserModel>;
 begin
-  Result := Self.repository.FindAll;
+  Result := Self.userRepository.FindAll;
 end;
 
 function TUserController.Login(aUser: TUserDTO): TUserModel;
@@ -90,7 +83,7 @@ var
 begin
   Result := nil;
 
-  user := Self.repository.FindByLogin(aUser.login);
+  user := Self.userRepository.FindByLogin(aUser.login);
   if not (user = nil) then begin
     if user.CheckPassword(aUser.password) then begin
       Result := user;

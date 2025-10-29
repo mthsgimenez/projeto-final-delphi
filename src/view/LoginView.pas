@@ -6,7 +6,7 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.StdCtrls,
   Vcl.Imaging.jpeg, Vcl.Buttons, Vcl.Imaging.pngimage, UserController, UserDTO, UserModel, MessageHelper,
-  Vcl.Skia;
+  Vcl.Skia, Dependencies;
 
 type
   TLoginCallback = procedure(user: TUserModel) of object;
@@ -39,7 +39,6 @@ type
   public
     onLoginAttempt: TLoginCallback;
     constructor Create(AOwner: TComponent; aCallback: TLoginCallback); reintroduce;
-    destructor Destroy; override;
   end;
 
 var
@@ -85,13 +84,7 @@ begin
   inherited Create(AOwner);
   if not Assigned(aCallback) then raise Exception.Create('Callback de login não específicado');
   Self.onLoginAttempt := aCallback;
-  Self.userController := TUserController.Create;
-end;
-
-destructor TformLogin.Destroy;
-begin
-  Self.userController.Free;
-  inherited Destroy;
+  Self.userController := TDependencies.GetInstance.GetUserController;
 end;
 
 procedure TformLogin.FormCreate(Sender: TObject);
