@@ -21,7 +21,7 @@ object formPermissions: TformPermissions
     Margins.Top = 0
     Margins.Right = 0
     Margins.Bottom = 0
-    ActivePage = tabUsers
+    ActivePage = tabList
     Align = alClient
     TabOrder = 0
     object tabList: TTabSheet
@@ -168,6 +168,7 @@ object formPermissions: TformPermissions
         Height = 41
         Caption = 'Adicionar usu'#225'rio'
         TabOrder = 2
+        OnClick = buttonAddUserClick
       end
       object buttonBack: TButton
         Left = 584

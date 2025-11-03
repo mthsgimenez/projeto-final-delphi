@@ -15,6 +15,9 @@ type TDependencies = class
     permissionRepository: TPermissionGroupRepository;
     permissionController: TPermissionController;
 
+    procedure CreateUserRepository;
+    procedure CreatePermissionRepository;
+
     class var instance: TDependencies;
     constructor Create;
   public
@@ -31,6 +34,27 @@ implementation
 constructor TDependencies.Create;
 begin
   inherited;
+end;
+
+procedure TDependencies.CreatePermissionRepository;
+begin
+  if not Assigned(Self.permissionDAO) then
+    Self.permissionDAO := TPermissionGroupDAO.Create;
+
+  if not Assigned(Self.permissionRepository) then
+    Self.permissionRepository := TPermissionGroupRepository.Create(Self.permissionDAO);
+end;
+
+procedure TDependencies.CreateUserRepository;
+begin
+  if not Assigned(Self.userDAO) then
+    Self.userDAO := TUserDAO.Create;
+
+  if not Assigned(Self.permissionDAO) then
+    Self.permissionDAO := TPermissionGroupDAO.Create;
+
+  if not Assigned(Self.userRepository) then
+    Self.userRepository := TUserRepository.Create(Self.userDAO, Self.permissionDAO);
 end;
 
 destructor TDependencies.Destroy;
@@ -59,10 +83,12 @@ end;
 function TDependencies.GetPermissionController: TPermissionController;
 begin
   if not Assigned(Self.permissionController) then begin
-    if not Assigned(Self.permissionDAO) then
-      Self.permissionDAO := TPermissionGroupDAO.Create;
-    Self.permissionRepository := TPermissionGroupRepository.Create(Self.permissionDAO);
-    Self.permissionController := TPermissionController.Create(Self.permissionRepository);
+    if not Assigned(Self.permissionRepository) then
+      Self.CreatePermissionRepository;
+    if not Assigned(Self.userRepository) then
+      Self.CreateUserRepository;
+
+    Self.permissionController := TPermissionController.Create(Self.permissionRepository, Self.userRepository);
   end;
 
   Result := Self.permissionController;
@@ -71,11 +97,9 @@ end;
 function TDependencies.GetUserController: TUserController;
 begin
   if not Assigned(Self.userController) then begin
-    if not Assigned(Self.permissionDAO) then
-      Self.permissionDAO := TPermissionGroupDAO.Create;
+    if not Assigned(Self.userRepository) then
+      Self.CreateUserRepository;
 
-    Self.userDAO := TUserDAO.Create;
-    Self.userRepository := TUserRepository.Create(Self.userDAO, Self.permissionDAO);
     Self.userController := TUserController.Create(Self.userRepository);
   end;
 

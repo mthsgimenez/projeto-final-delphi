@@ -43,6 +43,7 @@ type
     procedure gridUsersSelectCell(Sender: TObject; ACol, ARow: LongInt;
       var CanSelect: Boolean);
     procedure buttonRemoveUserClick(Sender: TObject);
+    procedure buttonAddUserClick(Sender: TObject);
   private
     selectedUser: TUserModel;
     users: TObjectList<TUserModel>;
@@ -70,6 +71,32 @@ implementation
 {$R *.dfm}
 
 { TformPermissions }
+
+procedure TformPermissions.buttonAddUserClick(Sender: TObject);
+var
+  user: TUserModel;
+  updatedUser: TUserModel;
+  comboBoxIndex: Integer;
+begin
+  comboBoxIndex := Self.comboUsers.ItemIndex;
+  if comboBoxIndex = -1 then begin
+    Self.messageHelper.Warning('Nenhum usuário selecionado');
+    Exit;
+  end;
+
+  user := TUserModel(Self.comboUsers.Items.Objects[Self.comboUsers.ItemIndex]);
+
+  try
+    updatedUser := Self.permissionController.AddUserToGroup(user.id, Self.selectedGroup.id);
+    Self.users.Remove(user);
+    Self.users.Add(updatedUser);
+
+    Self.UpdateUsersCombobox;
+    Self.UpdateUsersList(Self.selectedGroup);
+  except
+    Self.messageHelper.Error('O usuário selecionado já pertence à um grupo');
+  end;
+end;
 
 procedure TformPermissions.buttonBackClick(Sender: TObject);
 begin
@@ -126,7 +153,17 @@ begin
     Exit;
   end;
 
-  Self.selectedUser.permissionGroup := nil;
+  try
+    if Self.permissionController.RemoveUserFromGroup(Self.selectedUser.id) then begin
+      Self.selectedUser.permissionGroup.Free;
+      Self.selectedUser.permissionGroup := nil;
+    end;
+
+    Self.UpdateUsersCombobox;
+    Self.UpdateUsersList(Self.selectedGroup);
+  except
+    Self.messageHelper.Error('Não foi possível remover o usuário do grupo.');
+  end;
 end;
 
 procedure TformPermissions.buttonSaveClick(Sender: TObject);
