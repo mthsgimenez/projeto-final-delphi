@@ -10,6 +10,7 @@ object formMenu: TformMenu
   Font.Height = -12
   Font.Name = 'Segoe UI'
   Font.Style = []
+  OnCreate = FormCreate
   TextHeight = 15
   object panelContainer: TPanel
     AlignWithMargins = True

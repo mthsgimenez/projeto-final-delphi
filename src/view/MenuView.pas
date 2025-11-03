@@ -5,7 +5,7 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Buttons, Vcl.StdCtrls, Vcl.ExtCtrls,
-  Vcl.Imaging.pngimage, UserView, Vcl.Skia, PermissionsView;
+  Vcl.Imaging.pngimage, UserView, Vcl.Skia, PermissionsView, Session, Permissions, UserModel;
 
 type
   TformMenu = class(TForm)
@@ -24,6 +24,7 @@ type
     procedure imgMenuClick(Sender: TObject);
     procedure buttonUserMenuClick(Sender: TObject);
     procedure buttonPermissionsClick(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
   private
     openWidth: Integer;
     closedWidth: Integer;
@@ -73,6 +74,19 @@ begin
   Self.openWidth := openWidth;
   Self.isMenuOpen := False;
   Self.panelMenu.Width := Self.closedWidth;
+end;
+
+procedure TformMenu.FormCreate(Sender: TObject);
+var
+  user: TUserModel;
+begin
+  user := TSession.GetInstance.GetUser;
+
+  if Assigned(user.permissionGroup) then begin
+    Self.panelPermissions.Visible := user.permissionGroup.hasPermission(USERS_PERMISSIONS)
+  end else begin
+    Self.panelPermissions.Visible := False;
+  end;
 end;
 
 procedure TformMenu.imgMenuClick(Sender: TObject);
