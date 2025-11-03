@@ -34,6 +34,8 @@ object formUser: TformUser
         Top = 48
         Width = 665
         Height = 345
+        BevelOuter = bvNone
+        BorderStyle = bsNone
         ColCount = 3
         FixedCols = 0
         TabOrder = 0

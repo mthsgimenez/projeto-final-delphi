@@ -146,6 +146,8 @@ object formPermissions: TformPermissions
         Top = 20
         Width = 686
         Height = 450
+        BevelOuter = bvNone
+        BorderStyle = bsNone
         ColCount = 2
         FixedCols = 0
         TabOrder = 0
