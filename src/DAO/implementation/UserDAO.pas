@@ -68,8 +68,8 @@ begin
   Result := nil;
 
   Self.Query.SQL.Text := Format(
-    'INSERT INTO users(id, name, login, hash) VALUES (%s, %s, %s, %s) RETURNING *',
-    [IntToStr(aUser.id), QuotedStr(aUser.name), QuotedStr(aUser.login), QuotedStr(aUser.GetHash)]
+    'INSERT INTO users(name, login, hash) VALUES (%s, %s, %s) RETURNING *',
+    [QuotedStr(aUser.name), QuotedStr(aUser.login), QuotedStr(aUser.GetHash)]
   );
 
   helper := TDBHelper.Create;
