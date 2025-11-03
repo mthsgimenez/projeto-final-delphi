@@ -36,8 +36,12 @@ uses
   UserDAOInterface in 'src\DAO\interface\UserDAOInterface.pas',
   PermissionGroupDAOInterface in 'src\DAO\interface\PermissionGroupDAOInterface.pas',
   Dependencies in 'src\infra\Dependencies.pas',
-  Vcl.Styles,
-  Vcl.Themes;
+  StorageDAO in 'src\DAO\implementation\StorageDAO.pas',
+  StorageModel in 'src\model\StorageModel.pas',
+  StorageRepository in 'src\repository\implementation\StorageRepository.pas',
+  StorageController in 'src\controller\StorageController.pas',
+  StorageDTO in 'src\DTO\StorageDTO.pas',
+  StorageDAOInterface in 'src\DAO\interface\StorageDAOInterface.pas';
 
 {$R *.res}
 

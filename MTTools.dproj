@@ -201,6 +201,14 @@
         <DCCReference Include="src\infra\Dependencies.pas">
             <Form>$R *.res</Form>
         </DCCReference>
+        <DCCReference Include="src\DAO\implementation\StorageDAO.pas"/>
+        <DCCReference Include="src\model\StorageModel.pas"/>
+        <DCCReference Include="src\repository\implementation\StorageRepository.pas"/>
+        <DCCReference Include="src\controller\StorageController.pas"/>
+        <DCCReference Include="src\DTO\StorageDTO.pas"/>
+        <DCCReference Include="src\DAO\interface\StorageDAOInterface.pas">
+            <Form>$R *.res</Form>
+        </DCCReference>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
