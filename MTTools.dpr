@@ -41,7 +41,10 @@ uses
   StorageRepository in 'src\repository\implementation\StorageRepository.pas',
   StorageController in 'src\controller\StorageController.pas',
   StorageDTO in 'src\DTO\StorageDTO.pas',
-  StorageDAOInterface in 'src\DAO\interface\StorageDAOInterface.pas';
+  StorageDAOInterface in 'src\DAO\interface\StorageDAOInterface.pas',
+  SupplierDAO in 'src\DAO\implementation\SupplierDAO.pas',
+  SupplierModel in 'src\model\SupplierModel.pas',
+  CNPJ in 'src\model\CNPJ.pas';
 
 {$R *.res}
 

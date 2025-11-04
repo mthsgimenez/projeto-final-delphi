@@ -209,6 +209,9 @@
         <DCCReference Include="src\DAO\interface\StorageDAOInterface.pas">
             <Form>$R *.res</Form>
         </DCCReference>
+        <DCCReference Include="src\DAO\implementation\SupplierDAO.pas"/>
+        <DCCReference Include="src\model\SupplierModel.pas"/>
+        <DCCReference Include="src\model\CNPJ.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
