@@ -7,12 +7,16 @@ CREATE TABLE storages (
 
 CREATE TABLE suppliers (
 	id serial NOT NULL,
-	"name" varchar(70) NOT NULL,
+	trade_name varchar(80) NOT NULL,
+	legal_name varchar(120) NOT NULL,
 	cnpj varchar(14) NOT NULL,
 	cep varchar(8) NOT NULL,
+	email varchar(100) NULL,
+	phone varchar(16) NULL,
 	CONSTRAINT suppliers_pk PRIMARY KEY (id),
-	CONSTRAINT suppliers_unique UNIQUE (name),
-	CONSTRAINT suppliers_unique_1 UNIQUE (cnpj)
+	CONSTRAINT suppliers_unique UNIQUE (cnpj),
+	CONSTRAINT suppliers_unique_1 UNIQUE (trade_name),
+	CONSTRAINT suppliers_unique_2 UNIQUE (legal_name)
 );
 
 CREATE TABLE permission_groups (

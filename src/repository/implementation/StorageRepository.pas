@@ -9,12 +9,12 @@ type TStorageRepository = class(TInterfacedObject, ICrudRepository<TStorage>)
   private
     storageDAO: IStorageDAO;
     helper: TDBHelper;
+  public
     function Save(aStorage: TStorage): TStorage;
     function FindById(aStorageId: Integer): TStorage;
     function FindAll(): TObjectList<TStorage>;
     function DeleteById(aStorageId: Integer): Boolean;
     function ExistsById(aStorageId: Integer): Boolean;
-  public
     constructor Create(aStorageDAO: IStorageDAO);
     destructor Destroy; override;
 end;
@@ -25,6 +25,7 @@ implementation
 
 constructor TStorageRepository.Create(aStorageDAO: IStorageDAO);
 begin
+  inherited Create;
   Self.storageDAO := aStorageDAO;
   Self.helper := TDBHelper.Create;
 end;
