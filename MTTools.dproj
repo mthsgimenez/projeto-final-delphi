@@ -212,6 +212,9 @@
         <DCCReference Include="src\DAO\implementation\SupplierDAO.pas"/>
         <DCCReference Include="src\model\SupplierModel.pas"/>
         <DCCReference Include="src\model\CNPJ.pas"/>
+        <DCCReference Include="src\DAO\interface\CNPJApiInterface.pas"/>
+        <DCCReference Include="src\DTO\CNPJDTO.pas"/>
+        <DCCReference Include="src\DAO\implementation\CNPJApi_cnpja.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
