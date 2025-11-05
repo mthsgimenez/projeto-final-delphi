@@ -28,12 +28,15 @@ end;
 
 class procedure TSession.setUser(aUser: TUserModel);
 begin
-  TLogger.GetLogger.Debug('Sessão iniciada com usuário: ' + Format('%d %s', [aUser.id, aUser.login]));
-
   if Assigned(loggedUser) then
     loggedUser.Free;
 
   loggedUser := aUser;
+
+  TLogger.GetLogger.Debug(Format(
+    'Usuário salvo em TSession: (ID: %d) %s',
+    [aUser.id, aUser.name]
+  ));
 end;
 
 end.

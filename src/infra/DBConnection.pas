@@ -44,7 +44,7 @@ begin
       Add('DriverID=PG');
     end;
     Self.FDConnection.Connected := True;
-    TLogger.GetLogger.Info('Conexão com banco estabelecida');
+    TLogger.GetLogger.Debug('Conexão com banco estabelecida');
   except
   on e: EPgNativeException do begin
     Self.FDConnection.Connected := False;

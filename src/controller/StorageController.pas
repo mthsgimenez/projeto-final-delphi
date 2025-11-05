@@ -2,7 +2,7 @@ unit StorageController;
 
 interface
 
-uses StorageRepository, StorageModel, StorageDTO, System.Generics.Collections, System.SysUtils;
+uses StorageRepository, StorageModel, StorageDTO, System.Generics.Collections, System.SysUtils, Session, Logging;
 
 type TStorageController = class
   private
@@ -30,13 +30,16 @@ function TStorageController.CreateStorage(aStorage: TStorageDTO): TStorage;
 var
   storage: TStorage;
 begin
-  Result := nil;
-
   storage := TStorage.Create;
   try
     storage.name := aStorage.name;
 
     Result := Self.storageRepository.Save(storage);
+    if Assigned(Result) then
+      TLogger.GetLogger.Info(Format(
+        'Estoque criado: Usuário (ID: %d) criou o estoque (ID: %d)',
+        [TSession.GetUser.id, Result.id]
+      ));
   finally
     storage.Free;
   end;
@@ -45,6 +48,11 @@ end;
 function TStorageController.DeleteStorage(aId: Integer): Boolean;
 begin
   Result := Self.storageRepository.DeleteById(aId);
+  if Result then
+    TLogger.GetLogger.Info(Format(
+      'Estoque deletado: Usuário (ID: %d) deletou o estoque (ID: %d)',
+      [TSession.GetUser.id, aId]
+    ));
 end;
 
 function TStorageController.EditStorage(aId: Integer; aData: TStorageDTO): TStorage;
@@ -57,6 +65,11 @@ begin
     storage.name := aData.name;
 
     Result := Self.storageRepository.Save(storage);
+    if Assigned(Result) then
+      TLogger.GetLogger.Info(Format(
+        'Estoque editado: Usuário (ID: %d) editou o estoque (ID: %d)',
+        [TSession.GetUser.id, Result.id]
+      ));
   finally
     storage.Free;
   end;

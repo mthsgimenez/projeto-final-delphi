@@ -3,7 +3,7 @@ unit PermissionsController;
 interface
 
 uses PermissionGroupRepository, PermissionGroupModel, Permissions, PermissionGroupDTO,
-  UserRepository, UserModel,
+  UserRepository, UserModel, Logging, Session,
   System.Generics.Collections, System.SysUtils;
 
 type TPermissionController = class
@@ -46,6 +46,12 @@ begin
 
   user.permissionGroup := group;
   Result := Self.userRepository.Save(user);
+
+  TLogger.GetLogger.Info(Format(
+    'Grupo de permissões alterado: Usuário (ID: %d) foi adicionado ao grupo de permissões (ID: %d) pelo usuário (ID: %d)',
+    [user.id, group.id, TSession.GetUser.id]
+  ));
+
   user.Free;
 end;
 
@@ -62,13 +68,18 @@ function TPermissionController.CreateGroup(
 var
   group: TPermissionGroup;
 begin
-  Result := nil;
   group := TPermissionGroup.Create;
   group.permissions := [];
   try
     group.name := aGroup.name;
     group.permissions := aGroup.permissions;
     Result := Self.permissionRepository.Save(group);
+    if Assigned(Result) then
+      TLogger.GetLogger.Info(Format(
+        'Grupo de permissões adicionado: Usuário (ID: %d) criou o grupo de permissões (ID: %d)',
+        [TSession.GetUser.id, Result.id]
+      ));
+
   finally
     group.Free;
   end;
@@ -77,6 +88,11 @@ end;
 function TPermissionController.DeleteGroup(aGroupId: Integer): Boolean;
 begin
   Result := Self.permissionRepository.DeleteById(aGroupId);
+  if Result then
+    TLogger.GetLogger.Info(Format(
+      'Grupo de permissões deletado: Usuário (ID: %d) deletou o grupo de permissões (ID: %d)',
+      [TSession.GetUser.id, aGroupId]
+    ));
 end;
 
 function TPermissionController.EditGroup(aGroupId: Integer;
@@ -84,13 +100,16 @@ function TPermissionController.EditGroup(aGroupId: Integer;
 var
   group: TPermissionGroup;
 begin
-  Result := nil;
-
   group := Self.permissionRepository.FindById(aGroupId);
   try
     group.name := aData.name;
     group.permissions := aData.permissions;
     Result := Self.permissionRepository.Save(group);
+    if Assigned(Result) then
+      TLogger.GetLogger.Info(Format(
+        'Grupo de permissões alterado: Usuário (ID: %d) alterou as permissões do grupo de permissões (ID: %d)',
+        [TSession.GetUser.id, aGroupId]
+      ));
   finally
     group.Free;
   end;
@@ -105,6 +124,7 @@ function TPermissionController.RemoveUserFromGroup(aUserId: Integer): Boolean;
 var
   user: TUserModel;
   _: TUserModel;
+  groupId: Integer;
 begin
   user := Self.userRepository.FindById(aUserId);
 
@@ -116,10 +136,16 @@ begin
     raise Exception.Create('Usuário não está em nenhum grupo');
   end;
 
+  groupId := user.permissionGroup.id;
   user.permissionGroup.Free;
   user.permissionGroup := nil;
   try
     _ := Self.userRepository.Save(user);
+    if Assigned(_) then
+    TLogger.GetLogger.Info(Format(
+      'Grupo de permissões alterado: Usuário (ID: %d) removeu o usuário (ID: %d) do grupo de permissões (ID: %d)',
+      [TSession.GetUser.id, _.id, groupId]
+    ));
     _.Free;
   finally
     user.Free;

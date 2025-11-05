@@ -37,7 +37,7 @@ end;
 
 procedure TformMain.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
-  TLogger.GetLogger.Info('Encerrando o sistema');
+  TLogger.GetLogger.Debug('Encerrando o sistema');
   TLogger.GetLogger.Free;
   TMessageHelper.GetInstance.Free;
   if TSession.GetUser <> nil then
@@ -61,10 +61,10 @@ begin
 
   TLogger.GetLogger.setLevel(TLogLevels.DEBUG);
 
-  TLogger.GetLogger.Info('Iniciando o sistema');
+  TLogger.GetLogger.Debug('Iniciando o sistema');
 
   try
-    TLogger.GetLogger.Info('Carregando arquivo de configuração do banco');
+    TLogger.GetLogger.Debug('Carregando arquivo de configuração do banco');
     Self.configController.LoadDBConfig;
   except
     on e: Exception do begin
@@ -78,7 +78,7 @@ begin
   end;
 
   if Self.configController.IsDBConnected then begin
-    TLogger.GetLogger.Info('Exibindo formulário de login');
+    TLogger.GetLogger.Debug('Exibindo formulário de login');
     loginForm := TformLogin.Create(Self.panelMain, Self.OnLogin);
     Self.OpenForm(loginForm);
   end else begin
@@ -104,7 +104,10 @@ begin
   if Assigned(Self.activeForm) then
     Self.activeForm.Free;
 
-  TLogger.GetLogger.Info('Login realizado: ' + TSession.GetUser.login);
+  TLogger.GetLogger.Info(Format(
+    'Login realizado: (ID: %d) %s',
+    [TSession.GetUser.id, TSession.GetUser.login]
+  ));
 
   menuForm := TformMenu.Create(Self.panelMain, closedWidth, openWidth);
   menuForm.setLogoutCallback(Self.OnLogout);
@@ -115,6 +118,11 @@ procedure TformMain.OnLogout;
 var
   loginForm: TformLogin;
 begin
+  TLogger.GetLogger.Info(Format(
+    'Logout: (ID: %d) %s',
+    [TSession.GetUser.id, TSession.GetUser.login]
+  ));
+
   if Assigned(Self.activeForm) then
     Self.activeForm.Free;
 

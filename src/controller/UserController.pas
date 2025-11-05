@@ -2,7 +2,7 @@ unit UserController;
 
 interface
 
-uses UserRepository, UserModel, UserDTO, System.Generics.Collections, System.SysUtils;
+uses UserRepository, UserModel, UserDTO, System.Generics.Collections, System.SysUtils, Logging, Session;
 
   type TUserController = class
     private
@@ -40,6 +40,11 @@ begin
     user.SetPassword(Trim(aUser.password));
 
     Result := Self.userRepository.Save(user);
+    if Assigned(Result) then
+      TLogger.GetLogger.Info(Format(
+        'Usuário criado: Usuário (ID: %d) %s cadastrou o usuário (ID: %d)',
+        [TSession.GetUser.id, TSession.GetUser.name, Result.id]
+      ));
   finally
     user.Free;
   end;
@@ -48,6 +53,12 @@ end;
 function TUserController.DeleteUser(aId: Integer): Boolean;
 begin
   Result := Self.userRepository.DeleteById(aId);
+  if Result then
+    TLogger.GetLogger.Info(Format(
+      'Usuário deletado: Usuário (ID: %d) %s deletou o usuário (ID: %d)',
+      [TSession.GetUser.id, TSession.GetUser.name, aId]
+    ));
+
 end;
 
 function TUserController.EditUser(aId: Integer; aData: TUserDTO): TUserModel;
@@ -62,6 +73,11 @@ begin
     if Trim(aData.password) <> '' then user.SetPassword(Trim(aData.password));
 
     Result := Self.userRepository.Save(user);
+    if Assigned(Result) then
+      TLogger.GetLogger.Info(Format(
+        'Usuário editado: Usuário (ID: %d) %s editou o usuário (ID: %d)',
+        [TSession.GetUser.id, TSession.GetUser.name, aId]
+      ));
   finally
     user.Free;
   end;
