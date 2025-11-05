@@ -72,7 +72,7 @@ begin
     Exit;
   end;
 
-  if TSession.GetInstance.GetUser.id = Self.selectedUser.id then begin
+  if TSession.GetUser.id = Self.selectedUser.id then begin
     Self.messageHelper.Error('Você não pode desativar seu próprio usuário');
     Exit;
   end;
@@ -170,7 +170,7 @@ procedure TformUser.FormCreate(Sender: TObject);
 var
   user: TUserModel;
 begin
-  user := TSession.GetInstance.GetUser;
+  user := TSession.GetUser;
 
   if Assigned(user.permissionGroup) then begin
     Self.buttonCreate.Visible := user.permissionGroup.hasPermission(TPermissions.USERS_CREATE);

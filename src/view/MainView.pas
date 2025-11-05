@@ -40,7 +40,8 @@ begin
   TLogger.GetLogger.Info('Encerrando o sistema');
   TLogger.GetLogger.Free;
   TMessageHelper.GetInstance.Free;
-  TSession.GetInstance.Free;
+  if TSession.GetUser <> nil then
+    TSession.GetUser.Free;
   TDependencies.GetInstance.Free;
   Self.configController.Free;
   Self.activeForm.Free;
@@ -98,12 +99,12 @@ begin
     Exit;
   end;
 
-  TSession.GetInstance.SetUser(user);
+  TSession.SetUser(user);
 
   if Assigned(Self.activeForm) then
     Self.activeForm.Free;
 
-  TLogger.GetLogger.Info('Login realizado: ' + TSession.GetInstance.GetUser.login);
+  TLogger.GetLogger.Info('Login realizado: ' + TSession.GetUser.login);
 
   menuForm := TformMenu.Create(Self.panelMain, closedWidth, openWidth);
   menuForm.setLogoutCallback(Self.OnLogout);

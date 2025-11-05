@@ -6,14 +6,11 @@ uses UserModel, Logging, System.SysUtils;
 
 type TSession = class
   private
-    loggedUser: TUserModel;
-    class var instance: TSession;
+    class var loggedUser: TUserModel;
     constructor Create;
   public
-    class function GetInstance: TSession;
-    function GetUser: TUserModel;
-    procedure setUser(aUser: TUserModel);
-    destructor Destroy; override;
+    class procedure setUser(aUser: TUserModel);
+    class function GetUser: TUserModel;
 end;
 
 implementation
@@ -22,37 +19,21 @@ implementation
 
 constructor TSession.Create;
 begin
-
 end;
 
-destructor TSession.Destroy;
+class function TSession.GetUser: TUserModel;
 begin
-  if Assigned(Self.loggedUser) then
-    Self.loggedUser.Free;
-  inherited Destroy;
+  Result := loggedUser;
 end;
 
-class function TSession.GetInstance: TSession;
-begin
-  if instance = nil then
-    instance := TSession.Create;
-
-  Result := instance;
-end;
-
-function TSession.GetUser: TUserModel;
-begin
-  Result := Self.loggedUser;
-end;
-
-procedure TSession.setUser(aUser: TUserModel);
+class procedure TSession.setUser(aUser: TUserModel);
 begin
   TLogger.GetLogger.Debug('Sessão iniciada com usuário: ' + Format('%d %s', [aUser.id, aUser.login]));
 
-  if Assigned(Self.loggedUser) then
-    Self.loggedUser.Free;
+  if Assigned(loggedUser) then
+    loggedUser.Free;
 
-  Self.loggedUser := aUser;
+  loggedUser := aUser;
 end;
 
 end.

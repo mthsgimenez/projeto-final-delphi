@@ -94,7 +94,7 @@ procedure TformMenu.FormCreate(Sender: TObject);
 var
   user: TUserModel;
 begin
-  user := TSession.GetInstance.GetUser;
+  user := TSession.GetUser;
 
   if Assigned(user.permissionGroup) then begin
     Self.panelPermissions.Visible := user.permissionGroup.hasPermission(USERS_PERMISSIONS)
