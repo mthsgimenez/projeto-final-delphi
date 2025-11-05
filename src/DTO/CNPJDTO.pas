@@ -9,6 +9,7 @@ type TCNPJDTO = record
   cep: String;
   phone: String;
   email: String;
+  status: String;
 end;
 
 implementation
