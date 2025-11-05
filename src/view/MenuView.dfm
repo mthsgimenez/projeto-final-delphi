@@ -25,8 +25,16 @@ object formMenu: TformMenu
     Align = alClient
     BevelOuter = bvNone
     Caption = 'panelContainer'
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -12
+    Font.Name = 'Segoe UI'
+    Font.Style = []
+    ParentFont = False
     ShowCaption = False
     TabOrder = 0
+    ExplicitLeft = 45
+    ExplicitTop = -5
   end
   object panelMenu: TPanel
     AlignWithMargins = True
@@ -69,6 +77,38 @@ object formMenu: TformMenu
       Width = 250
       Height = 3
       Pen.Style = psClear
+    end
+    object labelUsername: TLabel
+      Left = 60
+      Top = 518
+      Width = 7
+      Height = 32
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clSnow
+      Font.Height = -24
+      Font.Name = 'Segoe UI'
+      Font.Style = []
+      ParentFont = False
+    end
+    object imgLogout: TImage
+      Left = 7
+      Top = 518
+      Width = 36
+      Height = 36
+      Center = True
+      Picture.Data = {
+        0D54536B537667477261706869633C73766720786D6C6E733D22687474703A2F
+        2F7777772E77332E6F72672F323030302F73766722206865696768743D223234
+        7078222076696577426F783D2230202D39363020393630203936302220776964
+        74683D2232347078222066696C6C3D2223464646464646223E3C706174682064
+        3D224D3230302D313230712D333320302D35362E352D32332E35543132302D32
+        3030762D35363071302D33332032332E352D35362E35543230302D3834306832
+        3830763830483230307635363068323830763830483230305A6D3434302D3136
+        302D35352D3538203130322D31303248333630762D3830683332374C3538352D
+        3632326C35352D353820323030203230302D323030203230305A222F3E3C2F73
+        76673E}
+      Stretch = True
+      OnClick = imgLogoutClick
     end
     object panelUser: TPanel
       Left = 0

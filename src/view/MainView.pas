@@ -17,6 +17,7 @@ type
     activeForm: TForm;
     procedure OnLogin(user: TUserModel);
     procedure OpenForm(aForm: TForm);
+    procedure OnLogout;
   end;
 
 var
@@ -105,7 +106,19 @@ begin
   TLogger.GetLogger.Info('Login realizado: ' + TSession.GetInstance.GetUser.login);
 
   menuForm := TformMenu.Create(Self.panelMain, closedWidth, openWidth);
+  menuForm.setLogoutCallback(Self.OnLogout);
   Self.OpenForm(menuForm);
+end;
+
+procedure TformMain.OnLogout;
+var
+  loginForm: TformLogin;
+begin
+  if Assigned(Self.activeForm) then
+    Self.activeForm.Free;
+
+  loginForm := TformLogin.Create(Self.panelMain, Self.OnLogin);
+  Self.OpenForm(loginForm);
 end;
 
 end.

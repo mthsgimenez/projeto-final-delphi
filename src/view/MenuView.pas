@@ -8,6 +8,8 @@ uses
   Vcl.Imaging.pngimage, UserView, Vcl.Skia, PermissionsView, Session, Permissions, UserModel;
 
 type
+  TLogoutCallback = procedure of object;
+
   TformMenu = class(TForm)
     panelContainer: TPanel;
     panelMenu: TPanel;
@@ -21,11 +23,15 @@ type
     imgPermissions: TImage;
     labelPermissions: TLabel;
     buttonPermissions: TSpeedButton;
+    labelUsername: TLabel;
+    imgLogout: TImage;
     procedure imgMenuClick(Sender: TObject);
     procedure buttonUserMenuClick(Sender: TObject);
     procedure buttonPermissionsClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
+    procedure imgLogoutClick(Sender: TObject);
   private
+    logoutCallback: TLogoutCallback;
     openWidth: Integer;
     closedWidth: Integer;
     isMenuOpen: Boolean;
@@ -33,7 +39,9 @@ type
     procedure ToggleMenu;
     procedure ChangeForm(aForm: TFormClass);
   public
+    procedure setLogoutCallback(aCallback: TLogoutCallback);
     constructor Create(AOwner: TComponent; closedWidth: Integer; openWidth: Integer); reintroduce;
+    destructor Destroy; override;
   end;
 
 var
@@ -76,6 +84,12 @@ begin
   Self.panelMenu.Width := Self.closedWidth;
 end;
 
+destructor TformMenu.Destroy;
+begin
+  Self.activeForm.Free;
+  inherited;
+end;
+
 procedure TformMenu.FormCreate(Sender: TObject);
 var
   user: TUserModel;
@@ -87,11 +101,23 @@ begin
   end else begin
     Self.panelPermissions.Visible := False;
   end;
+
+  Self.labelUsername.Caption := user.login;
+end;
+
+procedure TformMenu.imgLogoutClick(Sender: TObject);
+begin
+  Self.logoutCallback;
 end;
 
 procedure TformMenu.imgMenuClick(Sender: TObject);
 begin
   Self.ToggleMenu;
+end;
+
+procedure TformMenu.setLogoutCallback(aCallback: TLogoutCallback);
+begin
+  Self.logoutCallback := aCallback;
 end;
 
 procedure TformMenu.ToggleMenu;

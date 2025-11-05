@@ -207,14 +207,20 @@
         <DCCReference Include="src\controller\StorageController.pas"/>
         <DCCReference Include="src\DTO\StorageDTO.pas"/>
         <DCCReference Include="src\DAO\interface\StorageDAOInterface.pas">
-            <Form>$R *.res</Form>
+            <Form>,
+  SupplierModel in &apos;src\model\SupplierModel.pas&apos;,
+  CNPJ in &apos;src\model\CNPJ.pas&apos;,
+  CNPJApiInterface in &apos;src\DAO\interface\CNPJApiInterface.pas&apos;,
+  CNPJDTO in &apos;src\DTO\CNPJDTO.pas&apos;,
+  ImplCnpja in &apos;src\DAO\implementation\ImplCnpja.pas&apos;;
+
+{$R *.res</Form>
         </DCCReference>
-        <DCCReference Include="src\DAO\implementation\SupplierDAO.pas"/>
         <DCCReference Include="src\model\SupplierModel.pas"/>
         <DCCReference Include="src\model\CNPJ.pas"/>
         <DCCReference Include="src\DAO\interface\CNPJApiInterface.pas"/>
         <DCCReference Include="src\DTO\CNPJDTO.pas"/>
-        <DCCReference Include="src\DAO\implementation\CNPJApi_cnpja.pas"/>
+        <DCCReference Include="src\DAO\implementation\ImplCnpja.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

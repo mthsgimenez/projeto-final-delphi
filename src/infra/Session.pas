@@ -27,7 +27,8 @@ end;
 
 destructor TSession.Destroy;
 begin
-  Self.loggedUser.Free;
+  if Assigned(Self.loggedUser) then
+    Self.loggedUser.Free;
   inherited Destroy;
 end;
 
@@ -47,6 +48,9 @@ end;
 procedure TSession.setUser(aUser: TUserModel);
 begin
   TLogger.GetLogger.Debug('Sessão iniciada com usuário: ' + Format('%d %s', [aUser.id, aUser.login]));
+
+  if Assigned(Self.loggedUser) then
+    Self.loggedUser.Free;
 
   Self.loggedUser := aUser;
 end;

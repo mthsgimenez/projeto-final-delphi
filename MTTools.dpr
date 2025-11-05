@@ -42,12 +42,11 @@ uses
   StorageController in 'src\controller\StorageController.pas',
   StorageDTO in 'src\DTO\StorageDTO.pas',
   StorageDAOInterface in 'src\DAO\interface\StorageDAOInterface.pas',
-  SupplierDAO in 'src\DAO\implementation\SupplierDAO.pas',
   SupplierModel in 'src\model\SupplierModel.pas',
   CNPJ in 'src\model\CNPJ.pas',
   CNPJApiInterface in 'src\DAO\interface\CNPJApiInterface.pas',
   CNPJDTO in 'src\DTO\CNPJDTO.pas',
-  CNPJApi_cnpja in 'src\DAO\implementation\CNPJApi_cnpja.pas';
+  ImplCnpja in 'src\DAO\implementation\ImplCnpja.pas';
 
 {$R *.res}
 
