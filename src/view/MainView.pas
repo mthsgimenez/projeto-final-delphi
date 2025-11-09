@@ -15,6 +15,7 @@ type
   private
     configController: TConfigController;
     activeForm: TForm;
+    procedure FreeResources;
     procedure OnLogin(user: TUserModel);
     procedure OpenForm(aForm: TForm);
     procedure OnLogout;
@@ -37,14 +38,7 @@ end;
 
 procedure TformMain.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
-  TLogger.GetLogger.Debug('Encerrando o sistema');
-  TLogger.GetLogger.Free;
-  TMessageHelper.GetInstance.Free;
-  if TSession.GetUser <> nil then
-    TSession.GetUser.Free;
-  TDependencies.GetInstance.Free;
-  Self.configController.Free;
-  Self.activeForm.Free;
+  Self.FreeResources;
 end;
 
 procedure TformMain.FormCreate(Sender: TObject);
@@ -68,7 +62,7 @@ begin
     Self.configController.LoadDBConfig;
   except
     on e: Exception do begin
-      ShowMessage(e.Message);
+      TMessageHelper.GetInstance.Error('Não foi possível carregar o arquivo de configuração do sistema');
 
       TLogger.GetLogger.Warn('Não foi possível carregar a configuração, exibindo formulário para configuração manual');
       configForm := TformDBConfig.Create(Self.configController, Self);
@@ -83,8 +77,21 @@ begin
     Self.OpenForm(loginForm);
   end else begin
     TLogger.GetLogger.Warn('Encerrando o sistema pois não foi possível se conectar ao banco');
+    Self.FreeResources;
     Application.Terminate;
   end;
+end;
+
+procedure TformMain.FreeResources;
+begin
+  TLogger.GetLogger.Debug('Encerrando o sistema');
+  TLogger.GetLogger.Free;
+  TMessageHelper.GetInstance.Free;
+  if TSession.GetUser <> nil then
+    TSession.GetUser.Free;
+  TDependencies.GetInstance.Free;
+  Self.configController.Free;
+  Self.activeForm.Free;
 end;
 
 procedure TformMain.OnLogin(user: TUserModel);
