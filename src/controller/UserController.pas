@@ -31,8 +31,6 @@ function TUserController.CreateUser(aUser: TUserDTO): TUserModel;
 var
   user: TUserModel;
 begin
-  Result := nil;
-
   user := TUserModel.Create;
   try
     user.name := aUser.name;

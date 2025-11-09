@@ -97,7 +97,7 @@ begin
   user := TSession.GetUser;
 
   if Assigned(user.permissionGroup) then begin
-    Self.panelPermissions.Visible := user.permissionGroup.hasPermission(USERS_PERMISSIONS)
+    Self.panelPermissions.Visible := user.permissionGroup.hasPermission(GROUP_PERMISSIONS)
   end else begin
     Self.panelPermissions.Visible := False;
   end;
