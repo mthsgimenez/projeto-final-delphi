@@ -46,6 +46,8 @@ procedure TConfigController.LoadDBConfig;
 var
   config: TDBConfigModel;
 begin
+  config := nil;
+
   try
     try
       config := Self.repository.Get;
@@ -54,8 +56,7 @@ begin
       raise;
     end;
   finally
-    if Assigned(config) then
-      config.Free;
+    config.Free;
   end;
 end;
 
