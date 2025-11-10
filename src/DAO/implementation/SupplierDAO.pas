@@ -4,7 +4,7 @@ interface
 
 uses
   DAOBase, SupplierDAOInterface, SupplierModel, DBHelper, CNPJ,
-  System.Generics.Collections, System.SysUtils, Data.DB;
+  System.Generics.Collections, System.SysUtils, Data.DB, System.StrUtils;
 
 type
   TSupplierDAO = class(TDAOBase, ISupplierDAO)
@@ -45,9 +45,15 @@ begin
   Self.Query.SQL.Text := Format(
     'INSERT INTO suppliers(trade_name, legal_name, cnpj, cep, email, phone) ' +
     'VALUES (%s, %s, %s, %s, %s, %s) RETURNING *',
-    [QuotedStr(aSupplier.tradeName), QuotedStr(aSupplier.legalName),
-     QuotedStr(aSupplier.CNPJ.getCNPJ), QuotedStr(aSupplier.CEP),
-     QuotedStr(aSupplier.email), QuotedStr(aSupplier.phone)]
+    [
+      QuotedStr(aSupplier.tradeName),
+      QuotedStr(aSupplier.legalName),
+      QuotedStr(aSupplier.CNPJ.getCNPJ),
+      QuotedStr(aSupplier.CEP),
+      IfThen(aSupplier.email = '', 'NULL', QuotedStr(aSupplier.email)),
+      IfThen(aSupplier.phone = '', 'NULL', QuotedStr(aSupplier.phone)),
+      aSupplier.id
+    ]
   );
 
   helper := TDBHelper.Create;
@@ -150,9 +156,15 @@ begin
   Self.Query.SQL.Text := Format(
     'UPDATE suppliers SET trade_name = %s, legal_name = %s, cnpj = %s, cep = %s, ' +
     'email = %s, phone = %s WHERE id = %d RETURNING *',
-    [QuotedStr(aSupplier.tradeName), QuotedStr(aSupplier.legalName),
-     QuotedStr(aSupplier.CNPJ.getCNPJ), QuotedStr(aSupplier.CEP),
-     QuotedStr(aSupplier.email), QuotedStr(aSupplier.phone), aSupplier.id]
+    [
+      QuotedStr(aSupplier.tradeName),
+      QuotedStr(aSupplier.legalName),
+      QuotedStr(aSupplier.CNPJ.getCNPJ),
+      QuotedStr(aSupplier.CEP),
+      IfThen(aSupplier.email = '', 'NULL', QuotedStr(aSupplier.email)),
+      IfThen(aSupplier.phone = '', 'NULL', QuotedStr(aSupplier.phone)),
+      aSupplier.id
+    ]
   );
 
   helper := TDBHelper.Create;
