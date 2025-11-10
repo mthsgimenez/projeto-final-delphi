@@ -203,6 +203,9 @@
         <DCCReference Include="src\controller\SupplierController.pas"/>
         <DCCReference Include="src\DAO\interface\SupplierDAOInterface.pas"/>
         <DCCReference Include="src\DTO\SupplierDTO.pas"/>
+        <DCCReference Include="src\model\ToolTypeModel.pas"/>
+        <DCCReference Include="src\DAO\interface\ToolTypeDAOInterface.pas"/>
+        <DCCReference Include="src\DAO\implementation\ToolTypeDAO.pas"/>
         <DCCReference Include="src\view\LoginView.pas">
             <Form>formLogin</Form>
         </DCCReference>
