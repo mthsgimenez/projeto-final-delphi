@@ -8,7 +8,10 @@ type TPermissions = (
     USERS_CREATE = 1,
     USERS_UPDATE = 2,
     USERS_DELETE = 3,
-    GROUP_PERMISSIONS = 4
+    GROUP_PERMISSIONS = 4,
+    SUPPLIERS_CREATE = 5,
+    SUPPLIERS_UPDATE = 6,
+    SUPPLIERS_DELETE = 7
 );
 
 type TPermissionsSet = set of TPermissions;

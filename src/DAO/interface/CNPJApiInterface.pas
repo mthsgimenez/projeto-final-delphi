@@ -2,10 +2,10 @@ unit CNPJAPIInterface;
 
 interface
 
-uses CNPJDTO;
+uses SupplierDTO;
 
 type ICNPJApi = interface
-  function SearchCNPJ(aCNPJ: String): TCNPJDTO;
+  function SearchCNPJ(aCNPJ: String): TSupplierDTO;
 end;
 
 implementation

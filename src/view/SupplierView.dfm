@@ -10,6 +10,7 @@ object formSupplier: TformSupplier
   Font.Height = -12
   Font.Name = 'Segoe UI'
   Font.Style = []
+  OnCreate = FormCreate
   TextHeight = 15
   object pcontrolSupplier: TPageControl
     AlignWithMargins = True
@@ -21,46 +22,56 @@ object formSupplier: TformSupplier
     Margins.Top = 0
     Margins.Right = 0
     Margins.Bottom = 0
-    ActivePage = tabCreate
+    ActivePage = tabView
     Align = alClient
     TabOrder = 0
     object tabView: TTabSheet
       Caption = 'tabList'
       TabVisible = False
+      OnShow = tabViewShow
       object gridSuppliers: TStringGrid
         Left = 32
         Top = 24
         Width = 657
-        Height = 441
+        Height = 425
         BevelInner = bvNone
         BevelOuter = bvNone
         BorderStyle = bsNone
+        ColCount = 6
+        FixedCols = 0
         TabOrder = 0
         OnDrawCell = gridSuppliersDrawCell
+        OnSelectCell = gridSuppliersSelectCell
       end
       object buttonCreate: TButton
         Left = 32
-        Top = 495
+        Top = 487
         Width = 145
         Height = 45
         Caption = 'Cadastrar fornecedor'
         TabOrder = 1
+        Visible = False
+        OnClick = buttonCreateClick
       end
       object buttonDelete: TButton
         Left = 544
-        Top = 495
+        Top = 487
         Width = 145
         Height = 45
         Caption = 'Excluir fornecedor'
         TabOrder = 2
+        Visible = False
+        OnClick = buttonDeleteClick
       end
       object buttonEdit: TButton
         Left = 288
-        Top = 495
+        Top = 487
         Width = 145
         Height = 45
         Caption = 'Editar dados fornecedor'
         TabOrder = 3
+        Visible = False
+        OnClick = buttonEditClick
       end
     end
     object tabCreate: TTabSheet
@@ -68,9 +79,9 @@ object formSupplier: TformSupplier
       ImageIndex = 1
       TabVisible = False
       object panelCNPJ: TPanel
-        Left = 136
-        Top = 152
-        Width = 145
+        Left = 16
+        Top = 176
+        Width = 165
         Height = 49
         BevelOuter = bvNone
         Caption = 'panelCNPJ'
@@ -84,7 +95,7 @@ object formSupplier: TformSupplier
           Caption = 'CNPJ:'
         end
         object imgSearch: TImage
-          Left = 111
+          Left = 135
           Top = 22
           Width = 24
           Height = 24
@@ -102,11 +113,12 @@ object formSupplier: TformSupplier
             372E35543338302D373630712D373520302D3132372E352035322E3554323030
             2D35383071302037352035322E35203132372E35543338302D3430305A222F3E
             3C2F7376673E}
+          OnClick = imgSearchClick
         end
-        object MaskEdit1: TMaskEdit
+        object editCNPJ: TMaskEdit
           Left = 8
           Top = 22
-          Width = 97
+          Width = 121
           Height = 23
           EditMask = '99 999 999\/9999\-99;0;_'
           MaxLength = 18
@@ -116,14 +128,144 @@ object formSupplier: TformSupplier
         end
       end
       object panelTradeName: TPanel
-        Left = 376
-        Top = 200
-        Width = 185
-        Height = 41
+        Left = 197
+        Top = 176
+        Width = 193
+        Height = 49
         BevelOuter = bvNone
         Caption = 'panelTradeName'
         ShowCaption = False
         TabOrder = 1
+        object labelTradeName: TLabel
+          Left = 9
+          Top = 3
+          Width = 80
+          Height = 15
+          Caption = 'Nome fantasia:'
+        end
+        object editTradeName: TEdit
+          Left = 8
+          Top = 22
+          Width = 177
+          Height = 23
+          TabOrder = 0
+        end
+      end
+      object panelLegalName: TPanel
+        Left = 408
+        Top = 176
+        Width = 193
+        Height = 49
+        BevelOuter = bvNone
+        Caption = 'panelTradeName'
+        ShowCaption = False
+        TabOrder = 2
+        object labelLegalName: TLabel
+          Left = 9
+          Top = 3
+          Width = 67
+          Height = 15
+          Caption = 'Raz'#227'o social:'
+        end
+        object editLegalName: TEdit
+          Left = 8
+          Top = 22
+          Width = 177
+          Height = 23
+          TabOrder = 0
+        end
+      end
+      object panelEmail: TPanel
+        Left = 197
+        Top = 254
+        Width = 193
+        Height = 49
+        BevelOuter = bvNone
+        Caption = 'panelTradeName'
+        ShowCaption = False
+        TabOrder = 3
+        object labelEmail: TLabel
+          Left = 9
+          Top = 3
+          Width = 32
+          Height = 15
+          Caption = 'Email:'
+        end
+        object editEmail: TEdit
+          Left = 8
+          Top = 22
+          Width = 177
+          Height = 23
+          TabOrder = 0
+        end
+      end
+      object panelCEP: TPanel
+        Left = 621
+        Top = 176
+        Width = 92
+        Height = 49
+        BevelOuter = bvNone
+        Caption = 'panelTradeName'
+        ShowCaption = False
+        TabOrder = 4
+        object labelCEP: TLabel
+          Left = 9
+          Top = 3
+          Width = 24
+          Height = 15
+          Caption = 'CEP:'
+        end
+        object editCEP: TMaskEdit
+          Left = 8
+          Top = 22
+          Width = 73
+          Height = 23
+          TabOrder = 0
+          Text = ''
+        end
+      end
+      object panelPhone: TPanel
+        Left = 408
+        Top = 254
+        Width = 129
+        Height = 49
+        BevelOuter = bvNone
+        Caption = 'panelTradeName'
+        ShowCaption = False
+        TabOrder = 5
+        object labelPhone: TLabel
+          Left = 9
+          Top = 3
+          Width = 29
+          Height = 15
+          Caption = 'Fone:'
+        end
+        object editPhone: TMaskEdit
+          Left = 9
+          Top = 22
+          Width = 112
+          Height = 23
+          TabOrder = 0
+          Text = ''
+        end
+      end
+      object buttonSave: TButton
+        Left = 171
+        Top = 384
+        Width = 145
+        Height = 45
+        Caption = 'Salvar'
+        TabOrder = 6
+        OnClick = buttonSaveClick
+      end
+      object buttonBack: TButton
+        Left = 432
+        Top = 384
+        Width = 145
+        Height = 45
+        Caption = 'Cancelar'
+        TabOrder = 7
+        OnClick = buttonBackClick
       end
     end
   end

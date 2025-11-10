@@ -33,8 +33,6 @@ object formMenu: TformMenu
     ParentFont = False
     ShowCaption = False
     TabOrder = 0
-    ExplicitLeft = 45
-    ExplicitTop = -5
   end
   object panelMenu: TPanel
     AlignWithMargins = True
@@ -261,6 +259,70 @@ object formMenu: TformMenu
         Flat = True
         OnClick = buttonPermissionsClick
         ExplicitTop = -4
+      end
+    end
+    object panelSuppliers: TPanel
+      Left = 0
+      Top = 161
+      Width = 250
+      Height = 50
+      BevelOuter = bvNone
+      Caption = 'panelUser'
+      ShowCaption = False
+      TabOrder = 2
+      object labelSuppliers: TLabel
+        Left = 60
+        Top = 7
+        Width = 144
+        Height = 32
+        Caption = 'Fornecedores'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clSnow
+        Font.Height = -24
+        Font.Name = 'Segoe UI'
+        Font.Style = []
+        ParentFont = False
+      end
+      object imgSuppliers: TImage
+        Left = 7
+        Top = 7
+        Width = 36
+        Height = 36
+        Center = True
+        Picture.Data = {
+          0D54536B537667477261706869633C73766720786D6C6E733D22687474703A2F
+          2F7777772E77332E6F72672F323030302F73766722206865696768743D223234
+          7078222076696577426F783D2230202D39363020393630203936302220776964
+          74683D2232347078222066696C6C3D2223464646464646223E3C706174682064
+          3D224D3234302D313630712D353020302D38352D3335742D33352D3835483430
+          762D34343071302D33332032332E352D35362E35543132302D38303068353630
+          76313630683132306C3132302031363076323030682D383071302035302D3335
+          203835742D3835203335712D353020302D38352D3335742D33352D3835483336
+          3071302035302D3335203835742D38352033355A6D302D383071313720302032
+          382E352D31312E35543238302D32383071302D31372D31312E352D32382E3554
+          3234302D333230712D313720302D32382E352031312E35543230302D32383071
+          302031372031312E352032382E35543234302D3234305A4D3132302D33363068
+          33327131372D31382033392D32397434392D3131713237203020343920313174
+          333920323968323732762D33363048313230763336305A6D3630302031323071
+          313720302032382E352D31312E35543736302D32383071302D31372D31312E35
+          2D32382E35543732302D333230712D313720302D32382E352031312E35543638
+          302D32383071302031372031312E352032382E35543732302D3234305A6D2D34
+          302D323030683137306C2D39302D313230682D3830763132305A4D3336302D35
+          34305A222F3E3C2F7376673E}
+        Stretch = True
+      end
+      object buttonSuppliers: TSpeedButton
+        Left = 0
+        Top = 0
+        Width = 250
+        Height = 50
+        Align = alClient
+        Flat = True
+        OnClick = buttonSuppliersClick
+        ExplicitLeft = 208
+        ExplicitTop = 16
+        ExplicitWidth = 23
+        ExplicitHeight = 22
       end
     end
   end

@@ -2,7 +2,7 @@ unit ImplCnpja;
 
 interface
 
-uses CNPJApiInterface, CNPJDTO, CNPJ,
+uses CNPJApiInterface, SupplierDTO, CNPJ,
   System.SysUtils, System.Classes, IdHTTP, System.JSON, System.JSON.Types, System.Generics.Collections;
 
 type TCNPJA = class(TInterfacedObject, ICNPJApi)
@@ -11,7 +11,7 @@ type TCNPJA = class(TInterfacedObject, ICNPJApi)
   public
     constructor Create;
     destructor Destroy; override;
-    function SearchCNPJ(aCNPJ: String): TCNPJDTO;
+    function SearchCNPJ(aCNPJ: String): TSupplierDTO;
 end;
 
 implementation
@@ -29,7 +29,7 @@ begin
   inherited;
 end;
 
-function TCNPJA.SearchCNPJ(aCNPJ: String): TCNPJDTO;
+function TCNPJA.SearchCNPJ(aCNPJ: String): TSupplierDTO;
 const
   baseUrl = 'https://open.cnpja.com/office/';
 var
@@ -38,11 +38,10 @@ var
   JSONValue: TJSONValue;
   JSONObj: TJSONObject;
   companyObj: TJSONObject;
-  statusObj: TJSONObject;
   addressObj: TJSONObject;
   phonesArray: TJSONArray;
   emailsArray: TJSONArray;
-  CNPJDTO: TCNPJDTO;
+  CNPJDTO: TSupplierDTO;
 begin
   url := baseUrl + aCNPJ;
 
@@ -64,9 +63,6 @@ begin
 
     companyObj := JSONObj.GetValue<TJSONObject>('company');
     CNPJDTO.legalName := companyObj.GetValue<string>('name');
-
-    statusObj := JSONObj.GetValue<TJSONObject>('status');
-    CNPJDTO.status := statusObj.GetValue<string>('text');
 
     addressObj := JSONObj.GetValue<TJSONObject>('address');
     CNPJDTO.cep := addressObj.GetValue<string>('zip');

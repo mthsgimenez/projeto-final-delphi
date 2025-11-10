@@ -3,7 +3,8 @@ unit Dependencies;
 interface
 
 uses PermissionGroupDAOInterface, PermissionGroupDAO, PermissionGroupRepository, PermissionsController,
-  UserDAOInterface, UserDAO, UserRepository, UserController;
+  UserDAOInterface, UserDAO, UserRepository, UserController,
+  SupplierDAOInterface, SupplierDAO, SupplierRepository, SupplierController, CNPJApiInterface, ImplCnpja;
 
 type TDependencies = class
   private
@@ -15,14 +16,22 @@ type TDependencies = class
     permissionRepository: TPermissionGroupRepository;
     permissionController: TPermissionController;
 
+    cnpjApi: ICNPJApi;
+
+    supplierDAO: ISupplierDAO;
+    supplierRepository: TSupplierRepository;
+    supplierController: TSupplierController;
+
     procedure CreateUserRepository;
     procedure CreatePermissionRepository;
+    procedure CreateSupplierRepository;
 
     class var instance: TDependencies;
     constructor Create;
   public
     function GetUserController: TUserController;
     function GetPermissionController: TPermissionController;
+    function GetSupplierController: TSupplierController;
     class function GetInstance: TDependencies;
     destructor Destroy; override;
 end;
@@ -43,6 +52,18 @@ begin
 
   if not Assigned(Self.permissionRepository) then
     Self.permissionRepository := TPermissionGroupRepository.Create(Self.permissionDAO);
+end;
+
+procedure TDependencies.CreateSupplierRepository;
+begin
+  if not Assigned(Self.supplierDAO) then
+    Self.supplierDAO := TSupplierDAO.Create;
+
+  if not Assigned(Self.cnpjApi) then
+    Self.cnpjApi := TCNPJA.Create;
+
+  if not Assigned(Self.supplierRepository) then
+    Self.supplierRepository := TSupplierRepository.Create(Self.supplierDAO, Self.cnpjApi);
 end;
 
 procedure TDependencies.CreateUserRepository;
@@ -69,6 +90,11 @@ begin
     Self.userRepository.Free;
   end;
 
+  if Assigned(Self.supplierController) then begin
+    Self.supplierController.Free;
+    Self.supplierRepository.Free;
+  end;
+
   inherited;
 end;
 
@@ -92,6 +118,18 @@ begin
   end;
 
   Result := Self.permissionController;
+end;
+
+function TDependencies.GetSupplierController: TSupplierController;
+begin
+  if not Assigned(Self.supplierController) then begin
+    if not Assigned(Self.supplierRepository) then
+      Self.CreateSupplierRepository;
+
+    Self.supplierController := TSupplierController.Create(Self.supplierRepository);
+  end;
+
+  Result := Self.supplierController;
 end;
 
 function TDependencies.GetUserController: TUserController;

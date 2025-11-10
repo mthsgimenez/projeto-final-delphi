@@ -21,7 +21,7 @@ object formPermissions: TformPermissions
     Margins.Top = 0
     Margins.Right = 0
     Margins.Bottom = 0
-    ActivePage = tabList
+    ActivePage = tabCreate
     Align = alClient
     TabOrder = 0
     object tabList: TTabSheet
@@ -48,7 +48,10 @@ object formPermissions: TformPermissions
           'USERS_CREATE'
           'USERS_UPDATE'
           'USERS_DELETE'
-          'USERS_PERMISSIONS')
+          'USERS_PERMISSIONS'
+          'SUPPLIERS_CREATE'
+          'SUPPLIERS_UPDATE'
+          'SUPPLIERS_DELETE')
         TabOrder = 1
       end
       object buttonCreate: TButton
@@ -94,21 +97,21 @@ object formPermissions: TformPermissions
       TabVisible = False
       object labelName: TLabel
         Left = 192
-        Top = 144
+        Top = 48
         Width = 88
         Height = 15
         Caption = 'Nome do grupo:'
       end
       object labelPermissions: TLabel
         Left = 192
-        Top = 211
+        Top = 115
         Width = 114
         Height = 15
         Caption = 'Permiss'#245'es do grupo:'
       end
       object editName: TEdit
         Left = 192
-        Top = 165
+        Top = 69
         Width = 121
         Height = 23
         TabOrder = 0
@@ -116,20 +119,23 @@ object formPermissions: TformPermissions
       end
       object listPermissions: TCheckListBox
         Left = 192
-        Top = 232
+        Top = 136
         Width = 305
-        Height = 89
+        Height = 289
         ItemHeight = 17
         Items.Strings = (
           'USERS_CREATE'
           'USERS_UPDATE'
           'USERS_DELETE'
-          'USERS_PERMISSIONS')
+          'USERS_PERMISSIONS'
+          'SUPPLIERS_CREATE'
+          'SUPPLIERS_UPDATE'
+          'SUPPLIERS_DELETE')
         TabOrder = 1
       end
       object buttonSave: TButton
         Left = 256
-        Top = 344
+        Top = 472
         Width = 185
         Height = 41
         Caption = 'Salvar'

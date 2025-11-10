@@ -197,8 +197,12 @@
         <DCCReference Include="src\model\SupplierModel.pas"/>
         <DCCReference Include="src\model\CNPJ.pas"/>
         <DCCReference Include="src\DAO\interface\CNPJApiInterface.pas"/>
-        <DCCReference Include="src\DTO\CNPJDTO.pas"/>
         <DCCReference Include="src\DAO\implementation\ImplCnpja.pas"/>
+        <DCCReference Include="src\DAO\implementation\SupplierDAO.pas"/>
+        <DCCReference Include="src\repository\implementation\SupplierRepository.pas"/>
+        <DCCReference Include="src\controller\SupplierController.pas"/>
+        <DCCReference Include="src\DAO\interface\SupplierDAOInterface.pas"/>
+        <DCCReference Include="src\DTO\SupplierDTO.pas"/>
         <DCCReference Include="src\view\LoginView.pas">
             <Form>formLogin</Form>
         </DCCReference>
@@ -223,7 +227,6 @@
         </DCCReference>
         <DCCReference Include="src\view\SupplierView.pas">
             <Form>formSupplier</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
