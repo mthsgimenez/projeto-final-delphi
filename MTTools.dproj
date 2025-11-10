@@ -126,38 +126,16 @@
         <DelphiCompile Include="$(MainSource)">
             <MainSource>MainSource</MainSource>
         </DelphiCompile>
-        <DCCReference Include="src\view\LoginView.pas">
-            <Form>formLogin</Form>
-        </DCCReference>
-        <DCCReference Include="src\infra\DBConnection.pas">
-            <Form>Connection</Form>
-            <DesignClass>TDataModule</DesignClass>
-        </DCCReference>
         <DCCReference Include="src\DTO\DBConfigDTO.pas"/>
         <DCCReference Include="src\controller\ConfigController.pas"/>
-        <DCCReference Include="src\view\MainView.pas">
-            <Form>formMain</Form>
-        </DCCReference>
-        <DCCReference Include="src\view\DBConfigView.pas">
-            <Form>formDBConfig</Form>
-        </DCCReference>
         <DCCReference Include="lib\Bcrypt.pas"/>
         <DCCReference Include="src\util\DBHelper.pas"/>
         <DCCReference Include="src\util\DAOBase.pas"/>
         <DCCReference Include="src\DTO\UserDTO.pas"/>
         <DCCReference Include="src\controller\UserController.pas"/>
-        <DCCReference Include="src\view\UserView.pas">
-            <Form>formUser</Form>
-        </DCCReference>
-        <DCCReference Include="src\view\MenuView.pas">
-            <Form>formMenu</Form>
-        </DCCReference>
         <DCCReference Include="src\infra\Session.pas"/>
         <DCCReference Include="src\util\MessageHelper.pas"/>
         <DCCReference Include="src\infra\Logging.pas"/>
-        <DCCReference Include="src\view\PermissionsView.pas">
-            <Form>formPermissions</Form>
-        </DCCReference>
         <DCCReference Include="src\controller\PermissionsController.pas">
             <Form>DBConfigModel in &apos;src\model\DBConfigModel.pas&apos;,
   PermissionGroupModel in &apos;src\model\PermissionGroupModel.pas&apos;,
@@ -221,6 +199,32 @@
         <DCCReference Include="src\DAO\interface\CNPJApiInterface.pas"/>
         <DCCReference Include="src\DTO\CNPJDTO.pas"/>
         <DCCReference Include="src\DAO\implementation\ImplCnpja.pas"/>
+        <DCCReference Include="src\view\LoginView.pas">
+            <Form>formLogin</Form>
+        </DCCReference>
+        <DCCReference Include="src\infra\DBConnection.pas">
+            <Form>Connection</Form>
+            <DesignClass>TDataModule</DesignClass>
+        </DCCReference>
+        <DCCReference Include="src\view\MainView.pas">
+            <Form>formMain</Form>
+        </DCCReference>
+        <DCCReference Include="src\view\DBConfigView.pas">
+            <Form>formDBConfig</Form>
+        </DCCReference>
+        <DCCReference Include="src\view\UserView.pas">
+            <Form>formUser</Form>
+        </DCCReference>
+        <DCCReference Include="src\view\MenuView.pas">
+            <Form>formMenu</Form>
+        </DCCReference>
+        <DCCReference Include="src\view\PermissionsView.pas">
+            <Form>formPermissions</Form>
+        </DCCReference>
+        <DCCReference Include="src\view\SupplierView.pas">
+            <Form>formSupplier</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

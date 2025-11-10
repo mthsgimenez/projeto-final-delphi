@@ -2,23 +2,16 @@ program MTTools;
 
 uses
   Vcl.Forms,
-  LoginView in 'src\view\LoginView.pas' {formLogin},
-  DBConnection in 'src\infra\DBConnection.pas' {Connection: TDataModule},
   DBConfigDTO in 'src\DTO\DBConfigDTO.pas',
   ConfigController in 'src\controller\ConfigController.pas',
-  MainView in 'src\view\MainView.pas' {formMain},
-  DBConfigView in 'src\view\DBConfigView.pas' {formDBConfig},
   Bcrypt in 'lib\Bcrypt.pas',
   DBHelper in 'src\util\DBHelper.pas',
   DAOBase in 'src\util\DAOBase.pas',
   UserDTO in 'src\DTO\UserDTO.pas',
   UserController in 'src\controller\UserController.pas',
-  UserView in 'src\view\UserView.pas' {formUser},
-  MenuView in 'src\view\MenuView.pas' {formMenu},
   Session in 'src\infra\Session.pas',
   MessageHelper in 'src\util\MessageHelper.pas',
   Logging in 'src\infra\Logging.pas',
-  PermissionsView in 'src\view\PermissionsView.pas' {formPermissions},
   PermissionsController in 'src\controller\PermissionsController.pas',
   DBConfigModel in 'src\model\DBConfigModel.pas',
   PermissionGroupModel in 'src\model\PermissionGroupModel.pas',
@@ -46,7 +39,15 @@ uses
   CNPJ in 'src\model\CNPJ.pas',
   CNPJApiInterface in 'src\DAO\interface\CNPJApiInterface.pas',
   CNPJDTO in 'src\DTO\CNPJDTO.pas',
-  ImplCnpja in 'src\DAO\implementation\ImplCnpja.pas';
+  ImplCnpja in 'src\DAO\implementation\ImplCnpja.pas',
+  LoginView in 'src\view\LoginView.pas' {formLogin},
+  DBConnection in 'src\infra\DBConnection.pas' {Connection: TDataModule},
+  MainView in 'src\view\MainView.pas' {formMain},
+  DBConfigView in 'src\view\DBConfigView.pas' {formDBConfig},
+  UserView in 'src\view\UserView.pas' {formUser},
+  MenuView in 'src\view\MenuView.pas' {formMenu},
+  PermissionsView in 'src\view\PermissionsView.pas' {formPermissions},
+  SupplierView in 'src\view\SupplierView.pas' {formSupplier};
 
 {$R *.res}
 
