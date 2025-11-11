@@ -136,31 +136,7 @@
         <DCCReference Include="src\infra\Session.pas"/>
         <DCCReference Include="src\util\MessageHelper.pas"/>
         <DCCReference Include="src\infra\Logging.pas"/>
-        <DCCReference Include="src\controller\PermissionsController.pas">
-            <Form>DBConfigModel in &apos;src\model\DBConfigModel.pas&apos;,
-  PermissionGroupModel in &apos;src\model\PermissionGroupModel.pas&apos;,
-  Permissions in &apos;src\model\Permissions.pas&apos;,
-  UserModel in &apos;src\model\UserModel.pas&apos;,
-  DBConfigRepositoryJSON in &apos;src\repository\implementation\DBConfigRepositoryJSON.pas&apos;,
-  UserRepository in &apos;src\repository\implementation\UserRepository.pas&apos;,
-  CrudRepositoryInterface in &apos;src\repository\interface\CrudRepositoryInterface.pas&apos;,
-  PermissionGroupDTO in &apos;src\DTO\PermissionGroupDTO.pas&apos;,
-  DBConfigModel in &apos;src\model\DBConfigModel.pas&apos;,
-  PermissionGroupModel in &apos;src\model\PermissionGroupModel.pas&apos;,
-  Permissions in &apos;src\model\Permissions.pas&apos;,
-  UserModel in &apos;src\model\UserModel.pas&apos;,
-  DBConfigRepositoryJSON in &apos;src\repository\implementation\DBConfigRepositoryJSON.pas&apos;,
-  UserRepository in &apos;src\repository\implementation\UserRepository.pas&apos;,
-  CrudRepositoryInterface in &apos;src\repository\interface\CrudRepositoryInterface.pas&apos;,
-  DBConfigRepositoryInterface in &apos;src\repository\interface\DBConfigRepositoryInterface.pas&apos;,
-  DAOInterface in &apos;src\DAO\interface\DAOInterface.pas&apos;,
-  PermissionGroupDAO in &apos;src\DAO\implementation\PermissionGroupDAO.pas&apos;,
-  UserDAO in &apos;src\DAO\implementation\UserDAO.pas&apos;,
-  PermissionGroupRepository in &apos;src\repository\implementation\PermissionGroupRepository.pas&apos;,
-  Vcl.Styles;
-
-{$R *.res</Form>
-        </DCCReference>
+        <DCCReference Include="src\controller\PermissionsController.pas"/>
         <DCCReference Include="src\model\DBConfigModel.pas"/>
         <DCCReference Include="src\model\PermissionGroupModel.pas"/>
         <DCCReference Include="src\model\Permissions.pas"/>
@@ -176,24 +152,13 @@
         <DCCReference Include="src\repository\implementation\PermissionGroupRepository.pas"/>
         <DCCReference Include="src\DAO\interface\UserDAOInterface.pas"/>
         <DCCReference Include="src\DAO\interface\PermissionGroupDAOInterface.pas"/>
-        <DCCReference Include="src\infra\Dependencies.pas">
-            <Form>$R *.res</Form>
-        </DCCReference>
+        <DCCReference Include="src\infra\Dependencies.pas"/>
         <DCCReference Include="src\DAO\implementation\StorageDAO.pas"/>
         <DCCReference Include="src\model\StorageModel.pas"/>
         <DCCReference Include="src\repository\implementation\StorageRepository.pas"/>
         <DCCReference Include="src\controller\StorageController.pas"/>
         <DCCReference Include="src\DTO\StorageDTO.pas"/>
-        <DCCReference Include="src\DAO\interface\StorageDAOInterface.pas">
-            <Form>,
-  SupplierModel in &apos;src\model\SupplierModel.pas&apos;,
-  CNPJ in &apos;src\model\CNPJ.pas&apos;,
-  CNPJApiInterface in &apos;src\DAO\interface\CNPJApiInterface.pas&apos;,
-  CNPJDTO in &apos;src\DTO\CNPJDTO.pas&apos;,
-  ImplCnpja in &apos;src\DAO\implementation\ImplCnpja.pas&apos;;
-
-{$R *.res</Form>
-        </DCCReference>
+        <DCCReference Include="src\DAO\interface\StorageDAOInterface.pas"/>
         <DCCReference Include="src\model\SupplierModel.pas"/>
         <DCCReference Include="src\model\CNPJ.pas"/>
         <DCCReference Include="src\DAO\interface\CNPJApiInterface.pas"/>
@@ -206,6 +171,9 @@
         <DCCReference Include="src\model\ToolTypeModel.pas"/>
         <DCCReference Include="src\DAO\interface\ToolTypeDAOInterface.pas"/>
         <DCCReference Include="src\DAO\implementation\ToolTypeDAO.pas"/>
+        <DCCReference Include="src\repository\implementation\ToolTypeRepository.pas"/>
+        <DCCReference Include="src\controller\ToolTypeController.pas"/>
+        <DCCReference Include="src\DTO\ToolTypeDTO.pas"/>
         <DCCReference Include="src\view\LoginView.pas">
             <Form>formLogin</Form>
         </DCCReference>
@@ -230,6 +198,9 @@
         </DCCReference>
         <DCCReference Include="src\view\SupplierView.pas">
             <Form>formSupplier</Form>
+        </DCCReference>
+        <DCCReference Include="src\view\ToolTypeView.pas">
+            <Form>formToolType</Form>
         </DCCReference>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>

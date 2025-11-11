@@ -14,6 +14,7 @@ type
     function SelectAll(): TObjectList<TSupplier>;
     function Update(aSupplier: TSupplier): TSupplier;
     function DeleteById(aSupplierId: Integer): Boolean;
+    function SelectByToolTypeId(aToolTypeId: Integer): TSupplier;
   end;
 
 implementation
@@ -63,8 +64,7 @@ begin
 
     Self.Query.Open();
 
-    if not Self.Query.IsEmpty then
-    begin
+    if not Self.Query.IsEmpty then begin
       supplier := TSupplier.Create;
       supplier.id := Self.Query.FieldByName('id').AsInteger;
       supplier.tradeName := Self.Query.FieldByName('trade_name').AsString;
@@ -92,8 +92,39 @@ begin
   try
     Self.Query.Open();
 
-    if not Self.Query.IsEmpty then
-    begin
+    if not Self.Query.IsEmpty then begin
+      supplier := TSupplier.Create;
+      supplier.id := Self.Query.FieldByName('id').AsInteger;
+      supplier.tradeName := Self.Query.FieldByName('trade_name').AsString;
+      supplier.legalName := Self.Query.FieldByName('legal_name').AsString;
+      supplier.CNPJ := TCNPJ.Create(Self.Query.FieldByName('cnpj').AsString);
+      supplier.CEP := Self.Query.FieldByName('cep').AsString;
+      supplier.email := Self.Query.FieldByName('email').AsString;
+      supplier.phone := Self.Query.FieldByName('phone').AsString;
+
+      Result := supplier;
+    end;
+  finally
+    Self.Query.Close;
+  end;
+end;
+
+function TSupplierDAO.SelectByToolTypeId(aToolTypeId: Integer): TSupplier;
+var
+  supplier: TSupplier;
+begin
+  Result := nil;
+
+  Self.Query.SQL.Text := Format(
+    'SELECT s.* FROM tools_models AS t JOIN suppliers AS s ' +
+    'ON t.id_supplier = s.id WHERE t.id = %d',
+    [aToolTypeId]
+  );
+
+  try
+    Self.Query.Open();
+
+    if not Self.Query.IsEmpty then begin
       supplier := TSupplier.Create;
       supplier.id := Self.Query.FieldByName('id').AsInteger;
       supplier.tradeName := Self.Query.FieldByName('trade_name').AsString;
@@ -121,13 +152,11 @@ begin
   try
     Self.Query.Open;
 
-    if not Self.Query.IsEmpty then
-    begin
+    if not Self.Query.IsEmpty then begin
       suppliers := TObjectList<TSupplier>.Create;
       Result := suppliers;
 
-      while not Self.Query.Eof do
-      begin
+      while not Self.Query.Eof do begin
         supplier := TSupplier.Create;
         supplier.id := Self.Query.FieldByName('id').AsInteger;
         supplier.tradeName := Self.Query.FieldByName('trade_name').AsString;
@@ -174,8 +203,7 @@ begin
 
     Self.Query.Open();
 
-    if not Self.Query.IsEmpty then
-    begin
+    if not Self.Query.IsEmpty then begin
       supplier := TSupplier.Create;
       supplier.id := Self.Query.FieldByName('id').AsInteger;
       supplier.tradeName := Self.Query.FieldByName('trade_name').AsString;

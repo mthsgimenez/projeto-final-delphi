@@ -4,7 +4,8 @@ interface
 
 uses PermissionGroupDAOInterface, PermissionGroupDAO, PermissionGroupRepository, PermissionsController,
   UserDAOInterface, UserDAO, UserRepository, UserController,
-  SupplierDAOInterface, SupplierDAO, SupplierRepository, SupplierController, CNPJApiInterface, ImplCnpja;
+  SupplierDAOInterface, SupplierDAO, SupplierRepository, SupplierController, CNPJApiInterface, ImplCnpja,
+  ToolTypeDAOInterface, ToolTypeDAO, ToolTypeRepository, ToolTypeController;
 
 type TDependencies = class
   private
@@ -22,9 +23,14 @@ type TDependencies = class
     supplierRepository: TSupplierRepository;
     supplierController: TSupplierController;
 
+    toolTypeDAO: IToolTypeDAO;
+    toolTypeRepository: TToolTypeRepository;
+    toolTypeController: TToolTypeController;
+
     procedure CreateUserRepository;
     procedure CreatePermissionRepository;
     procedure CreateSupplierRepository;
+    procedure CreateToolTypeRepository;
 
     class var instance: TDependencies;
     constructor Create;
@@ -32,6 +38,8 @@ type TDependencies = class
     function GetUserController: TUserController;
     function GetPermissionController: TPermissionController;
     function GetSupplierController: TSupplierController;
+    function GetToolTypeController: TToolTypeController;
+
     class function GetInstance: TDependencies;
     destructor Destroy; override;
 end;
@@ -66,6 +74,18 @@ begin
     Self.supplierRepository := TSupplierRepository.Create(Self.supplierDAO, Self.cnpjApi);
 end;
 
+procedure TDependencies.CreateToolTypeRepository;
+begin
+  if not Assigned(Self.supplierDAO) then
+    Self.supplierDAO := TSupplierDAO.Create;
+
+  if not Assigned(Self.toolTypeDAO) then
+    Self.toolTypeDAO := TToolTypeDAO.Create;
+
+  if not Assigned(Self.toolTypeRepository) then
+    Self.toolTypeRepository := TToolTypeRepository.Create(Self.toolTypeDAO, Self.supplierDAO);
+end;
+
 procedure TDependencies.CreateUserRepository;
 begin
   if not Assigned(Self.userDAO) then
@@ -80,21 +100,15 @@ end;
 
 destructor TDependencies.Destroy;
 begin
-  if Assigned(Self.permissionController) then begin
-    Self.permissionController.Free;
-    Self.permissionRepository.Free;
-  end;
+  if Assigned(Self.userController) then Self.userController.Free;
+  if Assigned(Self.permissionController) then Self.permissionController.Free;
+  if Assigned(Self.supplierController) then Self.supplierController.Free;
+  if Assigned(Self.toolTypeController) then Self.toolTypeController.Free;
 
-  if Assigned(Self.userController) then begin
-    Self.userController.Free;
-    Self.userRepository.Free;
-  end;
-
-  if Assigned(Self.supplierController) then begin
-    Self.supplierController.Free;
-    Self.supplierRepository.Free;
-  end;
-
+  if Assigned(Self.userRepository) then Self.userRepository.Free;
+  if Assigned(Self.permissionRepository) then Self.permissionRepository.Free;
+  if Assigned(Self.supplierRepository) then Self.supplierRepository.Free;
+  if Assigned(Self.toolTypeRepository) then Self.toolTypeRepository.Free;
   inherited;
 end;
 
@@ -130,6 +144,21 @@ begin
   end;
 
   Result := Self.supplierController;
+end;
+
+function TDependencies.GetToolTypeController: TToolTypeController;
+begin
+  if not Assigned(Self.toolTypeController) then begin
+    if not Assigned(Self.toolTypeRepository) then
+      Self.CreateToolTypeRepository;
+
+    if not Assigned(Self.supplierRepository) then
+      Self.CreateSupplierRepository;
+
+    Self.toolTypeController := TToolTypeController.Create(Self.toolTypeRepository, Self.supplierRepository);
+  end;
+
+  Result := Self.toolTypeController;
 end;
 
 function TDependencies.GetUserController: TUserController;
