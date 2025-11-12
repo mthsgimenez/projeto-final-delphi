@@ -6,21 +6,52 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ComCtrls, Vcl.ExtCtrls, Vcl.StdCtrls,
   Vcl.Grids, Vcl.Imaging.jpeg, Vcl.Imaging.pngimage, System.Generics.Collections,
-  ToolTypeModel, ToolTypeController, ToolTypeDTO, Dependencies;
+  ToolTypeModel, ToolTypeController, ToolTypeDTO, Dependencies, Vcl.Buttons,
+  Vcl.Skia, SupplierController, SupplierModel, MessageHelper;
 
 type
   TformToolType = class(TForm)
     pcontrolToolType: TPageControl;
-    tabList: TTabSheet;
     tabCreate: TTabSheet;
-    Image1: TImage;
+    tabList: TTabSheet;
+    imageBrokenIcon: TImage;
     gridToolTypes: TStringGrid;
+    labelTitle: TLabel;
+    panelButtonCreate: TPanel;
+    shapeButtonCreate: TShape;
+    buttonCreate: TSpeedButton;
+    editCode: TEdit;
+    editDescription: TEdit;
+    comboSuppliers: TComboBox;
+    buttonSelectImage: TButton;
+    editImage: TEdit;
+    editPrice: TEdit;
+    comboUsage: TComboBox;
+    labelSupplier: TLabel;
+    labelUsage: TLabel;
+    buttonSave: TButton;
+    buttonCancel: TButton;
+    comboFamily: TComboBox;
+    Label1: TLabel;
+    imageDeleteIcon: TImage;
+    imageEditIcon: TImage;
     procedure FormCreate(Sender: TObject);
     procedure gridToolTypesDrawCell(Sender: TObject; ACol, ARow: LongInt;
       Rect: TRect; State: TGridDrawState);
+    procedure buttonCreateClick(Sender: TObject);
+    procedure buttonCancelClick(Sender: TObject);
+    procedure buttonSaveClick(Sender: TObject);
+    procedure gridToolTypesMouseDown(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer);
   private
+    supplierController: TSupplierController;
     toolTypeController: TToolTypeController;
     toolTypes: TObjectList<TToolType>;
+    suppliers: TObjectList<TSupplier>;
+
+    selectedTool: TToolType;
+
+    procedure updateComboSuppliers;
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
@@ -33,34 +64,102 @@ implementation
 
 {$R *.dfm}
 
+procedure TformToolType.buttonCancelClick(Sender: TObject);
+begin
+  Self.pcontrolToolType.ActivePageIndex := 1;
+  Self.selectedTool := nil;
+end;
+
+procedure TformToolType.buttonCreateClick(Sender: TObject);
+begin
+  Self.pcontrolToolType.ActivePageIndex := 0;
+end;
+
+procedure TformToolType.buttonSaveClick(Sender: TObject);
+var
+  data: TToolTypeDTO;
+  price: double;
+  problems: TStringList;
+  newTool: TToolType;
+  supplier: TSupplier;
+begin
+  data.code := Self.editCode.Text;
+  data.description := Self.editDescription.Text;
+  data.family := Self.comboFamily.Text;
+  data.usage := Self.comboUsage.Text;
+  if Self.comboSuppliers.ItemIndex <> -1 then begin
+    supplier := TSupplier(Self.comboSuppliers.Items[Self.comboSuppliers.ItemIndex]);
+    data.id_supplier := supplier.id;
+  end;
+  if not TryStrToFloat(Self.editPrice.Text, price) then begin
+    TMessageHelper.GetInstance.Error('Preço inválido');
+    Exit;
+  end;
+  data.price := Currency(price);
+  data.image := Self.editImage.Text;
+
+  problems := data.Validate;
+  if problems.Count > 0 then begin
+    TMessageHelper.GetInstance.Error(problems.Text);
+    problems.Free;
+    Exit;
+  end;
+  problems.Free;
+
+  if not Assigned(Self.selectedTool) then begin
+    newTool := Self.toolTypeController.CreateToolType(data);
+    if not Assigned(newTool) then begin
+      TMessageHelper.GetInstance.Error('Não foi possível cadastrar a ferramenta');
+      Exit;
+    end;
+
+    Self.toolTypes.Add(newTool);
+    Self.gridToolTypes.RowCount := Self.toolTypes.Count + 1;
+  end;
+end;
+
 constructor TformToolType.Create(AOwner: TComponent);
 begin
   inherited;
   Self.toolTypeController := TDependencies.GetInstance.GetToolTypeController;
+  Self.supplierController := TDependencies.GetInstance.GetSupplierController;
   Self.toolTypes := Self.toolTypeController.GetAll;
+  Self.suppliers := Self.supplierController.GetSuppliers;
+  Self.selectedTool := nil;
 end;
 
 destructor TformToolType.Destroy;
 begin
   Self.toolTypes.Free;
+  Self.suppliers.Free;
   inherited;
 end;
 
 procedure TformToolType.FormCreate(Sender: TObject);
 begin
-  Self.gridToolTypes.ColCount := 3;
-  Self.gridToolTypes.RowCount := 3;
-  Self.gridToolTypes.DefaultRowHeight := 80;
+  Self.gridToolTypes.ColCount := 5;
+  if Assigned(Self.toolTypes) then begin
+    Self.gridToolTypes.RowCount := Self.toolTypes.Count + 1;
+  end else begin
+    Self.gridToolTypes.RowCount := 1;
+  end;
 
+  Self.gridToolTypes.DefaultRowHeight := 80;
   Self.gridToolTypes.RowHeights[0] := 30;
 
   Self.gridToolTypes.ColWidths[0] := 80;
-  Self.gridToolTypes.ColWidths[1] := 325;
-  Self.gridToolTypes.ColWidths[2] := 325;
+  Self.gridToolTypes.ColWidths[1] := 280;
+  Self.gridToolTypes.ColWidths[2] := 280;
+  Self.gridToolTypes.ColWidths[3] := 40;
+  Self.gridToolTypes.ColWidths[4] := 40;
+
+  Self.updateComboSuppliers;
 end;
 
 procedure TformToolType.gridToolTypesDrawCell(Sender: TObject; ACol,
   ARow: LongInt; Rect: TRect; State: TGridDrawState);
+var
+  tool: TToolType;
 begin
   with Self.gridToolTypes.Canvas do
     begin
@@ -81,25 +180,92 @@ begin
       end;
 
       if Assigned(Self.toolTypes) then begin
-        if ARow < Self.toolTypes.Count then begin
-          if ACol = 0 then
-            StretchDraw(Rect, Self.Image1.Picture.Graphic);
+        if ACol = 0 then
+          StretchDraw(Rect, Self.imageBrokenIcon.Picture.Graphic);
+
+        if ARow - 1 < Self.toolTypes.Count then begin
+          tool := Self.toolTypes[ARow - 1];
 
           if ACol = 1 then begin
             Font.Color := clBlack;
             Font.Size := 16;
-            TextOut(Rect.Left + 10, Rect.Top, Self.toolTypes[ARow].code);
+            TextOut(Rect.Left + 10, Rect.Top, tool.code);
 
             Font.Size := 12;
-            TextOut(Rect.Left + 10, Rect.Top + 30, Self.toolTypes[ARow].description);
+            TextOut(Rect.Left + 10, Rect.Top + 30, tool.description);
 
             Font.Color := clGrayText;
             Font.Size := 12;
-            TextOut(Rect.Left + 10, Rect.Top + 54, '(' + Self.toolTypes[ARow].usage + ')');
+            TextOut(Rect.Left + 10, Rect.Top + 54, '(' + tool.usage + ')');
+          end else if ACol = 2 then begin
+            Font.Color := clBlack;
+            Font.Size := 12;
+            TextOut(Rect.Left + 10, Rect.Top + 8, 'Família: ' + tool.family);
+            TextOut(Rect.Left + 10, Rect.Top + 30, 'Fornecedor: ' + tool.supplier.tradeName);
+            TextOut(Rect.Left + 10, Rect.Top + 50, 'Preço: ' + FormatCurr('R$ 0.00', tool.price));
+          end else if ACol = 3 then begin
+            StretchDraw(Rect, Self.imageEditIcon.Picture.Graphic);
+          end else if ACol = 4 then begin
+            StretchDraw(Rect, Self.imageDeleteIcon.Picture.Graphic);
           end;
         end;
       end;
     end;
+end;
+
+procedure TformToolType.gridToolTypesMouseDown(Sender: TObject;
+  Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+var
+  row, col: Integer;
+  tool: TToolType;
+begin
+  Self.gridToolTypes.MouseToCell(X, Y, col, row);
+
+  if row < 1 then Exit;
+
+  try
+    tool := Self.toolTypes[row - 1];
+  except
+    Exit;
+  end;
+
+  if col = 3 then begin
+    Self.selectedTool := tool;
+    Self.pcontrolToolType.ActivePageIndex := 0;
+
+    Self.editCode.Text := tool.code;
+    Self.editDescription.Text := tool.description;
+    Self.editImage.Text := tool.image;
+    Self.editPrice.Text := FormatCurr('0.00', tool.price);
+
+    Exit;
+  end;
+
+  if col = 4 then begin
+    if not TMessageHelper.GetInstance.Confirmation(
+      Format('Deseja mesmo excluir a ferramenta: %s?', [tool.code]))
+    then Exit;
+
+    if Self.toolTypeController.DeleteToolType(tool.id) then begin
+      Self.toolTypes.Remove(tool);
+      Self.gridToolTypes.RowCount := Self.toolTypes.Count + 1;
+      Exit;
+    end;
+
+    TMessageHelper.GetInstance.Error('Não foi possível deletar a ferramenta.');
+  end;
+end;
+
+procedure TformToolType.updateComboSuppliers;
+var
+  supplier: TSupplier;
+begin
+  if Assigned(Self.suppliers) and (Self.suppliers.Count > 0) then begin
+    Self.comboSuppliers.Clear;
+    for supplier in Self.suppliers do begin
+      Self.comboSuppliers.AddItem(supplier.tradeName, supplier);
+    end;
+  end;
 end;
 
 end.
