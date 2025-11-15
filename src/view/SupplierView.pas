@@ -140,6 +140,9 @@ begin
 
     supplier := Self.supplierController.EditSupplier(Self.selectedSupplier.id, data);
 
+    if not Assigned(Self.suppliers) then
+      Self.suppliers := TObjectList<TSupplier>.Create;
+
     Self.suppliers.Remove(Self.selectedSupplier);
     Self.selectedSupplier := nil;
 
@@ -154,6 +157,9 @@ begin
     finally
       errors.Free;
     end;
+
+    if not Assigned(Self.suppliers) then
+      Self.suppliers := TObjectList<TSupplier>.Create;
 
     supplier := Self.supplierController.CreateSupplier(data);
     Self.suppliers.Add(supplier);

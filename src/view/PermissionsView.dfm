@@ -21,7 +21,7 @@ object formPermissions: TformPermissions
     Margins.Top = 0
     Margins.Right = 0
     Margins.Bottom = 0
-    ActivePage = tabCreate
+    ActivePage = tabList
     Align = alClient
     TabOrder = 0
     object tabList: TTabSheet
