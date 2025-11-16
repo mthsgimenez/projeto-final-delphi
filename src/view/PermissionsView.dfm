@@ -134,13 +134,22 @@ object formPermissions: TformPermissions
         TabOrder = 1
       end
       object buttonSave: TButton
-        Left = 256
+        Left = 360
         Top = 472
         Width = 185
         Height = 41
         Caption = 'Salvar'
         TabOrder = 2
         OnClick = buttonSaveClick
+      end
+      object buttonCancel: TButton
+        Left = 145
+        Top = 472
+        Width = 185
+        Height = 41
+        Caption = 'Cancelar'
+        TabOrder = 3
+        OnClick = buttonCancelClick
       end
     end
     object tabUsers: TTabSheet

@@ -250,8 +250,8 @@ object formSupplier: TformSupplier
         end
       end
       object buttonSave: TButton
-        Left = 171
-        Top = 384
+        Left = 376
+        Top = 392
         Width = 145
         Height = 45
         Caption = 'Salvar'
@@ -259,8 +259,8 @@ object formSupplier: TformSupplier
         OnClick = buttonSaveClick
       end
       object buttonBack: TButton
-        Left = 432
-        Top = 384
+        Left = 205
+        Top = 392
         Width = 145
         Height = 45
         Caption = 'Cancelar'

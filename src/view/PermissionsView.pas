@@ -30,6 +30,7 @@ type
     buttonAddUser: TButton;
     buttonBack: TButton;
     comboUsers: TComboBox;
+    buttonCancel: TButton;
     procedure listGroupsClick(Sender: TObject);
     procedure buttonEditClick(Sender: TObject);
     procedure buttonSaveClick(Sender: TObject);
@@ -44,6 +45,7 @@ type
       var CanSelect: Boolean);
     procedure buttonRemoveUserClick(Sender: TObject);
     procedure buttonAddUserClick(Sender: TObject);
+    procedure buttonCancelClick(Sender: TObject);
   private
     selectedUser: TUserModel;
     users: TObjectList<TUserModel>;
@@ -103,6 +105,12 @@ begin
   Self.selectedGroup := nil;
   Self.selectedUser := nil;
   Self.pcontrolPermissions.ActivePage := Self.pcontrolPermissions.Pages[0];
+end;
+
+procedure TformPermissions.buttonCancelClick(Sender: TObject);
+begin
+  Self.pcontrolPermissions.ActivePageIndex := 0;
+  Self.ClearEdits;
 end;
 
 procedure TformPermissions.buttonCreateClick(Sender: TObject);
