@@ -27,6 +27,7 @@ object formToolType: TformToolType
     object tabCreate: TTabSheet
       Caption = 'tabCreate'
       TabVisible = False
+      OnHide = tabCreateHide
       object labelSupplier: TLabel
         Left = 227
         Top = 222
@@ -35,18 +36,46 @@ object formToolType: TformToolType
         Caption = 'Fornecedor:'
       end
       object labelUsage: TLabel
-        Left = 194
-        Top = 259
-        Width = 96
+        Left = 195
+        Top = 260
+        Width = 95
         Height = 15
         Caption = 'Tipo de consumo:'
       end
-      object Label1: TLabel
+      object labelFamily: TLabel
         Left = 249
         Top = 149
         Width = 41
         Height = 15
         Caption = 'Fam'#237'lia:'
+      end
+      object labelPrice: TLabel
+        Left = 257
+        Top = 186
+        Width = 33
+        Height = 15
+        Caption = 'Pre'#231'o:'
+      end
+      object labelImage: TLabel
+        Left = 243
+        Top = 296
+        Width = 47
+        Height = 15
+        Caption = 'Imagem:'
+      end
+      object labelDescription: TLabel
+        Left = 236
+        Top = 111
+        Width = 54
+        Height = 15
+        Caption = 'Descri'#231#227'o:'
+      end
+      object labelCode: TLabel
+        Left = 248
+        Top = 74
+        Width = 42
+        Height = 15
+        Caption = 'C'#243'digo:'
       end
       object editCode: TEdit
         Left = 296
@@ -81,6 +110,7 @@ object formToolType: TformToolType
         Height = 23
         Caption = 'Selecionar'
         TabOrder = 3
+        OnClick = buttonSelectImageClick
       end
       object editImage: TEdit
         Left = 296
@@ -92,12 +122,12 @@ object formToolType: TformToolType
       end
       object editPrice: TEdit
         Left = 296
-        Top = 182
+        Top = 183
         Width = 145
         Height = 23
-        NumbersOnly = True
         TabOrder = 5
         TextHint = 'R$0,00'
+        OnExit = editPriceExit
       end
       object comboUsage: TComboBox
         Left = 296
@@ -237,8 +267,6 @@ object formToolType: TformToolType
         TabOrder = 0
         OnDrawCell = gridToolTypesDrawCell
         OnMouseDown = gridToolTypesMouseDown
-        ExplicitTop = 0
-        ExplicitHeight = 551
       end
       object panelButtonCreate: TPanel
         Left = 538
@@ -287,5 +315,10 @@ object formToolType: TformToolType
         end
       end
     end
+  end
+  object opdialogImage: TOpenDialog
+    Filter = 'Images|*.bmp;*.jpg;*.jpeg;*.png;'
+    Left = 612
+    Top = 270
   end
 end

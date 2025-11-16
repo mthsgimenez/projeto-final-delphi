@@ -32,9 +32,14 @@ type
     buttonSave: TButton;
     buttonCancel: TButton;
     comboFamily: TComboBox;
-    Label1: TLabel;
+    labelFamily: TLabel;
     imageDeleteIcon: TImage;
     imageEditIcon: TImage;
+    opdialogImage: TOpenDialog;
+    labelPrice: TLabel;
+    labelImage: TLabel;
+    labelDescription: TLabel;
+    labelCode: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure gridToolTypesDrawCell(Sender: TObject; ACol, ARow: LongInt;
       Rect: TRect; State: TGridDrawState);
@@ -43,15 +48,21 @@ type
     procedure buttonSaveClick(Sender: TObject);
     procedure gridToolTypesMouseDown(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
+    procedure buttonSelectImageClick(Sender: TObject);
+    procedure editPriceExit(Sender: TObject);
+    procedure tabCreateHide(Sender: TObject);
   private
     supplierController: TSupplierController;
     toolTypeController: TToolTypeController;
     toolTypes: TObjectList<TToolType>;
     suppliers: TObjectList<TSupplier>;
+    images: TDictionary<String, TPicture>;
 
     selectedTool: TToolType;
 
     procedure updateComboSuppliers;
+    procedure clearEdits;
+    procedure getImages;
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
@@ -80,18 +91,24 @@ var
   data: TToolTypeDTO;
   price: double;
   problems: TStringList;
-  newTool: TToolType;
+  newTool, updatedTool: TToolType;
   supplier: TSupplier;
+  unformattedPrice: String;
 begin
   data.code := Self.editCode.Text;
   data.description := Self.editDescription.Text;
   data.family := Self.comboFamily.Text;
   data.usage := Self.comboUsage.Text;
   if Self.comboSuppliers.ItemIndex <> -1 then begin
-    supplier := TSupplier(Self.comboSuppliers.Items[Self.comboSuppliers.ItemIndex]);
+    supplier := TSupplier(Self.comboSuppliers.Items.Objects[Self.comboSuppliers.ItemIndex]);
     data.id_supplier := supplier.id;
   end;
-  if not TryStrToFloat(Self.editPrice.Text, price) then begin
+
+  unformattedPrice := StringReplace(Self.editPrice.Text, 'R$', '', [rfReplaceAll]);
+  unformattedPrice := StringReplace(unformattedPrice, '.', '', [rfReplaceAll]);
+  unformattedPrice := StringReplace(unformattedPrice, ',', '.', [rfReplaceAll]);
+
+  if not TryStrToFloat(unformattedPrice, price) then begin
     TMessageHelper.GetInstance.Error('Preço inválido');
     Exit;
   end;
@@ -113,9 +130,43 @@ begin
       Exit;
     end;
 
+    if not Assigned(Self.toolTypes) then
+      Self.toolTypes := TObjectList<TToolType>.Create;
+
     Self.toolTypes.Add(newTool);
     Self.gridToolTypes.RowCount := Self.toolTypes.Count + 1;
+
+    Self.pcontrolToolType.ActivePageIndex := 1;
+    Exit;
   end;
+
+  updatedTool := Self.toolTypeController.EditToolType(Self.selectedTool.id, data);
+
+  if Assigned(updatedTool) then begin
+    Self.toolTypes.Remove(Self.selectedTool);
+    Self.selectedTool := nil;
+    Self.toolTypes.Add(updatedTool);
+  end;
+
+  Self.pcontrolToolType.ActivePageIndex := 1;
+end;
+
+procedure TformToolType.buttonSelectImageClick(Sender: TObject);
+begin
+  if Self.opdialogImage.Execute then begin
+    Self.editImage.Text := Self.opdialogImage.FileName;
+  end;
+end;
+
+procedure TformToolType.clearEdits;
+begin
+  Self.editCode.Clear;
+  Self.editDescription.Clear;
+  Self.comboFamily.ItemIndex := -1;
+  Self.comboUsage.ItemIndex := -1;
+  Self.comboSuppliers.ItemIndex := -1;
+  Self.editPrice.Clear;
+  Self.editImage.Clear;
 end;
 
 constructor TformToolType.Create(AOwner: TComponent);
@@ -125,14 +176,39 @@ begin
   Self.supplierController := TDependencies.GetInstance.GetSupplierController;
   Self.toolTypes := Self.toolTypeController.GetAll;
   Self.suppliers := Self.supplierController.GetSuppliers;
+  Self.images := TDictionary<String, TPicture>.Create;
   Self.selectedTool := nil;
 end;
 
 destructor TformToolType.Destroy;
+var
+  image: TPicture;
 begin
   Self.toolTypes.Free;
   Self.suppliers.Free;
+  // Dicionário não da free nos objetos contidos nele
+  for image in Self.images.Values do begin
+    image.Free;
+  end;
+  Self.images.Free;
   inherited;
+end;
+
+procedure TformToolType.editPriceExit(Sender: TObject);
+var
+  value: Double;
+  formattedValue: String;
+begin
+  formattedValue := Self.editPrice.Text;
+  formattedValue := StringReplace(formattedValue, ',', '.', [rfReplaceAll]);
+
+  if TryStrToFloat(formattedValue, value) then begin
+    formattedValue := FormatFloat('#,0.00', value);
+    formattedValue := StringReplace(formattedValue, '.', '#', [rfReplaceAll]);
+    formattedValue := StringReplace(formattedValue, ',', '.', [rfReplaceAll]);
+    formattedValue := StringReplace(formattedValue, '#', ',', [rfReplaceAll]);
+    Self.editPrice.Text := 'R$' + formattedValue;
+  end;
 end;
 
 procedure TformToolType.FormCreate(Sender: TObject);
@@ -154,12 +230,32 @@ begin
   Self.gridToolTypes.ColWidths[4] := 40;
 
   Self.updateComboSuppliers;
+  Self.getImages;
+end;
+
+procedure TformToolType.getImages;
+var
+  tool: TToolType;
+  image: TPicture;
+begin
+  for tool in Self.toolTypes do begin
+    if tool.image <> '' then
+      if not Self.images.ContainsKey(tool.image) then begin
+        try
+          image := Self.toolTypeController.LoadImage(tool.image);
+          Self.images.Add(tool.image, image);
+        except
+          continue;
+        end;
+      end;
+  end;
 end;
 
 procedure TformToolType.gridToolTypesDrawCell(Sender: TObject; ACol,
   ARow: LongInt; Rect: TRect; State: TGridDrawState);
 var
   tool: TToolType;
+  image: TPicture;
 begin
   with Self.gridToolTypes.Canvas do
     begin
@@ -180,11 +276,16 @@ begin
       end;
 
       if Assigned(Self.toolTypes) then begin
-        if ACol = 0 then
-          StretchDraw(Rect, Self.imageBrokenIcon.Picture.Graphic);
-
         if ARow - 1 < Self.toolTypes.Count then begin
           tool := Self.toolTypes[ARow - 1];
+
+          if ACol = 0 then begin
+            if Self.images.TryGetValue(tool.image, image) then begin
+              StretchDraw(Rect, image.Graphic);
+            end else begin
+              StretchDraw(Rect, Self.imageBrokenIcon.Picture.Graphic);
+            end;
+          end;
 
           if ACol = 1 then begin
             Font.Color := clBlack;
@@ -218,6 +319,7 @@ procedure TformToolType.gridToolTypesMouseDown(Sender: TObject;
 var
   row, col: Integer;
   tool: TToolType;
+  formattedValue: String;
 begin
   Self.gridToolTypes.MouseToCell(X, Y, col, row);
 
@@ -229,19 +331,27 @@ begin
     Exit;
   end;
 
-  if col = 3 then begin
+  if col = 3 then begin // Edit
     Self.selectedTool := tool;
     Self.pcontrolToolType.ActivePageIndex := 0;
 
     Self.editCode.Text := tool.code;
     Self.editDescription.Text := tool.description;
     Self.editImage.Text := tool.image;
-    Self.editPrice.Text := FormatCurr('0.00', tool.price);
+    Self.comboFamily.ItemIndex := Self.comboFamily.Items.IndexOf(tool.family);
+    Self.comboUsage.ItemIndex := Self.comboUsage.Items.IndexOf(tool.usage);
+    Self.comboSuppliers.ItemIndex := Self.comboSuppliers.Items.IndexOf(tool.supplier.tradeName);
+
+    formattedValue := FormatCurr('#,0.00', tool.price);
+    formattedValue := StringReplace(formattedValue, '.', '#', [rfReplaceAll]);
+    formattedValue := StringReplace(formattedValue, ',', '.', [rfReplaceAll]);
+    formattedValue := StringReplace(formattedValue, '#', ',', [rfReplaceAll]);
+    Self.editPrice.Text := 'R$' + formattedValue;
 
     Exit;
   end;
 
-  if col = 4 then begin
+  if col = 4 then begin // Delete
     if not TMessageHelper.GetInstance.Confirmation(
       Format('Deseja mesmo excluir a ferramenta: %s?', [tool.code]))
     then Exit;
@@ -254,6 +364,11 @@ begin
 
     TMessageHelper.GetInstance.Error('Não foi possível deletar a ferramenta.');
   end;
+end;
+
+procedure TformToolType.tabCreateHide(Sender: TObject);
+begin
+  Self.clearEdits;
 end;
 
 procedure TformToolType.updateComboSuppliers;

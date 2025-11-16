@@ -62,15 +62,24 @@ end;
 
 procedure TConfigController.PrepareDirectory;
 var
-  path: String;
+  configFolderPath, imagesFolderPath: String;
 begin
-  path := TPath.Combine(GetEnvironmentVariable('APPDATA'), 'MTTools');
-  if not TDirectory.Exists(path) then begin
+  imagesFolderPath := TPath.Combine(ExtractFilePath(ParamStr(0)), 'images');
+  configFolderPath := TPath.Combine(GetEnvironmentVariable('APPDATA'), 'MTTools');
+  if not TDirectory.Exists(configFolderPath) then begin
     try
-      TDirectory.CreateDirectory(path);
+      TDirectory.CreateDirectory(configFolderPath);
     except
     on e: Exception do
-      ShowMessage('Erro ao criar diretório do sistema em "' + path + '": ' + e.message);
+      ShowMessage('Erro ao criar diretório do sistema em "' + configFolderPath + '":' + e.message);
+    end;
+  end;
+  if not TDirectory.Exists(imagesFolderPath) then begin
+    try
+      TDirectory.CreateDirectory(imagesFolderPath);
+    except
+    on e: Exception do
+      ShowMessage('Erro ao criar diretório do sistema em "' + imagesFolderPath + '":' + e.message);
     end;
   end;
 end;

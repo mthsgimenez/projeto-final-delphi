@@ -69,7 +69,7 @@ CREATE TABLE tools_models (
 	"usage" varchar(15) NOT NULL,
 	id_supplier int NOT NULL,
 	price money NOT NULL,
-	image varchar(100) NULL,
+	image text NULL,
 	CONSTRAINT tools_models_pk PRIMARY KEY (id),
 	CONSTRAINT tools_models_unique UNIQUE (code),
 	CONSTRAINT tools_models_suppliers_fk FOREIGN KEY (id_supplier) REFERENCES suppliers(id) ON DELETE RESTRICT ON UPDATE CASCADE

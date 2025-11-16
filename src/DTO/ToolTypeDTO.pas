@@ -29,9 +29,9 @@ begin
   if Trim(code) = '' then errors.Add('código não pode estar vazio');
   if Trim(description) = '' then errors.Add('descrição não pode estar vazia');
   if Trim(family) = '' then errors.Add('família não pode estar vazia');
-  if Trim(usage) = '' then errors.Add('tipo de consumo não pode estar vazio');
-  if id_supplier <= 0 then errors.Add('fornecedor inválido');
   if price <= 0 then errors.Add('preço deve ser maior que zero');
+  if id_supplier <= 0 then errors.Add('fornecedor inválido');
+  if Trim(usage) = '' then errors.Add('tipo de consumo não pode estar vazio');
 
   Result := errors;
 end;

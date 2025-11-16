@@ -4,13 +4,14 @@ interface
 
 uses
   ToolTypeRepository, ToolTypeModel, ToolTypeDTO, SupplierRepository, SupplierModel,
-  Logging, Session, System.Generics.Collections, System.SysUtils;
+  Logging, Session, System.Generics.Collections, System.SysUtils, Vcl.Graphics, System.IOUtils;
 
 type
   TToolTypeController = class
   private
     toolTypeRepository: TToolTypeRepository;
     supplierRepository: TSupplierRepository;
+    function SaveImage(aPath: String): String;
   public
     constructor Create(aToolTypeRepository: TToolTypeRepository; aSupplierRepository: TSupplierRepository);
     function GetAll: TObjectList<TToolType>;
@@ -18,6 +19,7 @@ type
     function CreateToolType(aToolTypeDTO: TToolTypeDTO): TToolType;
     function EditToolType(aToolTypeId: Integer; aToolTypeDTO: TToolTypeDTO): TToolType;
     function DeleteToolType(aToolTypeId: Integer): Boolean;
+    function LoadImage(aPath: String): TPicture;
   end;
 
 implementation
@@ -41,6 +43,51 @@ begin
   Result := Self.toolTypeRepository.FindById(aToolId);
 end;
 
+function TToolTypeController.LoadImage(aPath: String): TPicture;
+var
+  picture: TPicture;
+begin
+  if not FileExists(aPath) then
+    raise Exception.Create('Imagem não encontrada');
+
+  picture := TPicture.Create;
+
+  try
+    picture.LoadFromFile(aPath);
+    Result := picture;
+  except
+    on e: Exception do begin
+      picture.Free;
+      raise Exception.Create('Erro ao carregar imagem: ' + e.Message);
+    end;
+  end;
+end;
+
+function TToolTypeController.SaveImage(aPath: String): String;
+var
+  imagesFolder, destPath, fileName: string;
+begin
+  if not TFile.Exists(aPath) then
+    raise Exception.Create('Imagem não encontrada.');
+
+  try
+    imagesFolder := TPath.Combine(ExtractFilePath(ParamStr(0)), 'images');
+
+    fileName := TPath.GetFileName(aPath);
+
+    destPath := TPath.Combine(imagesFolder, fileName);
+    TFile.Copy(aPath, destPath, True);
+
+    if not TFile.Exists(destPath) then
+      raise Exception.Create('Não foi possível salvar a imagem');
+
+    Result := destPath
+  except
+    on E: Exception do
+      raise Exception.Create('Não foi possível salvar a imagem: ' + E.Message);
+  end;
+end;
+
 function TToolTypeController.CreateToolType(aToolTypeDTO: TToolTypeDTO): TToolType;
 var
   toolType: TToolType;
@@ -57,8 +104,16 @@ begin
     toolType.family := aToolTypeDTO.family;
     toolType.usage := aToolTypeDTO.usage;
     toolType.price := aToolTypeDTO.price;
-    toolType.image := aToolTypeDTO.image;
     toolType.supplier := supplier;
+    if aToolTypeDTO.image <> '' then begin
+      try
+        toolType.image := Self.SaveImage(aToolTypeDTO.image);
+      except
+        on e: Exception do begin
+          toolType.image := '';
+        end;
+      end;
+    end;
 
     Result := Self.toolTypeRepository.Save(toolType);
 
@@ -92,8 +147,18 @@ begin
     toolType.family := aToolTypeDTO.family;
     toolType.usage := aToolTypeDTO.usage;
     toolType.price := aToolTypeDTO.price;
-    toolType.image := aToolTypeDTO.image;
+    toolType.supplier.Free;
     toolType.supplier := supplier;
+
+    if aToolTypeDTO.image <> toolType.image then begin
+      try
+        toolType.image := Self.SaveImage(aToolTypeDTO.image);
+      except
+        on e: Exception do begin
+          toolType.image := '';
+        end;
+      end;
+    end;
 
     Result := Self.toolTypeRepository.Save(toolType);
 
