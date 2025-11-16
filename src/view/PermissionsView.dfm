@@ -21,7 +21,7 @@ object formPermissions: TformPermissions
     Margins.Top = 0
     Margins.Right = 0
     Margins.Bottom = 0
-    ActivePage = tabList
+    ActivePage = tabCreate
     Align = alClient
     TabOrder = 0
     object tabList: TTabSheet
@@ -51,7 +51,10 @@ object formPermissions: TformPermissions
           'USERS_PERMISSIONS'
           'SUPPLIERS_CREATE'
           'SUPPLIERS_UPDATE'
-          'SUPPLIERS_DELETE')
+          'SUPPLIERS_DELETE'
+          'TOOLS_CREATE'
+          'TOOLS_UPDATE'
+          'TOOLS_DELETE')
         TabOrder = 1
       end
       object buttonCreate: TButton
@@ -130,7 +133,10 @@ object formPermissions: TformPermissions
           'USERS_PERMISSIONS'
           'SUPPLIERS_CREATE'
           'SUPPLIERS_UPDATE'
-          'SUPPLIERS_DELETE')
+          'SUPPLIERS_DELETE'
+          'TOOLS_CREATE'
+          'TOOLS_UPDATE'
+          'TOOLS_DELETE')
         TabOrder = 1
       end
       object buttonSave: TButton

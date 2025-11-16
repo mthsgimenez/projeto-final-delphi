@@ -7,7 +7,7 @@ uses
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ComCtrls, Vcl.ExtCtrls, Vcl.StdCtrls,
   Vcl.Grids, Vcl.Imaging.jpeg, Vcl.Imaging.pngimage, System.Generics.Collections,
   ToolTypeModel, ToolTypeController, ToolTypeDTO, Dependencies, Vcl.Buttons,
-  Vcl.Skia, SupplierController, SupplierModel, MessageHelper;
+  Vcl.Skia, SupplierController, SupplierModel, MessageHelper, Session, Permissions;
 
 type
   TformToolType = class(TForm)
@@ -229,6 +229,12 @@ begin
   Self.gridToolTypes.ColWidths[3] := 40;
   Self.gridToolTypes.ColWidths[4] := 40;
 
+  if Assigned(TSession.GetUser.permissionGroup) then begin
+    Self.panelButtonCreate.Visible := TSession.GetUser.permissionGroup.hasPermission(TOOLS_CREATE);
+  end else begin
+    Self.panelButtonCreate.Visible := False;
+  end;
+
   Self.updateComboSuppliers;
   Self.getImages;
 end;
@@ -305,9 +311,15 @@ begin
             TextOut(Rect.Left + 10, Rect.Top + 30, 'Fornecedor: ' + tool.supplier.tradeName);
             TextOut(Rect.Left + 10, Rect.Top + 50, 'Preço: ' + FormatCurr('R$ 0.00', tool.price));
           end else if ACol = 3 then begin
-            StretchDraw(Rect, Self.imageEditIcon.Picture.Graphic);
+            if Assigned(TSession.GetUser.permissionGroup) then begin
+              if TSession.GetUser.permissionGroup.hasPermission(TOOLS_UPDATE) then
+                StretchDraw(Rect, Self.imageEditIcon.Picture.Graphic);
+            end;
           end else if ACol = 4 then begin
-            StretchDraw(Rect, Self.imageDeleteIcon.Picture.Graphic);
+            if Assigned(TSession.GetUser.permissionGroup) then begin
+              if TSession.GetUser.permissionGroup.hasPermission(TOOLS_DELETE) then
+                StretchDraw(Rect, Self.imageDeleteIcon.Picture.Graphic);
+            end;
           end;
         end;
       end;
@@ -332,37 +344,45 @@ begin
   end;
 
   if col = 3 then begin // Edit
-    Self.selectedTool := tool;
-    Self.pcontrolToolType.ActivePageIndex := 0;
+    if Assigned(TSession.GetUser.permissionGroup) then begin
+      if TSession.GetUser.permissionGroup.hasPermission(TOOLS_UPDATE) then begin
+        Self.selectedTool := tool;
+        Self.pcontrolToolType.ActivePageIndex := 0;
 
-    Self.editCode.Text := tool.code;
-    Self.editDescription.Text := tool.description;
-    Self.editImage.Text := tool.image;
-    Self.comboFamily.ItemIndex := Self.comboFamily.Items.IndexOf(tool.family);
-    Self.comboUsage.ItemIndex := Self.comboUsage.Items.IndexOf(tool.usage);
-    Self.comboSuppliers.ItemIndex := Self.comboSuppliers.Items.IndexOf(tool.supplier.tradeName);
+        Self.editCode.Text := tool.code;
+        Self.editDescription.Text := tool.description;
+        Self.editImage.Text := tool.image;
+        Self.comboFamily.ItemIndex := Self.comboFamily.Items.IndexOf(tool.family);
+        Self.comboUsage.ItemIndex := Self.comboUsage.Items.IndexOf(tool.usage);
+        Self.comboSuppliers.ItemIndex := Self.comboSuppliers.Items.IndexOf(tool.supplier.tradeName);
 
-    formattedValue := FormatCurr('#,0.00', tool.price);
-    formattedValue := StringReplace(formattedValue, '.', '#', [rfReplaceAll]);
-    formattedValue := StringReplace(formattedValue, ',', '.', [rfReplaceAll]);
-    formattedValue := StringReplace(formattedValue, '#', ',', [rfReplaceAll]);
-    Self.editPrice.Text := 'R$' + formattedValue;
+        formattedValue := FormatCurr('#,0.00', tool.price);
+        formattedValue := StringReplace(formattedValue, '.', '#', [rfReplaceAll]);
+        formattedValue := StringReplace(formattedValue, ',', '.', [rfReplaceAll]);
+        formattedValue := StringReplace(formattedValue, '#', ',', [rfReplaceAll]);
+        Self.editPrice.Text := 'R$' + formattedValue;
 
-    Exit;
+        Exit;
+      end;
+    end;
   end;
 
   if col = 4 then begin // Delete
-    if not TMessageHelper.GetInstance.Confirmation(
-      Format('Deseja mesmo excluir a ferramenta: %s?', [tool.code]))
-    then Exit;
+    if Assigned(TSession.GetUser.permissionGroup) then begin
+      if TSession.GetUser.permissionGroup.hasPermission(TOOLS_DELETE) then begin
+        if not TMessageHelper.GetInstance.Confirmation(
+          Format('Deseja mesmo excluir a ferramenta: %s?', [tool.code]))
+        then Exit;
 
-    if Self.toolTypeController.DeleteToolType(tool.id) then begin
-      Self.toolTypes.Remove(tool);
-      Self.gridToolTypes.RowCount := Self.toolTypes.Count + 1;
-      Exit;
+        if Self.toolTypeController.DeleteToolType(tool.id) then begin
+          Self.toolTypes.Remove(tool);
+          Self.gridToolTypes.RowCount := Self.toolTypes.Count + 1;
+          Exit;
+        end;
+
+        TMessageHelper.GetInstance.Error('Não foi possível deletar a ferramenta.');
+      end;
     end;
-
-    TMessageHelper.GetInstance.Error('Não foi possível deletar a ferramenta.');
   end;
 end;
 

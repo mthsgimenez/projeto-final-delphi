@@ -5,7 +5,10 @@ INSERT INTO permissions VALUES
 	(4, 'group_permissions', 'Permite criar e alterar grupos de permissões'),
 	(5, 'suppliers_create', 'Permite cadastrar fornecedores'),
 	(6, 'suppliers_update', 'Permite alterar dados de fornecedores'),
-	(7, 'suppliers_delete', 'Permite desativar fornecedores');
+	(7, 'suppliers_delete', 'Permite desativar fornecedores'),
+	(8, 'tools_create', 'Permite cadastrar ferramentas'),
+	(9, 'tools_update', 'Permite alterar dados de ferramentas'),
+	(10, 'tools_delete', 'Permite desativar ferramentas');
 
 INSERT INTO permission_groups ("name") VALUES ('admin');
 
