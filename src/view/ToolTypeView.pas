@@ -244,17 +244,18 @@ var
   tool: TToolType;
   image: TPicture;
 begin
-  for tool in Self.toolTypes do begin
-    if tool.image <> '' then
-      if not Self.images.ContainsKey(tool.image) then begin
-        try
-          image := Self.toolTypeController.LoadImage(tool.image);
-          Self.images.Add(tool.image, image);
-        except
-          continue;
+  if Assigned(Self.toolTypes) then
+    for tool in Self.toolTypes do begin
+      if tool.image <> '' then
+        if not Self.images.ContainsKey(tool.image) then begin
+          try
+            image := Self.toolTypeController.LoadImage(tool.image);
+            Self.images.Add(tool.image, image);
+          except
+            continue;
+          end;
         end;
-      end;
-  end;
+    end;
 end;
 
 procedure TformToolType.gridToolTypesDrawCell(Sender: TObject; ACol,

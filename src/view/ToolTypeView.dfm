@@ -38,7 +38,7 @@ object formToolType: TformToolType
       object labelUsage: TLabel
         Left = 195
         Top = 260
-        Width = 95
+        Width = 96
         Height = 15
         Caption = 'Tipo de consumo:'
       end
