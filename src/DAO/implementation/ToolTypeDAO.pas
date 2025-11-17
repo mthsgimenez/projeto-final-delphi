@@ -3,7 +3,7 @@ unit ToolTypeDAO;
 interface
 
 uses
-  DAOBase, ToolTypeModel, DBHelper, System.StrUtils,
+  DAOBase, ToolTypeModel, DBHelper, System.StrUtils, FireDAC.Stan.Param,
   ToolTypeDAOInterface, System.Generics.Collections, System.SysUtils, Data.DB;
 
 type
@@ -43,19 +43,21 @@ var
 begin
   Result := nil;
 
-  Self.Query.SQL.Text := Format(
+  Self.Query.SQL.Text :=
     'INSERT INTO tools_models(code, description, family, "usage", id_supplier, price, image) ' +
-    'VALUES(%s, %s, %s, %s, %d, %f, %s) RETURNING *',
-    [
-      QuotedStr(aTool.code),
-      QuotedStr(aTool.description),
-      QuotedStr(aTool.family),
-      QuotedStr(aTool.usage),
-      aTool.supplier.id,
-      aTool.price,
-      IfThen(aTool.image = '', 'NULL', QuotedStr(aTool.image))
-    ]
-  );
+    'VALUES(:code, :description, :family, :usage, :id_supplier, :price, :image) RETURNING *';
+
+  Self.Query.ParamByName('code').AsString := aTool.code;
+  Self.Query.ParamByName('description').AsString := aTool.description;
+  Self.Query.ParamByName('family').AsString := aTool.family;
+  Self.Query.ParamByName('usage').AsString := aTool.usage;
+  Self.Query.ParamByName('id_supplier').AsInteger := aTool.supplier.id;
+  Self.Query.ParamByName('price').AsCurrency := aTool.price;
+
+  if aTool.image = '' then
+    Self.Query.ParamByName('image').Clear
+  else
+    Self.Query.ParamByName('image').AsString := aTool.image;
 
   helper := TDBHelper.Create;
   try
@@ -190,19 +192,30 @@ begin
   Result := nil;
   helper := TDBHelper.Create;
 
-  Self.Query.SQL.Text := Format(
-    'UPDATE tools_models SET code = %s, description = %s, family = %s, "usage" = %s, ' +
-    'id_supplier = %d, price = %f, image = %s WHERE id = %d RETURNING *',
-    [
-      QuotedStr(aTool.code),
-      QuotedStr(aTool.description),
-      QuotedStr(aTool.family),
-      QuotedStr(aTool.usage),
-      aTool.supplier.id,
-      aTool.price,
-      IfThen(aTool.image = '', 'NULL', QuotedStr(aTool.image)),
-      aTool.id
-    ]);
+  Self.Query.SQL.Text :=
+    'UPDATE tools_models SET ' +
+    '  code = :code, ' +
+    '  description = :description, ' +
+    '  family = :family, ' +
+    '  "usage" = :usage, ' +
+    '  id_supplier = :id_supplier, ' +
+    '  price = :price, ' +
+    '  image = :image ' +
+    'WHERE id = :id ' +
+    'RETURNING *';
+
+  Self.Query.ParamByName('id').AsInteger := aTool.id;
+  Self.Query.ParamByName('code').AsString := aTool.code;
+  Self.Query.ParamByName('description').AsString := aTool.description;
+  Self.Query.ParamByName('family').AsString := aTool.family;
+  Self.Query.ParamByName('usage').AsString := aTool.usage;
+  Self.Query.ParamByName('id_supplier').AsInteger := aTool.supplier.id;
+  Self.Query.ParamByName('price').AsCurrency := aTool.price;
+
+  if aTool.image = '' then
+    Self.Query.ParamByName('image').Clear
+  else
+    Self.Query.ParamByName('image').AsString := aTool.image;
 
   try
     if helper.CheckIfAlreadyExistsExcludingId('tools_models', 'code', aTool.code, aTool.id) then
