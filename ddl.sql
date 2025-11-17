@@ -48,7 +48,9 @@ CREATE TABLE permissions (
 CREATE TABLE purchase_orders (
 	id serial NOT NULL,
 	id_supplier int NOT NULL,
-	status varchar(15) DEFAULT 'open'::character varying NOT NULL,
+	status varchar(15) DEFAULT 'OPEN'::character varying NOT NULL,
+	issued_at TIMESTAMP NOT NULL DEFAULT NOW(),
+	status_updated_at TIMESTAMP NULL,
 	CONSTRAINT purchase_orders_pk PRIMARY KEY (id),
 	CONSTRAINT purchase_orders_suppliers_fk FOREIGN KEY (id_supplier) REFERENCES suppliers(id) ON DELETE RESTRICT ON UPDATE CASCADE
 );
@@ -56,7 +58,9 @@ CREATE TABLE purchase_orders (
 CREATE TABLE service_orders (
 	id serial NOT NULL,
 	id_supplier int NOT NULL,
-	status varchar(15) DEFAULT 'open'::character varying NOT NULL,
+	status varchar(15) DEFAULT 'OPEN'::character varying NOT NULL,
+	issued_at TIMESTAMP NOT NULL DEFAULT NOW(),
+	status_updated_at TIMESTAMP NULL,
 	CONSTRAINT service_orders_pk PRIMARY KEY (id),
 	CONSTRAINT service_orders_suppliers_fk FOREIGN KEY (id_supplier) REFERENCES suppliers(id) ON DELETE RESTRICT ON UPDATE CASCADE
 );
@@ -129,3 +133,15 @@ CREATE TABLE service_order_tools (
 -- DROP TABLE permissions;
 -- DROP TABLE users;
 -- DROP TABLE permission_groups;
+
+-- ALTER SEQUENCE storages_id_seq RESTART WITH 1;
+-- ALTER SEQUENCE suppliers_id_seq RESTART WITH 1;
+-- ALTER SEQUENCE permission_groups_id_seq RESTART WITH 1;
+-- ALTER SEQUENCE users_id_seq RESTART WITH 1;
+-- ALTER SEQUENCE purchase_orders_id_seq RESTART WITH 1;
+-- ALTER SEQUENCE service_orders_id_seq RESTART WITH 1;
+-- ALTER SEQUENCE tools_models_id_seq RESTART WITH 1;
+-- ALTER SEQUENCE permission_groups_permissions_id_seq RESTART WITH 1;
+-- ALTER SEQUENCE purchase_order_tools_id_seq RESTART WITH 1;
+-- ALTER SEQUENCE tools_id_seq RESTART WITH 1;
+-- ALTER SEQUENCE service_order_tools_id_seq RESTART WITH 1;

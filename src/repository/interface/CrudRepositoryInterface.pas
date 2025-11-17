@@ -1,11 +1,12 @@
-unit CrudRepositoryInterface;
+unit CRUDRepositoryInterface;
 
 interface
 
 uses System.Generics.Collections;
 
 type ICrudRepository<TEntity: class> = interface
-  function Save(aEntity: TEntity): TEntity;
+  function Insert(aEntity: TEntity): TEntity;
+  function Update(aEntity: TEntity): TEntity;
   function FindById(aId: Integer): TEntity;
   function FindAll(): TObjectList<TEntity>;
   function DeleteById(aId: Integer): Boolean;

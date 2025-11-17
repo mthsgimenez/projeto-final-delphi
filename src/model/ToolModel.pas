@@ -17,8 +17,7 @@ type TTool = class
     code: String;
     model: TToolType;
     state: TState;
-    batch: String;
-    honing_num: Integer;
+    honingNum: Integer;
     storage: TStorage;
     status: TStatus;
 

@@ -2,52 +2,55 @@ unit UserRepository;
 
 interface
 
-uses
-  CrudRepositoryInterface, UserModel, DBHelper, UserDAOInterface, PermissionGroupDAOInterface,
-  System.Generics.Collections;
+uses System.Generics.Collections, System.SysUtils,
+  DBHelper, RepositoryBase, UserModel, UserRepositoryInterface,
+  PermissionGroupRepositoryInterface;
 
-type TUserRepository = class(TInterfacedObject, ICrudRepository<TUserModel>)
+type TUserRepository = class(TRepositoryBase, IUserRepository)
   private
-    userDAO: IUserDAO;
-    permissionDAO: IPermissionGroupDAO;
     helper: TDBHelper;
+    permissionGroupRepository: IPermissionGroupRepository;
   public
-    function Save(aUser: TUserModel): TUserModel;
-    function FindById(aId: Integer): TUserModel;
+    function Insert(aUser: TUserModel): TUserModel;
+    function Update(aUser: TUserModel): TUserModel;
+    function FindById(aUserId: Integer): TUserModel;
     function FindAll(): TObjectList<TUserModel>;
-    function ExistsById(aId: Integer): Boolean;
-    function DeleteById(aId: Integer): Boolean;
+    function ExistsById(aUserId: Integer): Boolean;
+    function DeleteById(aUserId: Integer): Boolean;
     function FindByLogin(aLogin: String): TUserModel;
-    constructor Create(aUserDAO: IUserDAO; aPermissionDAO: IPermissionGroupDAO);
-    destructor Destroy; override;
+    constructor Create(aHelper: TDBHelper; aPermissionGroupRepository: IPermissionGroupRepository);
 end;
 
 implementation
 
 { TUserRepository }
 
-constructor TUserRepository.Create(aUserDAO: IUserDAO;
-  aPermissionDAO: IPermissionGroupDAO);
+constructor TUserRepository.Create(aHelper: TDBHelper;
+  aPermissionGroupRepository: IPermissionGroupRepository);
 begin
-  Self.userDAO := aUserDAO;
-  Self.permissionDAO := aPermissionDAO;
-  Self.helper := TDBHelper.Create;
+  Self.helper := aHelper;
+  Self.permissionGroupRepository := aPermissionGroupRepository;
 end;
 
-function TUserRepository.DeleteById(aId: Integer): Boolean;
+function TUserRepository.DeleteById(aUserId: Integer): Boolean;
 begin
-  Result := Self.userDAO.DeleteById(aId);
+  Self.Query.SQL.Text := Format('DELETE FROM users WHERE id = %d', [aUserId]);
+
+  try
+    try
+      Self.Query.ExecSQL;
+      Result := Self.Query.RowsAffected > 0;
+    except
+      Result := False;
+    end;
+  finally
+    Self.Query.Close;
+  end;
 end;
 
-destructor TUserRepository.Destroy;
+function TUserRepository.ExistsById(aUserId: Integer): Boolean;
 begin
-  Self.helper.Free;
-  inherited;
-end;
-
-function TUserRepository.ExistsById(aId: Integer): Boolean;
-begin
-  Result := Self.helper.CheckIfAlreadyExists('users', 'id', aId);
+  Result := Self.helper.CheckIfAlreadyExists('users', 'id', aUserId);
 end;
 
 function TUserRepository.FindAll: TObjectList<TUserModel>;
@@ -55,51 +58,166 @@ var
   users: TObjectList<TUserModel>;
   user: TUserModel;
 begin
-  users := Self.userDAO.SelectAll;
+  Result := nil;
 
-  if Assigned(users) and (users.Count > 0) then
-    for user in users do
-      user.permissionGroup := Self.permissionDAO.SelectByUserId(user.id);
+  Self.Query.SQL.Text := 'SELECT * FROM users';
+  try
+    Self.Query.Open;
 
-  Result := users;
+    if not Self.Query.IsEmpty then begin
+      users := TObjectList<TUserModel>.Create;
+      Result := users;
+
+      while not Self.Query.Eof do begin
+        user := TUserModel.Create;
+        user.id := Self.Query.FieldByName('id').AsInteger;
+        user.name := Self.Query.FieldByName('name').AsString;
+        user.login := Self.Query.FieldByName('login').AsString;
+        user.SetHash(Self.Query.FieldByName('hash').AsString);
+        user.permissionGroup := Self.permissionGroupRepository.FindById(
+          Self.Query.FieldByName('id_pgroup').AsInteger
+        );
+
+        users.Add(user);
+
+        Self.Query.Next;
+      end;
+    end;
+  finally
+    Self.Query.Close;
+  end;
 end;
 
-function TUserRepository.FindById(aId: Integer): TUserModel;
+function TUserRepository.FindById(aUserId: Integer): TUserModel;
 var
   user: TUserModel;
 begin
-  user := Self.userDAO.SelectById(aId);
-  if Assigned(user) then
-    user.permissionGroup := Self.permissionDAO.SelectByUserId(user.id);
+  Result := nil;
 
-  Result := user;
+  Self.Query.SQL.Text := Format('SELECT * FROM users WHERE id = %d', [aUserId]);
+  try
+    Self.Query.Open();
+
+    if not Self.Query.IsEmpty then begin
+      user := TUserModel.Create;
+      user.id := Self.Query.FieldByName('id').AsInteger;
+      user.name := Self.Query.FieldByName('name').AsString;
+      user.login := Self.Query.FieldByName('login').AsString;
+      user.SetHash(Self.Query.FieldByName('hash').AsString);
+      user.permissionGroup := Self.permissionGroupRepository.FindById(
+        Self.Query.FieldByName('id_pgroup').AsInteger
+      );
+
+      Result := user;
+    end;
+  finally
+    Self.Query.Close;
+  end;
 end;
 
 function TUserRepository.FindByLogin(aLogin: String): TUserModel;
-var
-  user: TUserModel;
 begin
-  user := Self.userDAO.SelectByLogin(aLogin);
-  if Assigned(user) then
-    user.permissionGroup := Self.permissionDAO.SelectByUserId(user.id);
+  Result := nil;
 
-  Result := user;
+  Self.Query.SQL.Text := Format(
+    'SELECT * FROM users WHERE login = %s',
+    [QuotedStr(aLogin)]);
+
+  try
+    Self.Query.Open;
+
+    if not Self.Query.IsEmpty then begin
+      Result := TUserModel.Create;
+      Result.id := Self.Query.FieldByName('id').AsInteger;
+      Result.name := Self.Query.FieldByName('name').AsString;
+      Result.login := Self.Query.FieldByName('login').AsString;
+      Result.SetHash(Self.Query.FieldByName('hash').AsString);
+
+      Result.permissionGroup := Self.permissionGroupRepository.FindById(
+        Self.Query.FieldByName('id_pgroup').AsInteger
+      );
+    end;
+  finally
+    Self.Query.Close;
+  end;
 end;
 
-function TUserRepository.Save(aUser: TUserModel): TUserModel;
+function TUserRepository.Insert(aUser: TUserModel): TUserModel;
 var
   user: TUserModel;
 begin
-  if aUser.id = 0 then begin
-    user := Self.userDAO.Insert(aUser);
+  Result := nil;
+
+  Self.Query.SQL.Text := Format(
+    'INSERT INTO users(name, login, hash) VALUES (%s, %s, %s) RETURNING *',
+    [QuotedStr(aUser.name), QuotedStr(aUser.login), QuotedStr(aUser.GetHash)]
+  );
+
+  try
+    if Self.helper.CheckIfAlreadyExists('users', 'login', aUser.login) then
+      raise Exception.Create('Já existe um usuário utilizando o login "' + aUser.login + '"');
+
+    Self.Query.Open();
+
+    if not Self.Query.IsEmpty then begin
+      user := TUserModel.Create;
+      user.id := Self.Query.FieldByName('id').AsInteger;
+      user.name := Self.Query.FieldByName('name').AsString;
+      user.login := Self.Query.FieldByName('login').AsString;
+      user.SetHash(Self.Query.FieldByName('hash').AsString);
+
+      user.permissionGroup := Self.permissionGroupRepository.FindById(
+        Self.Query.FieldByName('id_pgroup').AsInteger
+      );
+
+      Result := user;
+    end;
+  finally
+    Self.Query.Close;
+  end;
+end;
+
+function TUserRepository.Update(aUser: TUserModel): TUserModel;
+var
+  user: TUserModel;
+  permGroup: String;
+begin
+  Result := nil;
+
+  if Assigned(aUser.permissionGroup) then begin
+    permGroup := IntToStr(aUser.permissionGroup.id);
   end else begin
-    user := Self.userDAO.Update(aUser);
+    permGroup := 'NULL';
   end;
 
-  if Assigned(user) then
-    user.permissionGroup := Self.permissionDAO.SelectByUserId(user.id);
+  Self.Query.SQL.Text := Format(
+    'UPDATE users SET name = %s, login = %s, hash = %s, id_pgroup = %s ' +
+    'WHERE id = %d RETURNING *',
+    [QuotedStr(aUser.name), QuotedStr(aUser.login), QuotedStr(aUser.GetHash), permGroup, aUser.id]
+  );
 
-  Result := user;
+  try
+    if Self.helper.CheckIfAlreadyExistsExcludingId('users', 'login', aUser.login, aUser.id) then
+      raise Exception.Create('Já existe um usuário utilizando o login "' + aUser.login + '"');
+
+    Self.Query.Open();
+
+    if not Self.Query.IsEmpty then begin
+      user := TUserModel.Create;
+      user.id := Self.Query.FieldByName('id').AsInteger;
+      user.name := Self.Query.FieldByName('name').AsString;
+      user.login := Self.Query.FieldByName('login').AsString;
+      user.SetHash(Self.Query.FieldByName('hash').AsString);
+
+      user.permissionGroup := Self.permissionGroupRepository.FindById(
+        Self.Query.FieldByName('id_pgroup').AsInteger
+      );
+
+      Result := user;
+    end;
+  finally
+    Self.Query.Close;
+  end;
 end;
 
 end.
