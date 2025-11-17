@@ -145,6 +145,25 @@ object formStorage: TformStorage
       Caption = 'tabTools'
       ImageIndex = 3
       TabVisible = False
+      OnShow = tabToolsShow
+      object gridTools: TStringGrid
+        Left = 12
+        Top = 13
+        Width = 700
+        Height = 468
+        ColCount = 4
+        TabOrder = 0
+        OnDrawCell = gridStoragesDrawCell
+      end
+      object buttonToolsBack: TButton
+        Left = 12
+        Top = 496
+        Width = 134
+        Height = 41
+        Caption = 'Voltar'
+        TabOrder = 1
+        OnClick = buttonToolsBackClick
+      end
     end
   end
 end

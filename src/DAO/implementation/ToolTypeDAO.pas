@@ -14,6 +14,7 @@ type
     function SelectAll(): TObjectList<TToolType>;
     function Update(aTool: TToolType): TToolType;
     function DeleteById(aToolId: Integer): Boolean;
+    function SelectByToolId(aToolId: Integer): TToolType;
   end;
 
 implementation
@@ -146,6 +147,40 @@ begin
   end;
 end;
 
+
+function TToolTypeDAO.SelectByToolId(aToolId: Integer): TToolType;
+var
+  toolType: TToolType;
+begin
+  Result := nil;
+
+  Self.Query.SQL.Text := Format(
+    'SELECT tm.* FROM tools t JOIN tools_models tm ON t.id_tool_model = tm.id ' +
+    'WHERE t.id = %d',
+    [aToolId]
+  );
+
+  try
+    Self.Query.Open;
+
+    if not Self.Query.IsEmpty then begin
+      toolType := TToolType.Create;
+      toolType.id := Self.Query.FieldByName('id').AsInteger;
+      toolType.code := Self.Query.FieldByName('code').AsString;
+      toolType.description := Self.Query.FieldByName('description').AsString;
+      toolType.family := Self.Query.FieldByName('family').AsString;
+      toolType.usage := Self.Query.FieldByName('usage').AsString;
+      toolType.price := Self.Query.FieldByName('price').AsCurrency;
+      toolType.image := Self.Query.FieldByName('image').AsString;
+
+      toolType.supplier := nil;
+
+      Result := toolType;
+    end;
+  finally
+    Self.Query.Close;
+  end;
+end;
 
 function TToolTypeDAO.Update(aTool: TToolType): TToolType;
 var

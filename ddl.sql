@@ -96,13 +96,14 @@ CREATE TABLE purchase_order_tools (
 
 CREATE TABLE tools (
 	id serial NOT NULL,
+	code varchar(30) NOT NULL,
 	id_tool_model int NOT NULL,
-	state varchar(15) DEFAULT 'new'::character varying NOT NULL,
-	batch varchar(30) NOT NULL,
+	state varchar(15) DEFAULT 'NEW'::character varying NOT NULL,
 	honing_num int DEFAULT 0 NOT NULL,
 	id_storage int NOT NULL,
-	in_use bool DEFAULT FALSE NOT NULL, 
+	status varchar(30) DEFAULT 'AVAILABLE'::character varying NOT NULL, 
 	CONSTRAINT tools_pk PRIMARY KEY (id),
+	CONSTRAINT tools_unique UNIQUE (code),
 	CONSTRAINT tools_storages_fk FOREIGN KEY (id_storage) REFERENCES storages(id) ON DELETE RESTRICT ON UPDATE CASCADE,
 	CONSTRAINT tools_tools_models_fk FOREIGN KEY (id_tool_model) REFERENCES tools_models(id) ON DELETE RESTRICT ON UPDATE CASCADE
 );

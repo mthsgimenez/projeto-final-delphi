@@ -253,11 +253,11 @@ object formToolType: TformToolType
         Left = 0
         Top = 60
         Width = 726
-        Height = 491
+        Height = 481
         Margins.Left = 0
         Margins.Top = 60
         Margins.Right = 0
-        Margins.Bottom = 0
+        Margins.Bottom = 10
         Align = alClient
         BevelInner = bvNone
         BevelOuter = bvNone
@@ -267,6 +267,7 @@ object formToolType: TformToolType
         TabOrder = 0
         OnDrawCell = gridToolTypesDrawCell
         OnMouseDown = gridToolTypesMouseDown
+        ExplicitHeight = 480
       end
       object panelButtonCreate: TPanel
         Left = 538

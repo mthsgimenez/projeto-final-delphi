@@ -206,6 +206,9 @@
         <DCCReference Include="src\view\StorageView.pas">
             <Form>formStorage</Form>
         </DCCReference>
+        <DCCReference Include="src\DAO\interface\ToolDAOInterface.pas"/>
+        <DCCReference Include="src\DAO\implementation\ToolDAO.pas"/>
+        <DCCReference Include="src\repository\implementation\ToolRepository.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

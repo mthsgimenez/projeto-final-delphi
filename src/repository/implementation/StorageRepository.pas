@@ -2,7 +2,7 @@ unit StorageRepository;
 
 interface
 
-uses StorageModel, StorageDAOInterface, DBHelper,
+uses StorageModel, StorageDAOInterface, DBHelper, ToolModel,
   CrudRepositoryInterface, System.Generics.Collections, ToolTypeModel;
 
 type TStorageRepository = class(TInterfacedObject, ICrudRepository<TStorage>)
@@ -16,6 +16,7 @@ type TStorageRepository = class(TInterfacedObject, ICrudRepository<TStorage>)
     function DeleteById(aStorageId: Integer): Boolean;
     function ExistsById(aStorageId: Integer): Boolean;
     function FindToolTypes(aStorage: TStorage): TObjectList<TToolType>;
+    function FindTools(aStorage: TStorage; aToolType: TToolType): TObjectList<TTool>;
     constructor Create(aStorageDAO: IStorageDAO);
     destructor Destroy; override;
 end;
@@ -55,6 +56,12 @@ end;
 function TStorageRepository.FindById(aStorageId: Integer): TStorage;
 begin
   Result := Self.storageDAO.SelectById(aStorageId);
+end;
+
+function TStorageRepository.FindTools(aStorage: TStorage;
+  aToolType: TToolType): TObjectList<TTool>;
+begin
+  Result := Self.storageDAO.GetTools(aStorage, aToolType);
 end;
 
 function TStorageRepository.FindToolTypes(

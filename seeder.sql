@@ -19,7 +19,10 @@ INSERT INTO permission_groups_permissions (id_pgroup, id_permission) VALUES
 	(1, 4),
 	(1, 5),
 	(1, 6),
-	(1, 7);
+	(1, 7),
+	(1, 8),
+	(1, 9),
+	(1, 10);
 
 -- Cria um usuário 'admin' com a senha 'admin'
 INSERT INTO users ("name", login, hash, id_pgroup) VALUES

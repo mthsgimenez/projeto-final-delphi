@@ -5,7 +5,7 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ComCtrls, Vcl.StdCtrls, Vcl.Grids, System.Generics.Collections,
-  Dependencies, StorageController, StorageModel, ToolTypeModel, StorageDTO, MessageHelper;
+  Dependencies, StorageController, StorageModel, ToolTypeModel, StorageDTO, MessageHelper, ToolModel;
 
 type
   TformStorage = class(TForm)
@@ -25,6 +25,8 @@ type
     gridToolTypes: TStringGrid;
     buttonToolTypesBack: TButton;
     buttonTools: TButton;
+    gridTools: TStringGrid;
+    buttonToolsBack: TButton;
     procedure buttonCancelClick(Sender: TObject);
     procedure buttonSaveClick(Sender: TObject);
     procedure tabListShow(Sender: TObject);
@@ -43,6 +45,8 @@ type
     procedure gridToolTypesSelectCell(Sender: TObject; ACol, ARow: LongInt;
       var CanSelect: Boolean);
     procedure buttonToolsClick(Sender: TObject);
+    procedure tabToolsShow(Sender: TObject);
+    procedure buttonToolsBackClick(Sender: TObject);
   private
     storageController: TStorageController;
     storages: TObjectList<TStorage>;
@@ -51,8 +55,12 @@ type
     toolTypes: TObjectList<TToolType>;
     selectedToolType: TToolType;
 
+    tools: TObjectList<TTool>;
+    selectedTool: TTool;
+
     procedure UpdateStorageGrid;
     procedure UpdateToolTypesGrid;
+    procedure UpdateToolsGrid;
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
@@ -138,6 +146,11 @@ begin
   Self.editName.Clear;
 end;
 
+procedure TformStorage.buttonToolsBackClick(Sender: TObject);
+begin
+  Self.pcontrolStorage.ActivePageIndex := 2;
+end;
+
 procedure TformStorage.buttonToolsClick(Sender: TObject);
 begin
   if not Assigned(Self.selectedToolType) then begin
@@ -145,6 +158,10 @@ begin
     Exit;
   end;
 
+  if Assigned(Self.tools) then
+    Self.tools.Free;
+
+  Self.tools := Self.storageController.GetTools(Self.selectedStorage, Self.selectedToolType);
   Self.pcontrolStorage.ActivePageIndex := 3;
 end;
 
@@ -179,6 +196,9 @@ begin
   Self.storages.Free;
   if Assigned(Self.toolTypes) then
     Self.toolTypes.Free;
+
+  if Assigned(Self.tools) then
+    Self.tools.Free;
   inherited;
 end;
 
@@ -241,6 +261,11 @@ begin
   Self.UpdateStorageGrid;
 end;
 
+procedure TformStorage.tabToolsShow(Sender: TObject);
+begin
+  Self.UpdateToolsGrid;
+end;
+
 procedure TformStorage.tabToolTypesShow(Sender: TObject);
 begin
   Self.UpdateToolTypesGrid;
@@ -271,6 +296,35 @@ begin
         Cells[1, i] := IntToStr(storage.quantityTotal);
         Cells[2, i] := IntToStr(storage.quantityInUse);
         Cells[3, i] := IntToStr(storage.quantityTotal - storage.quantityInUse);
+      end;
+  end;
+end;
+
+procedure TformStorage.UpdateToolsGrid;
+var
+  tool: TTool;
+  i: Integer;
+begin
+  with Self.gridTools do begin
+    RowCount := 1;
+    Cells[0, 0] := 'Código';
+    Cells[1, 0] := 'Estado';
+    Cells[2, 0] := 'Número de afiações';
+    Cells[3, 0] := 'Disponibilidade';
+    ColWidths[0] := 170;
+    ColWidths[1] := 170;
+    ColWidths[2] := 170;
+    ColWidths[3] := 175;
+
+    if Assigned(Self.tools) then
+      for tool in Self.tools do begin
+        i := RowCount;
+        RowCount := RowCount + 1;
+        Objects[0, i] := tool;
+        Cells[0, i] := tool.code;
+        Cells[1, i] := StateToString(tool.state);
+        Cells[2, i] := IntToStr(tool.honing_num);
+        Cells[3, i] := StatusToString(tool.status);
       end;
   end;
 end;

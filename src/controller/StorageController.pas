@@ -2,7 +2,7 @@ unit StorageController;
 
 interface
 
-uses StorageRepository, StorageModel, StorageDTO, System.Generics.Collections, System.SysUtils, Session, Logging, ToolTypeModel;
+uses StorageRepository, StorageModel, StorageDTO, System.Generics.Collections, System.SysUtils, Session, Logging, ToolTypeModel, ToolModel;
 
 type TStorageController = class
   private
@@ -15,6 +15,7 @@ type TStorageController = class
     function GetStorages: TObjectList<TStorage>;
     function DeleteStorage(aId: Integer): Boolean;
     function GetToolTypes(aStorageId: Integer): TObjectList<TToolType>;
+    function GetTools(aStorage: TStorage; aToolType: TToolType): TObjectList<TTool>;
   end;
 
 implementation
@@ -84,6 +85,12 @@ end;
 function TStorageController.GetStorages: TObjectList<TStorage>;
 begin
   Result := Self.storageRepository.FindAll;
+end;
+
+function TStorageController.GetTools(aStorage: TStorage;
+  aToolType: TToolType): TObjectList<TTool>;
+begin
+  Result := Self.storageRepository.FindTools(aStorage, aToolType);
 end;
 
 function TStorageController.GetToolTypes(

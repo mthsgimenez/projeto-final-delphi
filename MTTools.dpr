@@ -60,7 +60,10 @@ uses
   PermissionsView in 'src\view\PermissionsView.pas' {formPermissions},
   SupplierView in 'src\view\SupplierView.pas' {formSupplier},
   ToolTypeView in 'src\view\ToolTypeView.pas' {formToolType},
-  StorageView in 'src\view\StorageView.pas' {formStorage};
+  StorageView in 'src\view\StorageView.pas' {formStorage},
+  ToolDAOInterface in 'src\DAO\interface\ToolDAOInterface.pas',
+  ToolDAO in 'src\DAO\implementation\ToolDAO.pas',
+  ToolRepository in 'src\repository\implementation\ToolRepository.pas';
 
 {$R *.res}
 
