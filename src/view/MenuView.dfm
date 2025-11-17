@@ -347,7 +347,7 @@ object formMenu: TformMenu
         Font.Style = []
         ParentFont = False
       end
-      object Image1: TImage
+      object imageToolTypes: TImage
         Left = 7
         Top = 7
         Width = 36
@@ -391,6 +391,63 @@ object formMenu: TformMenu
         Flat = True
         OnClick = buttonToolTypesClick
         ExplicitLeft = 192
+        ExplicitTop = 24
+        ExplicitWidth = 23
+        ExplicitHeight = 22
+      end
+    end
+    object panelStorage: TPanel
+      Left = 0
+      Top = 273
+      Width = 250
+      Height = 50
+      BevelOuter = bvNone
+      Caption = 'panelStorage'
+      ShowCaption = False
+      TabOrder = 4
+      object labelStorage: TLabel
+        Left = 60
+        Top = 7
+        Width = 95
+        Height = 32
+        Caption = 'Estoques'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clSnow
+        Font.Height = -24
+        Font.Name = 'Segoe UI'
+        Font.Style = []
+        ParentFont = False
+      end
+      object imageStorage: TImage
+        Left = 7
+        Top = 7
+        Width = 36
+        Height = 36
+        Picture.Data = {
+          0E5466727853564747726170686963790100003C73766720786D6C6E733D2268
+          7474703A2F2F7777772E77332E6F72672F323030302F73766722206865696768
+          743D2232347078222076696577426F783D2230202D3936302039363020393630
+          222077696474683D2232347078222066696C6C3D2223464646464646223E3C70
+          61746820643D224D3230302D3830712D333320302D35362E352D32332E355431
+          32302D313630762D343531712D31382D31312D32392D32382E355438302D3638
+          30762D31323071302D33332032332E352D35362E35543136302D383830683634
+          3071333320302035362E352032332E35543838302D3830307631323071302032
+          332D31312034302E35543834302D3631317634353171302033332D32332E3520
+          35362E35543736302D3830483230305A6D302D3532307634343068353630762D
+          343430483230305A6D2D34302D383068363430762D3132304831363076313230
+          5A6D3230302032383068323430762D3830483336307638305A6D313230203230
+          5A222F3E3C2F7376673E0D0A}
+        Stretch = True
+      end
+      object buttonStorage: TSpeedButton
+        Left = 0
+        Top = 0
+        Width = 250
+        Height = 50
+        Align = alClient
+        Flat = True
+        OnClick = buttonStorageClick
+        ExplicitLeft = 176
         ExplicitTop = 24
         ExplicitWidth = 23
         ExplicitHeight = 22

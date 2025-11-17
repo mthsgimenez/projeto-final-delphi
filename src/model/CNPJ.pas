@@ -82,7 +82,7 @@ end;
 
 procedure TCNPJ.setCNPJ(aCNPJ: String);
 begin
-  if not TCNPJ.IsCnpjValid(aCNPJ) then raise Exception.Create('CNPJ inválido');
+//  if not TCNPJ.IsCnpjValid(aCNPJ) then raise Exception.Create('CNPJ inválido');
 
   Self.CNPJ := aCNPJ;
 end;

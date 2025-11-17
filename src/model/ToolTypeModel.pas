@@ -14,6 +14,8 @@ type TToolType = class
     supplier: TSupplier;
     price: Currency;
     image: String;
+    quantityTotal: Integer;
+    quantityInUse: Integer;
 
     destructor Destroy; override;
 end;

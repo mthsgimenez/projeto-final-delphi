@@ -50,6 +50,7 @@ uses
   ToolTypeRepository in 'src\repository\implementation\ToolTypeRepository.pas',
   ToolTypeController in 'src\controller\ToolTypeController.pas',
   ToolTypeDTO in 'src\DTO\ToolTypeDTO.pas',
+  ToolModel in 'src\model\ToolModel.pas',
   LoginView in 'src\view\LoginView.pas' {formLogin},
   DBConnection in 'src\infra\DBConnection.pas' {Connection: TDataModule},
   MainView in 'src\view\MainView.pas' {formMain},
@@ -58,7 +59,8 @@ uses
   MenuView in 'src\view\MenuView.pas' {formMenu},
   PermissionsView in 'src\view\PermissionsView.pas' {formPermissions},
   SupplierView in 'src\view\SupplierView.pas' {formSupplier},
-  ToolTypeView in 'src\view\ToolTypeView.pas' {formToolType};
+  ToolTypeView in 'src\view\ToolTypeView.pas' {formToolType},
+  StorageView in 'src\view\StorageView.pas' {formStorage};
 
 {$R *.res}
 

@@ -5,7 +5,8 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Buttons, Vcl.StdCtrls, Vcl.ExtCtrls,
-  Vcl.Imaging.pngimage, UserView, Vcl.Skia, PermissionsView, Session, Permissions, UserModel, SupplierView, ToolTypeView;
+  Vcl.Imaging.pngimage, UserView, Vcl.Skia, PermissionsView, Session, Permissions, UserModel, SupplierView, ToolTypeView, StorageView,
+  frSVGGraphic;
 
 type
   TLogoutCallback = procedure of object;
@@ -31,8 +32,12 @@ type
     buttonSuppliers: TSpeedButton;
     panelToolTypes: TPanel;
     labelToolTypes: TLabel;
-    Image1: TImage;
+    imageToolTypes: TImage;
     buttonToolTypes: TSpeedButton;
+    panelStorage: TPanel;
+    labelStorage: TLabel;
+    imageStorage: TImage;
+    buttonStorage: TSpeedButton;
     procedure imgMenuClick(Sender: TObject);
     procedure buttonUserMenuClick(Sender: TObject);
     procedure buttonPermissionsClick(Sender: TObject);
@@ -40,6 +45,7 @@ type
     procedure imgLogoutClick(Sender: TObject);
     procedure buttonSuppliersClick(Sender: TObject);
     procedure buttonToolTypesClick(Sender: TObject);
+    procedure buttonStorageClick(Sender: TObject);
   private
     logoutCallback: TLogoutCallback;
     openWidth: Integer;
@@ -66,6 +72,12 @@ implementation
 procedure TformMenu.buttonPermissionsClick(Sender: TObject);
 begin
   Self.ChangeForm(TformPermissions);
+  if Self.isMenuOpen then Self.ToggleMenu;
+end;
+
+procedure TformMenu.buttonStorageClick(Sender: TObject);
+begin
+  Self.ChangeForm(TformStorage);
   if Self.isMenuOpen then Self.ToggleMenu;
 end;
 

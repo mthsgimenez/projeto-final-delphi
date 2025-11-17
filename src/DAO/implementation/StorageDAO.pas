@@ -3,7 +3,7 @@ unit StorageDAO;
 interface
 
 uses DAOBase, StorageDAOInterface, StorageModel, DBHelper,
-  System.Generics.Collections, System.SysUtils, Data.DB;
+  System.Generics.Collections, System.SysUtils, Data.DB, ToolTypeModel;
 
 type TStorageDAO = class(TDAOBase, IStorageDAO)
   function Insert(aStorage: TStorage): TStorage;
@@ -11,7 +11,7 @@ type TStorageDAO = class(TDAOBase, IStorageDAO)
   function SelectAll(): TObjectList<TStorage>;
   function Update(aStorage: TStorage): TStorage;
   function DeleteById(aStorageId: Integer): Boolean;
-  function GetToolCount(aStorage: TStorage): Integer;
+  function GetToolTypes(aStorage: TStorage): TObjectList<TToolType>;
 end;
 
 implementation
@@ -37,20 +37,55 @@ begin
   end;
 end;
 
-function TStorageDAO.GetToolCount(aStorage: TStorage): Integer;
+function TStorageDAO.GetToolTypes(aStorage: TStorage): TObjectList<TToolType>;
+var
+  list: TObjectList<TToolType>;
+  tool: TToolType;
 begin
-  Result := 0;
+  Result := nil;
 
   Self.Query.SQL.Text := Format(
-    'SELECT COUNT(*) FROM tools WHERE id_storage = %d',
+    'SELECT ' +
+	  'tm.id AS "id", ' +
+    'tm.code AS "code", ' +
+    'tm.description AS "description", ' +
+    'tm."family" AS "family", ' +
+    'tm."usage" AS "usage", ' +
+    'tm.price AS "price", ' +
+    'COUNT(t.id) AS "quantity_total", ' +
+    'COUNT(t.id) FILTER (WHERE t.in_use = TRUE) AS "quantity_in_use"' +
+    'FROM tools t ' +
+    'JOIN tools_models tm ON t.id_tool_model = tm.id ' +
+    'JOIN storages s ON t.id_storage = s.id ' +
+    'WHERE s.id = %d ' +
+    'GROUP BY tm.id, s.id',
     [aStorage.id]
   );
 
   try
-    Self.Query.Open;
+    Self.Query.Open();
 
     if not Self.Query.IsEmpty then begin
-      Result := Self.Query.FieldByName('count').AsInteger;
+      list := TObjectList<TToolType>.Create;
+
+      while not Self.Query.Eof do begin
+        tool := TToolType.Create;
+
+        tool.id := Self.Query.FieldByName('id').AsInteger;
+        tool.code := Self.Query.FieldByName('code').AsString;
+        tool.description := Self.Query.FieldByName('description').AsString;
+        tool.family := Self.Query.FieldByName('family').AsString;
+        tool.usage := Self.Query.FieldByName('usage').AsString;
+        tool.price := Self.Query.FieldByName('price').AsCurrency;
+        tool.quantityTotal := Self.Query.FieldByName('quantity_total').AsInteger;
+        tool.quantityInUse := Self.Query.FieldByName('quantity_in_use').AsInteger;
+
+        list.Add(tool);
+
+        Self.Query.Next;
+      end;
+
+      Result := list;
     end;
   finally
     Self.Query.Close;
@@ -96,7 +131,9 @@ var
 begin
   Result := nil;
 
-  Self.Query.SQL.Text := 'SELECT * FROM storages';
+  Self.Query.SQL.Text := 'SELECT s.*, COUNT(t.id) AS "quantity_total", ' +
+    'COUNT (t.id) FILTER (WHERE t.in_use = TRUE) AS "quantity_in_use" ' +
+    'FROM storages s LEFT JOIN tools t ON t.id_storage = s.id GROUP BY s.id';
 
   try
     Self.Query.Open;
@@ -108,11 +145,15 @@ begin
         storage := TStorage.Create;
         storage.id := Self.Query.FieldByName('id').AsInteger;
         storage.name := Self.Query.FieldByName('name').AsString;
+        storage.quantityTotal := Self.Query.FieldByName('quantity_total').AsInteger;
+        storage.quantityInUse := Self.Query.FieldByName('quantity_in_use').AsInteger;
 
         storages.Add(storage);
 
         Self.Query.Next;
       end;
+
+      Result := storages;
     end;
   finally
     Self.Query.Close;
@@ -126,7 +167,10 @@ begin
   Result := nil;
 
   Self.Query.SQL.Text := Format(
-    'SELECT * FROM storages WHERE id = %d',
+    'SELECT s.*, COUNT(t.id) AS "quantity_total", ' +
+    'COUNT (t.id) FILTER (WHERE t.in_use = TRUE) AS "quantity_in_use" ' +
+    'FROM storages s LEFT JOIN tools t ON t.id_storage = s.id ' +
+    'WHERE s.id = %d GROUP BY s.id',
     [aStorageId]
   );
 
@@ -137,6 +181,8 @@ begin
       storage := TStorage.Create;
       storage.id := Self.Query.FieldByName('id').AsInteger;
       storage.name := Self.Query.FieldByName('name').AsString;
+      storage.quantityTotal := Self.Query.FieldByName('quantity_total').AsInteger;
+      storage.quantityInUse := Self.Query.FieldByName('quantity_in_use').AsInteger;
 
       Result := storage;
     end;
@@ -147,13 +193,10 @@ end;
 
 function TStorageDAO.Update(aStorage: TStorage): TStorage;
 var
-  updatedStorage: TStorage;
   helper: TDBHelper;
 begin
-  Result := nil;
-
   Self.Query.SQL.Text := Format(
-    'UPDATE storages SET "name" = %s WHERE id = %d RETURNING *',
+    'UPDATE storages SET "name" = %s WHERE id = %d',
     [QuotedStr(aStorage.name), aStorage.id]
   );
 
@@ -162,15 +205,9 @@ begin
     if helper.CheckIfAlreadyExistsExcludingId('storages', 'name', aStorage.name, aStorage.id) then
       raise Exception.Create('Já existe um estoque chamado ' + aStorage.name);
 
-    Self.Query.Open;
+    Self.Query.ExecSQL;
 
-    if not Self.Query.IsEmpty then begin
-      updatedStorage := TStorage.Create;
-      updatedStorage.id := Self.Query.FieldByName('id').AsInteger;
-      updatedStorage.name := Self.Query.FieldByName('name').AsString;
-
-      Result := updatedStorage;
-    end;
+    Result := Self.SelectById(aStorage.id);
   finally
     Self.Query.Close;
     helper.Free;

@@ -2,7 +2,7 @@ unit StorageController;
 
 interface
 
-uses StorageRepository, StorageModel, StorageDTO, System.Generics.Collections, System.SysUtils, Session, Logging;
+uses StorageRepository, StorageModel, StorageDTO, System.Generics.Collections, System.SysUtils, Session, Logging, ToolTypeModel;
 
 type TStorageController = class
   private
@@ -14,6 +14,7 @@ type TStorageController = class
     function GetStorage(aId: Integer): TStorage;
     function GetStorages: TObjectList<TStorage>;
     function DeleteStorage(aId: Integer): Boolean;
+    function GetToolTypes(aStorageId: Integer): TObjectList<TToolType>;
   end;
 
 implementation
@@ -83,6 +84,20 @@ end;
 function TStorageController.GetStorages: TObjectList<TStorage>;
 begin
   Result := Self.storageRepository.FindAll;
+end;
+
+function TStorageController.GetToolTypes(
+  aStorageId: Integer): TObjectList<TToolType>;
+var
+  storage: TStorage;
+begin
+  storage := Self.storageRepository.FindById(aStorageId);
+
+  if not Assigned(storage) then
+    raise Exception.Create(Format('Estoque com id %d não encontrado', [aStorageId]));
+
+  Result := Self.storageRepository.FindToolTypes(storage);
+  storage.Free;
 end;
 
 end.

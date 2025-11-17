@@ -2,10 +2,10 @@ unit StorageDAOInterface;
 
 interface
 
-uses DAOInterface, StorageModel;
+uses DAOInterface, StorageModel, ToolTypeModel, System.Generics.Collections;
 
 type IStorageDAO = interface(IDAO<TStorage>)
-  function GetToolCount(aStorage: TStorage): Integer;
+  function GetToolTypes(aStorage: TStorage): TObjectList<TToolType>;
 end;
 
 implementation
