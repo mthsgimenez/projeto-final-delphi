@@ -323,7 +323,7 @@ begin
         Objects[0, i] := tool;
         Cells[0, i] := tool.code;
         Cells[1, i] := StateToString(tool.state);
-        Cells[2, i] := IntToStr(tool.honing_num);
+        Cells[2, i] := IntToStr(tool.honingNum);
         Cells[3, i] := StatusToString(tool.status);
       end;
   end;

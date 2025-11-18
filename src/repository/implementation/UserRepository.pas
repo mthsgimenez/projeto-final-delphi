@@ -2,7 +2,7 @@ unit UserRepository;
 
 interface
 
-uses System.Generics.Collections, System.SysUtils,
+uses System.Generics.Collections, System.SysUtils, Data.DB, FireDAC.Stan.Param,
   DBHelper, RepositoryBase, UserModel, UserRepositoryInterface,
   PermissionGroupRepositoryInterface;
 
@@ -28,13 +28,15 @@ implementation
 constructor TUserRepository.Create(aHelper: TDBHelper;
   aPermissionGroupRepository: IPermissionGroupRepository);
 begin
+  inherited Create;
   Self.helper := aHelper;
   Self.permissionGroupRepository := aPermissionGroupRepository;
 end;
 
 function TUserRepository.DeleteById(aUserId: Integer): Boolean;
 begin
-  Self.Query.SQL.Text := Format('DELETE FROM users WHERE id = %d', [aUserId]);
+  Self.Query.SQL.Text := 'DELETE FROM users WHERE id = :userId';
+  Self.Query.ParamByName('userId').AsInteger := aUserId;
 
   try
     try
@@ -94,7 +96,8 @@ var
 begin
   Result := nil;
 
-  Self.Query.SQL.Text := Format('SELECT * FROM users WHERE id = %d', [aUserId]);
+  Self.Query.SQL.Text := 'SELECT * FROM users WHERE id = :userId';
+  Self.Query.ParamByName('userId').AsInteger := aUserId;
   try
     Self.Query.Open();
 
@@ -119,9 +122,8 @@ function TUserRepository.FindByLogin(aLogin: String): TUserModel;
 begin
   Result := nil;
 
-  Self.Query.SQL.Text := Format(
-    'SELECT * FROM users WHERE login = %s',
-    [QuotedStr(aLogin)]);
+  Self.Query.SQL.Text := 'SELECT * FROM users WHERE login = :userLogin';
+  Self.Query.ParamByName('userLogin').AsString := aLogin;
 
   try
     Self.Query.Open;
@@ -148,10 +150,11 @@ var
 begin
   Result := nil;
 
-  Self.Query.SQL.Text := Format(
-    'INSERT INTO users(name, login, hash) VALUES (%s, %s, %s) RETURNING *',
-    [QuotedStr(aUser.name), QuotedStr(aUser.login), QuotedStr(aUser.GetHash)]
-  );
+  Self.Query.SQL.Text :=
+    'INSERT INTO users(name, login, hash) VALUES (:name, :login, :hash) RETURNING *';
+  Self.Query.ParamByName('name').AsString := aUser.name;
+  Self.Query.ParamByName('login').AsString := aUser.login;
+  Self.Query.ParamByName('hash').AsString := aUser.GetHash;
 
   try
     if Self.helper.CheckIfAlreadyExists('users', 'login', aUser.login) then
@@ -190,11 +193,13 @@ begin
     permGroup := 'NULL';
   end;
 
-  Self.Query.SQL.Text := Format(
-    'UPDATE users SET name = %s, login = %s, hash = %s, id_pgroup = %s ' +
-    'WHERE id = %d RETURNING *',
-    [QuotedStr(aUser.name), QuotedStr(aUser.login), QuotedStr(aUser.GetHash), permGroup, aUser.id]
-  );
+  Self.Query.SQL.Text :=
+    'UPDATE users SET name = :name, login = :login, hash = :hash, id_pgroup = :groupId ' +
+    'WHERE id = %d RETURNING *';
+  Self.Query.ParamByName('name').AsString := aUser.name;
+  Self.Query.ParamByName('login').AsString := aUser.login;
+  Self.Query.ParamByName('hash').AsString := aUser.GetHash;
+  Self.Query.ParamByName('groupId').AsInteger := aUser.permissionGroup.id;
 
   try
     if Self.helper.CheckIfAlreadyExistsExcludingId('users', 'login', aUser.login, aUser.id) then

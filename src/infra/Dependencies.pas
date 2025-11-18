@@ -2,41 +2,38 @@ unit Dependencies;
 
 interface
 
-uses PermissionGroupDAOInterface, PermissionGroupDAO, PermissionGroupRepository, PermissionsController,
-  UserDAOInterface, UserDAO, UserRepository, UserController,
-  SupplierDAOInterface, SupplierDAO, SupplierRepository, SupplierController, CNPJApiInterface, ImplCnpja,
-  ToolTypeDAOInterface, ToolTypeDAO, ToolTypeRepository, ToolTypeController,
-  StorageDAOInterface, StorageDAO, StorageRepository, StorageController;
+uses DBHelper,
+  PermissionGroupRepositoryInterface, PermissionGroupRepository, PermissionsController,
+  UserRepositoryInterface, UserRepository, UserController,
+  SupplierRepositoryInterface, SupplierRepository, SupplierController,
+  CNPJApiInterface, ImplCnpja,
+  ToolTypeRepositoryInterface, ToolTypeRepository, ToolTypeController,
+  StorageRepositoryInterface, StorageRepository, StorageController,
+  ToolRepositoryInterface, ToolRepository;
 
-type TDependencies = class
+type
+  TDependencies = class
   private
-    userDAO: IUserDAO;
-    userRepository: TUserRepository;
+    helper: TDBHelper;
+
+    userRepository: IUserRepository;
     userController: TUserController;
 
-    permissionDAO: IPermissionGroupDAO;
-    permissionRepository: TPermissionGroupRepository;
+    permissionRepository: IPermissionGroupRepository;
     permissionController: TPermissionController;
 
     cnpjApi: ICNPJApi;
 
-    supplierDAO: ISupplierDAO;
-    supplierRepository: TSupplierRepository;
+    supplierRepository: ISupplierRepository;
     supplierController: TSupplierController;
 
-    toolTypeDAO: IToolTypeDAO;
-    toolTypeRepository: TToolTypeRepository;
+    toolTypeRepository: IToolTypeRepository;
     toolTypeController: TToolTypeController;
 
-    storageDAO: IStorageDAO;
-    storageRepository: TStorageRepository;
+    storageRepository: IStorageRepository;
     storageController: TStorageController;
 
-    procedure CreateUserRepository;
-    procedure CreatePermissionRepository;
-    procedure CreateSupplierRepository;
-    procedure CreateToolTypeRepository;
-    procedure CreateStorageRepository;
+    toolRepository: IToolRepository;
 
     class var instance: TDependencies;
     constructor Create;
@@ -49,7 +46,7 @@ type TDependencies = class
 
     class function GetInstance: TDependencies;
     destructor Destroy; override;
-end;
+  end;
 
 implementation
 
@@ -57,61 +54,17 @@ implementation
 
 constructor TDependencies.Create;
 begin
-  inherited;
-end;
+  Self.helper := TDBHelper.Create;
 
-procedure TDependencies.CreatePermissionRepository;
-begin
-  if not Assigned(Self.permissionDAO) then
-    Self.permissionDAO := TPermissionGroupDAO.Create;
+  Self.permissionRepository := TPermissionGroupRepository.Create(Self.helper);
+  Self.userRepository := TUserRepository.Create(Self.helper, Self.permissionRepository);
 
-  if not Assigned(Self.permissionRepository) then
-    Self.permissionRepository := TPermissionGroupRepository.Create(Self.permissionDAO);
-end;
+  Self.cnpjApi := TCNPJA.Create;
+  Self.supplierRepository := TSupplierRepository.Create(Self.helper, Self.cnpjApi);
 
-procedure TDependencies.CreateStorageRepository;
-begin
-  if not Assigned(Self.storageDAO) then
-    Self.storageDAO := TStorageDAO.Create;
-
-  if not Assigned(Self.storageRepository) then
-    Self.storageRepository := TStorageRepository.Create(Self.storageDAO);
-end;
-
-procedure TDependencies.CreateSupplierRepository;
-begin
-  if not Assigned(Self.supplierDAO) then
-    Self.supplierDAO := TSupplierDAO.Create;
-
-  if not Assigned(Self.cnpjApi) then
-    Self.cnpjApi := TCNPJA.Create;
-
-  if not Assigned(Self.supplierRepository) then
-    Self.supplierRepository := TSupplierRepository.Create(Self.supplierDAO, Self.cnpjApi);
-end;
-
-procedure TDependencies.CreateToolTypeRepository;
-begin
-  if not Assigned(Self.supplierDAO) then
-    Self.supplierDAO := TSupplierDAO.Create;
-
-  if not Assigned(Self.toolTypeDAO) then
-    Self.toolTypeDAO := TToolTypeDAO.Create;
-
-  if not Assigned(Self.toolTypeRepository) then
-    Self.toolTypeRepository := TToolTypeRepository.Create(Self.toolTypeDAO, Self.supplierDAO);
-end;
-
-procedure TDependencies.CreateUserRepository;
-begin
-  if not Assigned(Self.userDAO) then
-    Self.userDAO := TUserDAO.Create;
-
-  if not Assigned(Self.permissionDAO) then
-    Self.permissionDAO := TPermissionGroupDAO.Create;
-
-  if not Assigned(Self.userRepository) then
-    Self.userRepository := TUserRepository.Create(Self.userDAO, Self.permissionDAO);
+  Self.toolTypeRepository := TToolTypeRepository.Create(Self.helper, Self.supplierRepository);
+  Self.storageRepository := TStorageRepository.Create(Self.helper, Self.toolTypeRepository);
+  Self.toolRepository := TToolRepository.Create(Self.helper, Self.toolTypeRepository, Self.storageRepository);
 end;
 
 destructor TDependencies.Destroy;
@@ -122,13 +75,7 @@ begin
   if Assigned(Self.toolTypeController) then Self.toolTypeController.Free;
   if Assigned(Self.storageController) then Self.storageController.Free;
 
-
-  if Assigned(Self.userRepository) then Self.userRepository.Free;
-  if Assigned(Self.permissionRepository) then Self.permissionRepository.Free;
-  if Assigned(Self.supplierRepository) then Self.supplierRepository.Free;
-  if Assigned(Self.toolTypeRepository) then Self.toolTypeRepository.Free;
-  if Assigned(Self.storageRepository) then Self.storageRepository.Free;
-
+  Self.helper.Free;
   inherited;
 end;
 
@@ -142,65 +89,41 @@ end;
 
 function TDependencies.GetPermissionController: TPermissionController;
 begin
-  if not Assigned(Self.permissionController) then begin
-    if not Assigned(Self.permissionRepository) then
-      Self.CreatePermissionRepository;
-    if not Assigned(Self.userRepository) then
-      Self.CreateUserRepository;
-
+  if not Assigned(Self.permissionController) then
     Self.permissionController := TPermissionController.Create(Self.permissionRepository, Self.userRepository);
-  end;
 
   Result := Self.permissionController;
 end;
 
 function TDependencies.GetStorageController: TStorageController;
 begin
-  if not Assigned(Self.storageController) then begin
-    if not Assigned(Self.storageRepository) then
-      Self.CreateStorageRepository;
-
+  if not Assigned(Self.storageController) then
     Self.storageController := TStorageController.Create(Self.storageRepository);
-  end;
 
   Result := Self.storageController;
 end;
 
 function TDependencies.GetSupplierController: TSupplierController;
 begin
-  if not Assigned(Self.supplierController) then begin
-    if not Assigned(Self.supplierRepository) then
-      Self.CreateSupplierRepository;
-
+  if not Assigned(Self.supplierController) then
     Self.supplierController := TSupplierController.Create(Self.supplierRepository);
-  end;
 
   Result := Self.supplierController;
 end;
 
 function TDependencies.GetToolTypeController: TToolTypeController;
 begin
-  if not Assigned(Self.toolTypeController) then begin
-    if not Assigned(Self.toolTypeRepository) then
-      Self.CreateToolTypeRepository;
-
-    if not Assigned(Self.supplierRepository) then
-      Self.CreateSupplierRepository;
-
+  if not Assigned(Self.toolTypeController) then
     Self.toolTypeController := TToolTypeController.Create(Self.toolTypeRepository, Self.supplierRepository);
-  end;
 
   Result := Self.toolTypeController;
 end;
 
+
 function TDependencies.GetUserController: TUserController;
 begin
-  if not Assigned(Self.userController) then begin
-    if not Assigned(Self.userRepository) then
-      Self.CreateUserRepository;
-
+  if not Assigned(Self.userController) then
     Self.userController := TUserController.Create(Self.userRepository);
-  end;
 
   Result := Self.userController;
 end;

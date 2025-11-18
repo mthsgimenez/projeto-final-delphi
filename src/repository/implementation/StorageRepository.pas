@@ -2,7 +2,7 @@ unit StorageRepository;
 
 interface
 
-uses System.Generics.Collections, System.SysUtils, DBHelper, RepositoryBase,
+uses System.Generics.Collections, System.SysUtils, DBHelper, RepositoryBase, Data.DB, FireDAC.Stan.Param,
   StorageRepositoryInterface, StorageModel, ToolTypeModel, ToolModel, ToolTypeRepositoryInterface;
 
 type TStorageRepository = class(TRepositoryBase, IStorageRepository)
@@ -28,6 +28,7 @@ implementation
 constructor TStorageRepository.Create(aHelper: TDBHelper;
   aToolTypeRepository: IToolTypeRepository);
 begin
+  inherited Create;
   Self.helper := aHelper;
   Self.toolTypeRepository := aToolTypeRepository;
 end;

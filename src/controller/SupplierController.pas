@@ -3,15 +3,15 @@ unit SupplierController;
 interface
 
 uses
-  SupplierRepository, SupplierModel, SupplierDTO, System.Generics.Collections,
+  SupplierRepositoryInterface, SupplierModel, SupplierDTO, System.Generics.Collections,
   System.SysUtils, Logging, Session, CNPJ;
 
 type
   TSupplierController = class
   private
-    supplierRepository: TSupplierRepository;
+    supplierRepository: ISupplierRepository;
   public
-    constructor Create(aSupplierRepository: TSupplierRepository);
+    constructor Create(aSupplierRepository: ISupplierRepository);
     function CreateSupplier(aSupplier: TSupplierDTO): TSupplier;
     function EditSupplier(aId: Integer; aData: TSupplierDTO): TSupplier;
     function GetSupplier(aId: Integer): TSupplier;
@@ -24,7 +24,7 @@ implementation
 
 { TSupplierController }
 
-constructor TSupplierController.Create(aSupplierRepository: TSupplierRepository);
+constructor TSupplierController.Create(aSupplierRepository: ISupplierRepository);
 begin
   inherited Create;
   Self.supplierRepository := aSupplierRepository;
@@ -46,7 +46,7 @@ begin
     supplier.email := aSupplier.email;
     supplier.phone := aSupplier.phone;
 
-    Result := Self.supplierRepository.Save(supplier);
+    Result := Self.supplierRepository.Insert(supplier);
 
     if Assigned(Result) then
       TLogger.GetLogger.Info(Format(
@@ -91,7 +91,7 @@ begin
     supplier.email := aData.email;
     supplier.phone := aData.phone;
 
-    Result := Self.supplierRepository.Save(supplier);
+    Result := Self.supplierRepository.Update(supplier);
 
     if Assigned(Result) then
       TLogger.GetLogger.Info(Format(

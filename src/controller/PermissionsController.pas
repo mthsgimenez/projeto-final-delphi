@@ -2,17 +2,17 @@ unit PermissionsController;
 
 interface
 
-uses PermissionGroupRepository, PermissionGroupModel, Permissions, PermissionGroupDTO,
-  UserRepository, UserModel, Logging, Session,
+uses PermissionGroupRepositoryInterface, PermissionGroupModel, Permissions, PermissionGroupDTO,
+  UserRepositoryInterface, UserModel, Logging, Session,
   System.Generics.Collections, System.SysUtils;
 
 type TPermissionController = class
   private
-    permissionRepository: TPermissionGroupRepository;
-    userRepository: TUserRepository;
+    permissionRepository: IPermissionGroupRepository;
+    userRepository: IUserRepository;
   public
     function GetGroups: TObjectList<TPermissionGroup>;
-    constructor Create(aPermissionRepository: TPermissionGroupRepository; aUserRepository: TUserRepository);
+    constructor Create(aPermissionRepository: IPermissionGroupRepository; aUserRepository: IUserRepository);
     function CreateGroup(aGroup: TPermissionGroupDTO): TPermissionGroup;
     function EditGroup(aGroupId: Integer; aData: TPermissionGroupDTO): TPermissionGroup;
     function DeleteGroup(aGroupId: Integer): Boolean;
@@ -45,7 +45,7 @@ begin
     raise Exception.Create('Grupo com id ' + IntToStr(aGroupId) + ' não encontrado.');
 
   user.permissionGroup := group;
-  Result := Self.userRepository.Save(user);
+  Result := Self.userRepository.Update(user);
 
   TLogger.GetLogger.Info(Format(
     'Grupo de permissões alterado: Usuário (ID: %d) foi adicionado ao grupo de permissões (ID: %d) pelo usuário (ID: %d)',
@@ -56,8 +56,8 @@ begin
 end;
 
 constructor TPermissionController.Create(
-  aPermissionRepository: TPermissionGroupRepository;
-  aUserRepository: TUserRepository);
+  aPermissionRepository: IPermissionGroupRepository;
+  aUserRepository: IUserRepository);
 begin
   Self.permissionRepository := aPermissionRepository;
   Self.userRepository := aUserRepository;
@@ -73,7 +73,7 @@ begin
   try
     group.name := aGroup.name;
     group.permissions := aGroup.permissions;
-    Result := Self.permissionRepository.Save(group);
+    Result := Self.permissionRepository.Insert(group);
     if Assigned(Result) then
       TLogger.GetLogger.Info(Format(
         'Grupo de permissões adicionado: Usuário (ID: %d) criou o grupo de permissões (ID: %d)',
@@ -104,7 +104,7 @@ begin
   try
     group.name := aData.name;
     group.permissions := aData.permissions;
-    Result := Self.permissionRepository.Save(group);
+    Result := Self.permissionRepository.Update(group);
     if Assigned(Result) then
       TLogger.GetLogger.Info(Format(
         'Grupo de permissões alterado: Usuário (ID: %d) alterou as permissões do grupo de permissões (ID: %d)',
@@ -140,7 +140,7 @@ begin
   user.permissionGroup.Free;
   user.permissionGroup := nil;
   try
-    _ := Self.userRepository.Save(user);
+    _ := Self.userRepository.Update(user);
     if Assigned(_) then
     TLogger.GetLogger.Info(Format(
       'Grupo de permissões alterado: Usuário (ID: %d) removeu o usuário (ID: %d) do grupo de permissões (ID: %d)',

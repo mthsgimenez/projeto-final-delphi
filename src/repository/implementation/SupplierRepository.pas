@@ -2,7 +2,7 @@ unit SupplierRepository;
 
 interface
 
-uses System.Generics.Collections, System.SysUtils, DBHelper, RepositoryBase,
+uses System.Generics.Collections, System.SysUtils, DBHelper, RepositoryBase, Data.DB, FireDAC.Stan.Param,
   SupplierRepositoryInterface, CNPJ, CNPJApiInterface,
   SupplierModel, SupplierDTO;
 
@@ -28,6 +28,7 @@ implementation
 
 constructor TSupplierRepository.Create(aHelper: TDBHelper; aCNPJApi: ICNPJApi);
 begin
+  inherited Create;
   Self.helper := aHelper;
   Self.CNPJApi := aCNPJApi;
 end;

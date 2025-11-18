@@ -2,13 +2,13 @@ unit UserController;
 
 interface
 
-uses UserRepository, UserModel, UserDTO, System.Generics.Collections, System.SysUtils, Logging, Session;
+uses UserRepositoryInterface, UserModel, UserDTO, System.Generics.Collections, System.SysUtils, Logging, Session;
 
   type TUserController = class
     private
-      userRepository: TUserRepository;
+      userRepository: IUserRepository;
     public
-      constructor Create(aUserRepository: TUserRepository);
+      constructor Create(aUserRepository: IUserRepository);
       function Login(aUser: TUserDTO): TUserModel;
       function EditUser(aId: Integer; aData: TUserDTO): TUserModel;
       function GetUser(aId: Integer): TUserModel;
@@ -21,7 +21,7 @@ implementation
 
 { TUserController }
 
-constructor TUserController.Create(aUserRepository: TUserRepository);
+constructor TUserController.Create(aUserRepository: IUserRepository);
 begin
   inherited Create;
   Self.userRepository := aUserRepository;
@@ -37,7 +37,7 @@ begin
     user.login := aUser.login;
     user.SetPassword(Trim(aUser.password));
 
-    Result := Self.userRepository.Save(user);
+    Result := Self.userRepository.Insert(user);
     if Assigned(Result) then
       TLogger.GetLogger.Info(Format(
         'Usuário criado: Usuário (ID: %d) %s cadastrou o usuário (ID: %d)',
@@ -70,7 +70,7 @@ begin
     user.login := aData.login;
     if Trim(aData.password) <> '' then user.SetPassword(Trim(aData.password));
 
-    Result := Self.userRepository.Save(user);
+    Result := Self.userRepository.Update(user);
     if Assigned(Result) then
       TLogger.GetLogger.Info(Format(
         'Usuário editado: Usuário (ID: %d) %s editou o usuário (ID: %d)',

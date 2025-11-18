@@ -2,7 +2,7 @@ unit PermissionGroupRepository;
 
 interface
 
-uses Data.DB, FireDAC.Comp.Client, FireDAC.DApt,
+uses FireDAC.Comp.Client, FireDAC.DApt, Data.DB, FireDAC.Stan.Param,
 DBHelper, System.Generics.Collections, System.SysUtils, System.StrUtils, System.Classes,
 RepositoryBase, PermissionGroupRepositoryInterface, PermissionGroupModel, Permissions;
 
@@ -27,6 +27,7 @@ implementation
 
 constructor TPermissionGroupRepository.Create(aHelper: TDBHelper);
 begin
+  inherited Create;
   Self.helper := aHelper;
 end;
 

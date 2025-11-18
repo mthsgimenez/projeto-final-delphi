@@ -3,17 +3,17 @@ unit ToolTypeController;
 interface
 
 uses
-  ToolTypeRepository, ToolTypeModel, ToolTypeDTO, SupplierRepository, SupplierModel,
+  ToolTypeRepositoryInterface, ToolTypeModel, ToolTypeDTO, SupplierRepositoryInterface, SupplierModel,
   Logging, Session, System.Generics.Collections, System.SysUtils, Vcl.Graphics, System.IOUtils;
 
 type
   TToolTypeController = class
   private
-    toolTypeRepository: TToolTypeRepository;
-    supplierRepository: TSupplierRepository;
+    toolTypeRepository: IToolTypeRepository;
+    supplierRepository: ISupplierRepository;
     function SaveImage(aPath: String): String;
   public
-    constructor Create(aToolTypeRepository: TToolTypeRepository; aSupplierRepository: TSupplierRepository);
+    constructor Create(aToolTypeRepository: IToolTypeRepository; aSupplierRepository: ISupplierRepository);
     function GetAll: TObjectList<TToolType>;
     function GetById(aToolId: Integer): TToolType;
     function CreateToolType(aToolTypeDTO: TToolTypeDTO): TToolType;
@@ -26,8 +26,8 @@ implementation
 
 { TToolTypeController }
 
-constructor TToolTypeController.Create(aToolTypeRepository: TToolTypeRepository;
-  aSupplierRepository: TSupplierRepository);
+constructor TToolTypeController.Create(aToolTypeRepository: IToolTypeRepository;
+  aSupplierRepository: ISupplierRepository);
 begin
   Self.toolTypeRepository := aToolTypeRepository;
   Self.supplierRepository := aSupplierRepository;
@@ -115,7 +115,7 @@ begin
       end;
     end;
 
-    Result := Self.toolTypeRepository.Save(toolType);
+    Result := Self.toolTypeRepository.Insert(toolType);
 
     if Assigned(Result) then
       TLogger.GetLogger.Info(Format(
@@ -160,7 +160,7 @@ begin
       end;
     end;
 
-    Result := Self.toolTypeRepository.Save(toolType);
+    Result := Self.toolTypeRepository.Update(toolType);
 
     if Assigned(Result) then
       TLogger.GetLogger.Info(Format(
