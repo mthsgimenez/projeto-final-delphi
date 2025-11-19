@@ -130,13 +130,17 @@ begin
   Self.Query.ParamByName('legalName').AsString := aSupplier.legalName;
   Self.Query.ParamByName('cnpj').AsString := aSupplier.CNPJ.getCNPJ;
   Self.Query.ParamByName('cep').AsString := aSupplier.CEP;
-  if aSupplier.email = '' then
+
+  if aSupplier.email = '' then begin
+    Self.Query.ParamByName('email').DataType := ftString;
     Self.Query.ParamByName('email').Clear
-  else
+  end else
     Self.Query.ParamByName('email').AsString := aSupplier.email;
-  if aSupplier.phone = '' then
-    Self.Query.ParamByName('phone').Clear
-  else
+
+  if aSupplier.phone = '' then begin
+    Self.Query.ParamByName('phone').DataType := ftString;
+    Self.Query.ParamByName('phone').Clear;
+  end else
     Self.Query.ParamByName('phone').AsString := aSupplier.phone;
 
   try

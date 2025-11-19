@@ -140,9 +140,10 @@ begin
   Self.Query.ParamByName('id_supplier').AsInteger := aToolType.supplier.id;
   Self.Query.ParamByName('price').AsCurrency := aToolType.price;
 
-  if aToolType.image = '' then
-    Self.Query.ParamByName('image').Clear
-  else
+  if aToolType.image = '' then begin
+    Self.Query.ParamByName('image').DataType := ftString;
+    Self.Query.ParamByName('image').Clear;
+  end else
     Self.Query.ParamByName('image').AsString := aToolType.image;
 
   try
@@ -197,9 +198,10 @@ begin
   Self.Query.ParamByName('id_supplier').AsInteger := aToolType.supplier.id;
   Self.Query.ParamByName('price').AsCurrency := aToolType.price;
 
-  if aToolType.image = '' then
+  if aToolType.image = '' then begin
+    Self.Query.ParamByName('image').DataType := ftString;
     Self.Query.ParamByName('image').Clear
-  else
+  end else
     Self.Query.ParamByName('image').AsString := aToolType.image;
 
   try
