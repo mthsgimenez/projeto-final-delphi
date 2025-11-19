@@ -2,7 +2,7 @@ unit PurchaseOrderModel;
 
 interface
 
-uses System.SysUtils, SupplierModel, ToolModel, System.Generics.Collections;
+uses System.SysUtils, SupplierModel, ToolTypeModel, System.Generics.Collections;
 
 type TStatus = (
   OPEN = 1,
@@ -10,15 +10,24 @@ type TStatus = (
   CANCELLED = 3
 );
 
+type TPurchaseOrderItem = class
+  model: TToolType;
+  quantity: Integer;
+
+  destructor Destroy; override;
+end;
+
 type TPurchaseOrder = class
   public
     id: Integer;
-    id_supplier: Integer;
+    supplier: TSupplier;
     status: TStatus;
-    issued_at: TDateTime;
-    status_updated_at: TDateTime;
-    items: TDictionary<Integer, Integer>; // id_tool_model, quantity
+    issuedAt: TDateTime;
+    statusUpdatedAt: TDateTime;
+    items: TObjectList<TPurchaseOrderItem>;
 
+    function GetTotalPrice: Currency;
+    procedure AddItemToOrder(aToolType: TToolType; aQuantity: Integer);
     constructor Create;
     destructor Destroy; override;
 end;
@@ -54,14 +63,48 @@ end;
 
 { TPurchaseOrder }
 
+procedure TPurchaseOrder.AddItemToOrder(aToolType: TToolType;
+  aQuantity: Integer);
+var
+  item: TPurchaseOrderItem;
+begin
+  item := TPurchaseOrderItem.Create;
+  item.model := aToolType;
+  item.quantity := aQuantity;
+
+  Self.items.Add(item);
+end;
+
 constructor TPurchaseOrder.Create;
 begin
-  Self.items := TDictionary<Integer, Integer>.Create;
+  Self.items := TObjectList<TPurchaseOrderItem>.Create;
 end;
 
 destructor TPurchaseOrder.Destroy;
 begin
   Self.items.Free;
+  inherited;
+end;
+
+function TPurchaseOrder.GetTotalPrice: Currency;
+var
+  item: TPurchaseOrderItem;
+  total: Currency;
+begin
+  total := 0;
+
+  for item in Self.items do begin
+    total := total + item.model.price * item.quantity;
+  end;
+
+  result := total;
+end;
+
+{ TPurchaseOrderItem }
+
+destructor TPurchaseOrderItem.Destroy;
+begin
+  Self.model.Free;
   inherited;
 end;
 
