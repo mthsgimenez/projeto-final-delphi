@@ -23,7 +23,7 @@ Facilitar a visualização e o controle das ferramentas, evitando perdas e itens
 
 ## Diagrama ER
 
-![Diagrama de entidade relacionamento](imagens/diagrama_er.png)
+![Diagrama de entidade relacionamento](imagens/DER.png)
 
 ### users
 
