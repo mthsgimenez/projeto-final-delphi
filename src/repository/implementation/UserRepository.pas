@@ -183,23 +183,25 @@ end;
 function TUserRepository.Update(aUser: TUserModel): TUserModel;
 var
   user: TUserModel;
-  permGroup: String;
 begin
   Result := nil;
 
-  if Assigned(aUser.permissionGroup) then begin
-    permGroup := IntToStr(aUser.permissionGroup.id);
-  end else begin
-    permGroup := 'NULL';
-  end;
-
   Self.Query.SQL.Text :=
     'UPDATE users SET name = :name, login = :login, hash = :hash, id_pgroup = :groupId ' +
-    'WHERE id = %d RETURNING *';
+    'WHERE id = :userId RETURNING *';
   Self.Query.ParamByName('name').AsString := aUser.name;
   Self.Query.ParamByName('login').AsString := aUser.login;
   Self.Query.ParamByName('hash').AsString := aUser.GetHash;
-  Self.Query.ParamByName('groupId').AsInteger := aUser.permissionGroup.id;
+
+  if Assigned(aUser.permissionGroup) then
+    Self.Query.ParamByName('groupId').AsInteger := aUser.permissionGroup.id
+  else begin
+    Self.Query.ParamByName('groupId').DataType := ftInteger;
+    Self.Query.ParamByName('groupId').Clear;
+  end;
+
+  Self.Query.ParamByName('userId').AsInteger := aUser.id;
+
 
   try
     if Self.helper.CheckIfAlreadyExistsExcludingId('users', 'login', aUser.login, aUser.id) then
