@@ -57,7 +57,9 @@ uses
   PermissionsView in 'src\view\PermissionsView.pas' {formPermissions},
   SupplierView in 'src\view\SupplierView.pas' {formSupplier},
   ToolTypeView in 'src\view\ToolTypeView.pas' {formToolType},
-  StorageView in 'src\view\StorageView.pas' {formStorage};
+  StorageView in 'src\view\StorageView.pas' {formStorage},
+  PurchaseOrderRepositoryInterface in 'src\repository\interface\PurchaseOrderRepositoryInterface.pas',
+  PurchaseOrderRepository in 'src\repository\implementation\PurchaseOrderRepository.pas';
 
 {$R *.res}
 

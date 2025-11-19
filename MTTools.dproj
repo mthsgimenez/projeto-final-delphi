@@ -203,6 +203,8 @@
         <DCCReference Include="src\view\StorageView.pas">
             <Form>formStorage</Form>
         </DCCReference>
+        <DCCReference Include="src\repository\interface\PurchaseOrderRepositoryInterface.pas"/>
+        <DCCReference Include="src\repository\implementation\PurchaseOrderRepository.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
