@@ -51,11 +51,17 @@ object formMenu: TformMenu
     ShowCaption = False
     TabOrder = 1
     object imgMenu: TImage
+      AlignWithMargins = True
       Left = 7
       Top = 7
-      Width = 36
+      Width = 243
       Height = 36
-      Center = True
+      Margins.Left = 7
+      Margins.Top = 7
+      Margins.Right = 0
+      Margins.Bottom = 10
+      Align = alTop
+      Anchors = [akTop]
       Picture.Data = {
         0D54536B537667477261706869633C73766720786D6C6E733D22687474703A2F
         2F7777772E77332E6F72672F323030302F73766722206865696768743D223430
@@ -68,6 +74,7 @@ object formMenu: TformMenu
       Proportional = True
       Stretch = True
       OnClick = imgMenuClick
+      ExplicitWidth = 36
     end
     object shapeSeparator: TShape
       Left = 0
@@ -109,14 +116,21 @@ object formMenu: TformMenu
       OnClick = imgLogoutClick
     end
     object panelUser: TPanel
+      AlignWithMargins = True
       Left = 0
-      Top = 54
+      Top = 57
       Width = 250
       Height = 50
+      Margins.Left = 0
+      Margins.Top = 4
+      Margins.Right = 0
+      Margins.Bottom = 0
+      Align = alTop
       BevelOuter = bvNone
       Caption = 'panelUser'
       ShowCaption = False
       TabOrder = 0
+      ExplicitTop = 54
       object imgUser: TImage
         Left = 7
         Top = 7
@@ -183,14 +197,21 @@ object formMenu: TformMenu
       end
     end
     object panelPermissions: TPanel
+      AlignWithMargins = True
       Left = 0
-      Top = 108
+      Top = 111
       Width = 250
       Height = 50
+      Margins.Left = 0
+      Margins.Top = 4
+      Margins.Right = 0
+      Margins.Bottom = 0
+      Align = alTop
       BevelOuter = bvNone
       Caption = 'panelUser'
       ShowCaption = False
       TabOrder = 1
+      ExplicitTop = 108
       object imgPermissions: TImage
         Left = 7
         Top = 7
@@ -262,14 +283,21 @@ object formMenu: TformMenu
       end
     end
     object panelSuppliers: TPanel
+      AlignWithMargins = True
       Left = 0
-      Top = 161
+      Top = 165
       Width = 250
       Height = 50
+      Margins.Left = 0
+      Margins.Top = 4
+      Margins.Right = 0
+      Margins.Bottom = 0
+      Align = alTop
       BevelOuter = bvNone
       Caption = 'panelUser'
       ShowCaption = False
       TabOrder = 2
+      ExplicitTop = 161
       object labelSuppliers: TLabel
         Left = 60
         Top = 7
@@ -326,14 +354,21 @@ object formMenu: TformMenu
       end
     end
     object panelToolTypes: TPanel
+      AlignWithMargins = True
       Left = 0
-      Top = 217
+      Top = 219
       Width = 250
       Height = 50
+      Margins.Left = 0
+      Margins.Top = 4
+      Margins.Right = 0
+      Margins.Bottom = 0
+      Align = alTop
       BevelOuter = bvNone
       Caption = 'panelUser'
       ShowCaption = False
       TabOrder = 3
+      ExplicitTop = 217
       object labelToolTypes: TLabel
         Left = 60
         Top = 7
@@ -397,10 +432,16 @@ object formMenu: TformMenu
       end
     end
     object panelStorage: TPanel
+      AlignWithMargins = True
       Left = 0
       Top = 273
       Width = 250
       Height = 50
+      Margins.Left = 0
+      Margins.Top = 4
+      Margins.Right = 0
+      Margins.Bottom = 0
+      Align = alTop
       BevelOuter = bvNone
       Caption = 'panelStorage'
       ShowCaption = False
@@ -447,14 +488,21 @@ object formMenu: TformMenu
       end
     end
     object panelOrders: TPanel
+      AlignWithMargins = True
       Left = 0
-      Top = 329
+      Top = 327
       Width = 250
       Height = 50
+      Margins.Left = 0
+      Margins.Top = 4
+      Margins.Right = 0
+      Margins.Bottom = 0
+      Align = alTop
       BevelOuter = bvNone
       Caption = 'panelStorage'
       ShowCaption = False
       TabOrder = 5
+      ExplicitTop = 329
       object labelOrders: TLabel
         Left = 60
         Top = 7
@@ -482,6 +530,54 @@ object formMenu: TformMenu
         Flat = True
         OnClick = buttonOrdersClick
         ExplicitLeft = 184
+        ExplicitTop = 24
+        ExplicitWidth = 23
+        ExplicitHeight = 22
+      end
+    end
+    object panelReports: TPanel
+      AlignWithMargins = True
+      Left = 0
+      Top = 381
+      Width = 250
+      Height = 50
+      Margins.Left = 0
+      Margins.Top = 4
+      Margins.Right = 0
+      Margins.Bottom = 0
+      Align = alTop
+      BevelOuter = bvNone
+      Caption = 'panelStorage'
+      ShowCaption = False
+      TabOrder = 6
+      ExplicitTop = 385
+      object labelReports: TLabel
+        Left = 60
+        Top = 7
+        Width = 104
+        Height = 32
+        Caption = 'Relat'#243'rios'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clSnow
+        Font.Height = -24
+        Font.Name = 'Segoe UI'
+        Font.Style = []
+        ParentFont = False
+      end
+      object buttonReports: TSpeedButton
+        AlignWithMargins = True
+        Left = 0
+        Top = 0
+        Width = 250
+        Height = 50
+        Margins.Left = 0
+        Margins.Top = 0
+        Margins.Right = 0
+        Margins.Bottom = 0
+        Align = alClient
+        Flat = True
+        OnClick = buttonReportsClick
+        ExplicitLeft = 31
         ExplicitTop = 24
         ExplicitWidth = 23
         ExplicitHeight = 22

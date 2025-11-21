@@ -6,7 +6,7 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Buttons, Vcl.StdCtrls, Vcl.ExtCtrls,
   Vcl.Imaging.pngimage, UserView, Vcl.Skia, PermissionsView, Session, Permissions, UserModel, SupplierView, ToolTypeView, StorageView,
-  OrderView;
+  OrderView, ReportsView;
 
 type
   TLogoutCallback = procedure of object;
@@ -41,6 +41,9 @@ type
     panelOrders: TPanel;
     labelOrders: TLabel;
     buttonOrders: TSpeedButton;
+    panelReports: TPanel;
+    labelReports: TLabel;
+    buttonReports: TSpeedButton;
     procedure imgMenuClick(Sender: TObject);
     procedure buttonUserMenuClick(Sender: TObject);
     procedure buttonPermissionsClick(Sender: TObject);
@@ -50,6 +53,7 @@ type
     procedure buttonToolTypesClick(Sender: TObject);
     procedure buttonStorageClick(Sender: TObject);
     procedure buttonOrdersClick(Sender: TObject);
+    procedure buttonReportsClick(Sender: TObject);
   private
     logoutCallback: TLogoutCallback;
     openWidth: Integer;
@@ -76,6 +80,12 @@ implementation
 procedure TformMenu.buttonPermissionsClick(Sender: TObject);
 begin
   Self.ChangeForm(TformPermissions);
+  if Self.isMenuOpen then Self.ToggleMenu;
+end;
+
+procedure TformMenu.buttonReportsClick(Sender: TObject);
+begin
+  Self.ChangeForm(TformReports);
   if Self.isMenuOpen then Self.ToggleMenu;
 end;
 
