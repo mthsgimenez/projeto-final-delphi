@@ -2,7 +2,7 @@ unit PurchaseOrderRepository;
 
 interface
 
-uses System.Generics.Collections, System.SysUtils, DBHelper, RepositoryBase, Data.DB, FireDAC.Stan.Param,
+uses System.Generics.Collections, System.SysUtils, DBHelper, RepositoryBase, Data.DB, FireDAC.Stan.Param, FireDAC.Comp.Client, FireDAC.DApt,
   PurchaseOrderRepositoryInterface, PurchaseOrderModel, ToolTypeModel, ToolTypeRepositoryInterface, SupplierRepositoryInterface;
 
 type TPurchaseOrderRepository = class(TRepositoryBase, IPurchaseOrderRepository)
@@ -10,13 +10,13 @@ type TPurchaseOrderRepository = class(TRepositoryBase, IPurchaseOrderRepository)
     helper: TDBHelper;
     toolTypeRepository: IToolTypeRepository;
     supplierRepository: ISupplierRepository;
+
+    procedure GetToolTypes(aPurchaseOrder: TPurchaseOrder);
   public
-    function Insert(aPurchaseOrder: TPurchaseOrder): TPurchaseOrder;
-    function Update(aPurchaseOrder: TPurchaseOrder): TPurchaseOrder;
+    function CreatePurchaseOrder(aPurchaseOrder: TPurchaseOrder): TPurchaseOrder;
+    function UpdateStatus(aPurchaseOrder: TPurchaseOrder): TPurchaseOrder;
     function FindById(aPurchaseOrderId: Integer): TPurchaseOrder;
     function FindAll(): TObjectList<TPurchaseOrder>;
-    function DeleteById(aPurchaseOrderId: Integer): Boolean;
-    function ExistsById(aPurchaseOrderId: Integer): Boolean;
 
     constructor Create(aHelper: TDBHelper; aToolTypeRepository: IToolTypeRepository;
       aSupplierRepository: ISupplierRepository);
@@ -37,27 +37,53 @@ begin
   Self.supplierRepository := aSupplierRepository;
 end;
 
-function TPurchaseOrderRepository.DeleteById(
-  aPurchaseOrderId: Integer): Boolean;
-begin
-  // noop
-end;
-
-function TPurchaseOrderRepository.ExistsById(
-  aPurchaseOrderId: Integer): Boolean;
-begin
-  Result := Self.helper.CheckIfAlreadyExists('purchase_orders', 'id', aPurchaseOrderId);
-end;
-
 function TPurchaseOrderRepository.FindAll: TObjectList<TPurchaseOrder>;
+var
+  ordersList: TObjectList<TPurchaseOrder>;
+  order: TPurchaseOrder;
 begin
+  Result := nil;
+
+  Self.Query.SQL.Text := 'SELECT * FROM purchase_orders ORDER BY issued_at DESC;';
+
+  try
+    Self.Query.Open;
+
+    if not Self.Query.IsEmpty then begin
+      ordersList := TObjectList<TPurchaseOrder>.Create;
+
+      while not Self.Query.Eof do begin
+        order := TPurchaseOrder.Create;
+
+        order.id := Self.Query.FieldByName('id').AsInteger;
+        order.supplier := Self.supplierRepository.FindById(
+          Self.Query.FieldByName('id_supplier').AsInteger
+        );
+        order.status := StringToStatus(
+          Self.Query.FieldByName('status').AsString
+        );
+        order.issuedAt := Self.Query.FieldByName('issued_at').AsDateTime;
+        if not Self.Query.FieldByName('status_updated_at').IsNull then
+          order.statusUpdatedAt := Self.Query.FieldByName('status_updated_at').AsDateTime;
+
+        Self.GetToolTypes(order);
+
+        ordersList.Add(order);
+
+        Self.Query.Next;
+      end;
+
+      Result := ordersList;
+    end;
+  finally
+    Self.Query.Close;
+  end;
 end;
 
 function TPurchaseOrderRepository.FindById(
   aPurchaseOrderId: Integer): TPurchaseOrder;
 var
   order: TPurchaseOrder;
-  toolType: TToolType;
 begin
   Result := nil;
 
@@ -78,42 +104,54 @@ begin
         Self.Query.FieldByName('status').AsString
       );
       order.issuedAt := Self.Query.FieldByName('issued_at').AsDateTime;
-      if not Self.Query.FieldByName('updated_at').IsNull then
-        order.statusUpdatedAt := Self.Query.FieldByName('updated_at').AsDateTime;
+      if not Self.Query.FieldByName('status_updated_at').IsNull then
+        order.statusUpdatedAt := Self.Query.FieldByName('status_updated_at').AsDateTime;
 
-      Self.Query.Close;
-      Self.Query.SQL.Text :=
-        'SELECT id_tool_model, tool_quantity FROM purchase_order_tools WHERE id_purchase_order = :purchaseOrderId';
-      Self.Query.ParamByName('purchaseOrderId').AsInteger := aPurchaseOrderId;
-      try
-        Self.Query.Open;
+      Self.GetToolTypes(order);
 
-        if not Self.Query.IsEmpty then begin
-          while not Self.Query.Eof do begin
-            toolType := Self.toolTypeRepository.FindById(
-              Self.Query.FieldByName('id_tool_model').AsInteger
-            );
-
-            order.AddItemToOrder(
-              toolType,
-              Self.Query.FieldByName('tool_quantity').AsInteger
-            );
-
-            Self.Query.Next;
-          end;
-        end;
-
-        Result := order;
-      except
-        order.Free;
-      end;
+      Result := order;
     end;
   finally
     Self.Query.Close;
   end;
 end;
 
-function TPurchaseOrderRepository.Insert(
+procedure TPurchaseOrderRepository.GetToolTypes(aPurchaseOrder: TPurchaseOrder);
+var
+  toolsQuery: TFDQuery;
+  toolType: TToolType;
+begin
+  toolsQuery := TFDQuery.Create(Self.Query.Connection);
+  toolsQuery.Connection := Self.Query.Connection;
+
+  toolsQuery.SQL.Text :=
+    'SELECT id_tool_model, tool_quantity FROM purchase_order_tools WHERE id_purchase_order = :purchaseOrderId';
+  toolsQuery.ParamByName('purchaseOrderId').AsInteger := aPurchaseOrder.id;
+
+  try
+    toolsQuery.Open;
+
+    if not toolsQuery.IsEmpty then begin
+      while not toolsQuery.Eof do begin
+        toolType := Self.toolTypeRepository.FindById(
+          toolsQuery.FieldByName('id_tool_model').AsInteger
+        );
+
+        aPurchaseOrder.AddItemToOrder(
+          toolType,
+          toolsQuery.FieldByName('tool_quantity').AsInteger
+        );
+
+        toolsQuery.Next;
+      end;
+    end;
+  finally
+    toolsQuery.Close;
+    toolsQuery.Free;
+  end;
+end;
+
+function TPurchaseOrderRepository.CreatePurchaseOrder(
   aPurchaseOrder: TPurchaseOrder): TPurchaseOrder;
 var
   item: TPurchaseOrderItem;
@@ -169,10 +207,46 @@ begin
   end;
 end;
 
-function TPurchaseOrderRepository.Update(
+function TPurchaseOrderRepository.UpdateStatus(
   aPurchaseOrder: TPurchaseOrder): TPurchaseOrder;
+var
+  order: TPurchaseOrder;
 begin
+  Result := nil;
 
+  Self.Query.SQL.Text :=
+    'UPDATE purchase_orders SET ' +
+    'status = :status, status_updated_at = :updateDate ' +
+    'WHERE id = :purchaseOrderId RETURNING *';
+
+  Self.Query.ParamByName('status').AsString := StatusToString(aPurchaseOrder.status);
+  Self.Query.ParamByName('updateDate').AsDateTime := Now;
+  Self.Query.ParamByName('purchaseOrderId').AsInteger := aPurchaseOrder.id;
+
+  try
+    Self.Query.Open;
+
+    if not Self.Query.IsEmpty then begin
+      order := TPurchaseOrder.Create;
+
+      order.id := Self.Query.FieldByName('id').AsInteger;
+      order.supplier := Self.supplierRepository.FindById(
+        Self.Query.FieldByName('id_supplier').AsInteger
+      );
+      order.status := StringToStatus(
+        Self.Query.FieldByName('status').AsString
+      );
+      order.issuedAt := Self.Query.FieldByName('issued_at').AsDateTime;
+      if not Self.Query.FieldByName('status_updated_at').IsNull then
+        order.statusUpdatedAt := Self.Query.FieldByName('status_updated_at').AsDateTime;
+
+      Self.GetToolTypes(order);
+
+      Result := order;
+    end;
+  finally
+    Self.Query.Close;
+  end;
 end;
 
 end.

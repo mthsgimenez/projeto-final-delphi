@@ -205,6 +205,12 @@
         </DCCReference>
         <DCCReference Include="src\repository\interface\PurchaseOrderRepositoryInterface.pas"/>
         <DCCReference Include="src\repository\implementation\PurchaseOrderRepository.pas"/>
+        <DCCReference Include="src\controller\PurchaseOrderController.pas"/>
+        <DCCReference Include="src\DTO\PurchaseOrderDTO.pas"/>
+        <DCCReference Include="src\view\OrderView.pas">
+            <Form>formOrder</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

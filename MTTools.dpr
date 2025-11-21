@@ -59,7 +59,10 @@ uses
   ToolTypeView in 'src\view\ToolTypeView.pas' {formToolType},
   StorageView in 'src\view\StorageView.pas' {formStorage},
   PurchaseOrderRepositoryInterface in 'src\repository\interface\PurchaseOrderRepositoryInterface.pas',
-  PurchaseOrderRepository in 'src\repository\implementation\PurchaseOrderRepository.pas';
+  PurchaseOrderRepository in 'src\repository\implementation\PurchaseOrderRepository.pas',
+  PurchaseOrderController in 'src\controller\PurchaseOrderController.pas',
+  PurchaseOrderDTO in 'src\DTO\PurchaseOrderDTO.pas',
+  OrderView in 'src\view\OrderView.pas' {formOrder};
 
 {$R *.res}
 

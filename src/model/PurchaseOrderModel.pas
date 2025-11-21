@@ -34,6 +34,7 @@ end;
 
 function StatusToString(aStatus: TStatus): String;
 function StringToStatus(aString: String): TStatus;
+function StatusToViewString(aStatus: TStatus): String;
 
 implementation
 
@@ -61,6 +62,15 @@ begin
   end;
 end;
 
+function StatusToViewString(aStatus: TStatus): String;
+begin
+  case aStatus of
+    OPEN: Result := 'EM ABERTO';
+    CLOSED: Result := 'FECHADO';
+    CANCELLED: Result := 'CANCELADO';
+  end;
+end;
+
 { TPurchaseOrder }
 
 procedure TPurchaseOrder.AddItemToOrder(aToolType: TToolType;
@@ -82,6 +92,7 @@ end;
 
 destructor TPurchaseOrder.Destroy;
 begin
+  Self.supplier.Free;
   Self.items.Free;
   inherited;
 end;

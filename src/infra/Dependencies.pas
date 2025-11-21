@@ -9,7 +9,8 @@ uses DBHelper,
   CNPJApiInterface, ImplCnpja,
   ToolTypeRepositoryInterface, ToolTypeRepository, ToolTypeController,
   StorageRepositoryInterface, StorageRepository, StorageController,
-  ToolRepositoryInterface, ToolRepository;
+  ToolRepositoryInterface, ToolRepository,
+  PurchaseOrderRepositoryInterface, PurchaseOrderRepository, PurchaseOrderController;
 
 type
   TDependencies = class
@@ -35,6 +36,9 @@ type
 
     toolRepository: IToolRepository;
 
+    purchaseOrderRepository: IPurchaseOrderRepository;
+    purchaseOrderController: TPurchaseOrderController;
+
     class var instance: TDependencies;
     constructor Create;
   public
@@ -43,6 +47,7 @@ type
     function GetSupplierController: TSupplierController;
     function GetToolTypeController: TToolTypeController;
     function GetStorageController: TStorageController;
+    function GetPurchaseOrderController: TPurchaseOrderController;
 
     class function GetInstance: TDependencies;
     destructor Destroy; override;
@@ -65,6 +70,8 @@ begin
   Self.toolTypeRepository := TToolTypeRepository.Create(Self.helper, Self.supplierRepository);
   Self.storageRepository := TStorageRepository.Create(Self.helper, Self.toolTypeRepository);
   Self.toolRepository := TToolRepository.Create(Self.helper, Self.toolTypeRepository, Self.storageRepository);
+
+  Self.purchaseOrderRepository := TPurchaseOrderRepository.Create(Self.helper, Self.toolTypeRepository, Self.supplierRepository);
 end;
 
 destructor TDependencies.Destroy;
@@ -74,6 +81,7 @@ begin
   if Assigned(Self.supplierController) then Self.supplierController.Free;
   if Assigned(Self.toolTypeController) then Self.toolTypeController.Free;
   if Assigned(Self.storageController) then Self.storageController.Free;
+  if Assigned(Self.purchaseOrderController) then Self.purchaseOrderController.Free;
 
   Self.helper.Free;
   inherited;
@@ -93,6 +101,14 @@ begin
     Self.permissionController := TPermissionController.Create(Self.permissionRepository, Self.userRepository);
 
   Result := Self.permissionController;
+end;
+
+function TDependencies.GetPurchaseOrderController: TPurchaseOrderController;
+begin
+  if not Assigned(Self.purchaseOrderController) then
+    Self.purchaseOrderController := TPurchaseOrderController.Create(Self.purchaseOrderRepository, Self.toolRepository);
+
+  Result := Self.purchaseOrderController;
 end;
 
 function TDependencies.GetStorageController: TStorageController;
