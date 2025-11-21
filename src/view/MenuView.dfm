@@ -446,5 +446,46 @@ object formMenu: TformMenu
         ExplicitHeight = 22
       end
     end
+    object panelOrders: TPanel
+      Left = 0
+      Top = 329
+      Width = 250
+      Height = 50
+      BevelOuter = bvNone
+      Caption = 'panelStorage'
+      ShowCaption = False
+      TabOrder = 5
+      object labelOrders: TLabel
+        Left = 60
+        Top = 7
+        Width = 83
+        Height = 32
+        Caption = 'Pedidos'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clSnow
+        Font.Height = -24
+        Font.Name = 'Segoe UI'
+        Font.Style = []
+        ParentFont = False
+      end
+      object buttonOrders: TSpeedButton
+        AlignWithMargins = True
+        Left = 0
+        Top = 0
+        Width = 250
+        Height = 50
+        Margins.Left = 0
+        Margins.Top = 0
+        Margins.Right = 0
+        Margins.Bottom = 0
+        Align = alClient
+        Flat = True
+        OnClick = buttonOrdersClick
+        ExplicitLeft = 184
+        ExplicitTop = 24
+        ExplicitWidth = 23
+        ExplicitHeight = 22
+      end
+    end
   end
 end
