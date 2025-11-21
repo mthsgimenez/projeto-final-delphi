@@ -62,7 +62,11 @@ uses
   PurchaseOrderRepository in 'src\repository\implementation\PurchaseOrderRepository.pas',
   PurchaseOrderController in 'src\controller\PurchaseOrderController.pas',
   PurchaseOrderDTO in 'src\DTO\PurchaseOrderDTO.pas',
-  OrderView in 'src\view\OrderView.pas' {formOrder};
+  OrderView in 'src\view\OrderView.pas' {formOrder},
+  ReportRepositoryInterface in 'src\repository\interface\ReportRepositoryInterface.pas',
+  ReportRepository in 'src\repository\implementation\ReportRepository.pas',
+  ReportsView in 'src\view\ReportsView.pas' {formReports},
+  ReportController in 'src\controller\ReportController.pas';
 
 {$R *.res}
 

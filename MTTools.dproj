@@ -211,6 +211,13 @@
             <Form>formOrder</Form>
             <FormType>dfm</FormType>
         </DCCReference>
+        <DCCReference Include="src\repository\interface\ReportRepositoryInterface.pas"/>
+        <DCCReference Include="src\repository\implementation\ReportRepository.pas"/>
+        <DCCReference Include="src\view\ReportsView.pas">
+            <Form>formReports</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="src\controller\ReportController.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

@@ -10,7 +10,8 @@ uses DBHelper,
   ToolTypeRepositoryInterface, ToolTypeRepository, ToolTypeController,
   StorageRepositoryInterface, StorageRepository, StorageController,
   ToolRepositoryInterface, ToolRepository,
-  PurchaseOrderRepositoryInterface, PurchaseOrderRepository, PurchaseOrderController;
+  PurchaseOrderRepositoryInterface, PurchaseOrderRepository, PurchaseOrderController,
+  ReportRepositoryInterface, ReportRepository, ReportController;
 
 type
   TDependencies = class
@@ -39,6 +40,9 @@ type
     purchaseOrderRepository: IPurchaseOrderRepository;
     purchaseOrderController: TPurchaseOrderController;
 
+    reportRepository: IReportRepository;
+    reportController: TReportController;
+
     class var instance: TDependencies;
     constructor Create;
   public
@@ -48,6 +52,7 @@ type
     function GetToolTypeController: TToolTypeController;
     function GetStorageController: TStorageController;
     function GetPurchaseOrderController: TPurchaseOrderController;
+    function GetReportController: TReportController;
 
     class function GetInstance: TDependencies;
     destructor Destroy; override;
@@ -72,6 +77,8 @@ begin
   Self.toolRepository := TToolRepository.Create(Self.helper, Self.toolTypeRepository, Self.storageRepository);
 
   Self.purchaseOrderRepository := TPurchaseOrderRepository.Create(Self.helper, Self.toolTypeRepository, Self.supplierRepository);
+
+  Self.reportRepository := TReportRepository.Create;
 end;
 
 destructor TDependencies.Destroy;
@@ -82,6 +89,8 @@ begin
   if Assigned(Self.toolTypeController) then Self.toolTypeController.Free;
   if Assigned(Self.storageController) then Self.storageController.Free;
   if Assigned(Self.purchaseOrderController) then Self.purchaseOrderController.Free;
+  if Assigned(Self.reportController) then Self.reportController.Free;
+
 
   Self.helper.Free;
   inherited;
@@ -109,6 +118,14 @@ begin
     Self.purchaseOrderController := TPurchaseOrderController.Create(Self.purchaseOrderRepository, Self.toolRepository);
 
   Result := Self.purchaseOrderController;
+end;
+
+function TDependencies.GetReportController: TReportController;
+begin
+  if not Assigned(Self.reportController) then
+    Self.reportController := TReportController.Create(Self.reportRepository);
+
+  Result := Self.reportController;
 end;
 
 function TDependencies.GetStorageController: TStorageController;
