@@ -164,8 +164,14 @@ begin
     'INSERT INTO purchase_orders (id_supplier) VALUES (:supplierId) RETURNING *';
   Self.Query.ParamByName('supplierId').AsInteger := aPurchaseOrder.supplier.id;
 
+  Self.Query.Connection.StartTransaction;
   try
-    Self.Query.Open;
+    try
+      Self.Query.Open;
+    except
+      Self.Query.Connection.Rollback;
+      Exit;
+    end;
 
     if not Self.Query.IsEmpty then begin
       order := TPurchaseOrder.Create;
@@ -194,11 +200,13 @@ begin
 
       try
         Self.Query.ExecSQL;
+        Self.Query.Connection.Commit;
 
         Self.GetToolTypes(order);
 
         Result := order;
       except
+        Self.Query.Connection.Rollback;
         order.Free;
       end;
     end;

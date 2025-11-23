@@ -2,8 +2,6 @@ unit PurchaseOrderDTO;
 
 interface
 
-uses System.Generics.Collections, PurchaseOrderModel, SupplierModel;
-
 type TPurchaseOrderItemDTO = record
   modelId: Integer;
   quantity: Integer;

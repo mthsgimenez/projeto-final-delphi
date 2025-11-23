@@ -2,7 +2,7 @@ unit PurchaseOrderRepositoryInterface;
 
 interface
 
-uses System.Generics.Collections, CRUDRepositoryInterface, PurchaseOrderModel, ToolTypeModel;
+uses System.Generics.Collections, PurchaseOrderModel;
 
 type IPurchaseOrderRepository = interface
   function CreatePurchaseOrder(aPurchaseOrder: TPurchaseOrder): TPurchaseOrder;
