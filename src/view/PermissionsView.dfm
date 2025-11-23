@@ -54,7 +54,11 @@ object formPermissions: TformPermissions
           'SUPPLIERS_DELETE'
           'TOOLS_CREATE'
           'TOOLS_UPDATE'
-          'TOOLS_DELETE')
+          'TOOLS_DELETE'
+          'STORAGE'
+          'ORDERS'
+          'RECEIPT'
+          'REPORTS')
         TabOrder = 1
       end
       object buttonCreate: TButton
@@ -136,7 +140,11 @@ object formPermissions: TformPermissions
           'SUPPLIERS_DELETE'
           'TOOLS_CREATE'
           'TOOLS_UPDATE'
-          'TOOLS_DELETE')
+          'TOOLS_DELETE'
+          'STORAGE'
+          'ORDERS'
+          'RECEIPT'
+          'REPORTS')
         TabOrder = 1
       end
       object buttonSave: TButton

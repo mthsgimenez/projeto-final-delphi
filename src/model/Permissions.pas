@@ -14,7 +14,11 @@ type TPermissions = (
     SUPPLIERS_DELETE = 7,
     TOOLS_CREATE = 8,
     TOOLS_UPDATE = 9,
-    TOOLS_DELETE = 10
+    TOOLS_DELETE = 10,
+    STORAGE = 11,
+    ORDERS = 12,
+    RECEIPT = 13,
+    REPORTS = 14
 );
 
 type TPermissionsSet = set of TPermissions;

@@ -224,6 +224,10 @@
         <DCCReference Include="src\repository\implementation\ServiceOrderRepository.pas"/>
         <DCCReference Include="src\controller\ServiceOrderController.pas"/>
         <DCCReference Include="src\controller\ToolController.pas"/>
+        <DCCReference Include="src\view\ReceiptView.pas">
+            <Form>formReceipt</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

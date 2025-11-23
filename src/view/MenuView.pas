@@ -6,7 +6,7 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Buttons, Vcl.StdCtrls, Vcl.ExtCtrls,
   Vcl.Imaging.pngimage, UserView, Vcl.Skia, PermissionsView, Session, Permissions, UserModel, SupplierView, ToolTypeView, StorageView,
-  OrderView, ReportsView;
+  OrderView, ReportsView, ReceiptView;
 
 type
   TLogoutCallback = procedure of object;
@@ -44,6 +44,9 @@ type
     panelReports: TPanel;
     labelReports: TLabel;
     buttonReports: TSpeedButton;
+    panelReceipt: TPanel;
+    labelReceipt: TLabel;
+    buttonReceipt: TSpeedButton;
     procedure imgMenuClick(Sender: TObject);
     procedure buttonUserMenuClick(Sender: TObject);
     procedure buttonPermissionsClick(Sender: TObject);
@@ -54,6 +57,7 @@ type
     procedure buttonStorageClick(Sender: TObject);
     procedure buttonOrdersClick(Sender: TObject);
     procedure buttonReportsClick(Sender: TObject);
+    procedure buttonReceiptClick(Sender: TObject);
   private
     logoutCallback: TLogoutCallback;
     openWidth: Integer;
@@ -80,6 +84,12 @@ implementation
 procedure TformMenu.buttonPermissionsClick(Sender: TObject);
 begin
   Self.ChangeForm(TformPermissions);
+  if Self.isMenuOpen then Self.ToggleMenu;
+end;
+
+procedure TformMenu.buttonReceiptClick(Sender: TObject);
+begin
+  Self.ChangeForm(TformReceipt);
   if Self.isMenuOpen then Self.ToggleMenu;
 end;
 
@@ -145,9 +155,17 @@ begin
   user := TSession.GetUser;
 
   if Assigned(user.permissionGroup) then begin
-    Self.panelPermissions.Visible := user.permissionGroup.hasPermission(GROUP_PERMISSIONS)
+    Self.panelPermissions.Visible := user.permissionGroup.hasPermission(GROUP_PERMISSIONS);
+    Self.panelStorage.Visible := user.permissionGroup.hasPermission(STORAGE);
+    Self.panelOrders.Visible := user.permissionGroup.hasPermission(ORDERS);
+    Self.panelReceipt.Visible := user.permissionGroup.hasPermission(RECEIPT);
+    Self.panelReports.Visible := user.permissionGroup.hasPermission(REPORTS);
   end else begin
     Self.panelPermissions.Visible := False;
+    Self.panelStorage.Visible := False;
+    Self.panelOrders.Visible := False;
+    Self.panelReceipt.Visible := False;
+    Self.panelReports.Visible := False;
   end;
 
   Self.labelUsername.Caption := user.login;

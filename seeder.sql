@@ -8,7 +8,11 @@ INSERT INTO permissions VALUES
 	(7, 'suppliers_delete', 'Permite desativar fornecedores'),
 	(8, 'tools_create', 'Permite cadastrar ferramentas'),
 	(9, 'tools_update', 'Permite alterar dados de ferramentas'),
-	(10, 'tools_delete', 'Permite desativar ferramentas');
+	(10, 'tools_delete', 'Permite desativar ferramentas'),
+	(11, 'storage', 'Permite visualizar e movimentar o estoque'),
+	(12, 'orders', 'Permite emitir e cancelar ordens de serviço e de compra'),
+	(13, 'receipt', 'Permite receber ordens de compra e de serviço, dando entrada no estoque'),
+	(14, 'reports', 'Permite emitir relatórios');
 
 INSERT INTO permission_groups ("name") VALUES ('admin');
 
@@ -22,7 +26,11 @@ INSERT INTO permission_groups_permissions (id_pgroup, id_permission) VALUES
 	(1, 7),
 	(1, 8),
 	(1, 9),
-	(1, 10);
+	(1, 10),
+	(1, 11),
+	(1, 12),
+	(1, 13),
+	(1, 14);
 
 -- Cria um usuário 'admin' com a senha 'admin'
 INSERT INTO users ("name", login, hash, id_pgroup) VALUES

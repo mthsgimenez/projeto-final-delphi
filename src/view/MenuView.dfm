@@ -130,7 +130,6 @@ object formMenu: TformMenu
       Caption = 'panelUser'
       ShowCaption = False
       TabOrder = 0
-      ExplicitTop = 54
       object imgUser: TImage
         Left = 7
         Top = 7
@@ -211,7 +210,6 @@ object formMenu: TformMenu
       Caption = 'panelUser'
       ShowCaption = False
       TabOrder = 1
-      ExplicitTop = 108
       object imgPermissions: TImage
         Left = 7
         Top = 7
@@ -297,7 +295,6 @@ object formMenu: TformMenu
       Caption = 'panelUser'
       ShowCaption = False
       TabOrder = 2
-      ExplicitTop = 161
       object labelSuppliers: TLabel
         Left = 60
         Top = 7
@@ -368,7 +365,6 @@ object formMenu: TformMenu
       Caption = 'panelUser'
       ShowCaption = False
       TabOrder = 3
-      ExplicitTop = 217
       object labelToolTypes: TLabel
         Left = 60
         Top = 7
@@ -502,7 +498,6 @@ object formMenu: TformMenu
       Caption = 'panelStorage'
       ShowCaption = False
       TabOrder = 5
-      ExplicitTop = 329
       object labelOrders: TLabel
         Left = 60
         Top = 7
@@ -538,7 +533,7 @@ object formMenu: TformMenu
     object panelReports: TPanel
       AlignWithMargins = True
       Left = 0
-      Top = 381
+      Top = 435
       Width = 250
       Height = 50
       Margins.Left = 0
@@ -550,7 +545,7 @@ object formMenu: TformMenu
       Caption = 'panelStorage'
       ShowCaption = False
       TabOrder = 6
-      ExplicitTop = 385
+      ExplicitTop = 470
       object labelReports: TLabel
         Left = 60
         Top = 7
@@ -577,6 +572,54 @@ object formMenu: TformMenu
         Align = alClient
         Flat = True
         OnClick = buttonReportsClick
+        ExplicitLeft = 31
+        ExplicitTop = 24
+        ExplicitWidth = 23
+        ExplicitHeight = 22
+      end
+    end
+    object panelReceipt: TPanel
+      AlignWithMargins = True
+      Left = 0
+      Top = 381
+      Width = 250
+      Height = 50
+      Margins.Left = 0
+      Margins.Top = 4
+      Margins.Right = 0
+      Margins.Bottom = 0
+      Align = alTop
+      BevelOuter = bvNone
+      Caption = 'panelStorage'
+      ShowCaption = False
+      TabOrder = 7
+      ExplicitTop = 400
+      object labelReceipt: TLabel
+        Left = 60
+        Top = 7
+        Width = 140
+        Height = 32
+        Caption = 'Recebimento'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clSnow
+        Font.Height = -24
+        Font.Name = 'Segoe UI'
+        Font.Style = []
+        ParentFont = False
+      end
+      object buttonReceipt: TSpeedButton
+        AlignWithMargins = True
+        Left = 0
+        Top = 0
+        Width = 250
+        Height = 50
+        Margins.Left = 0
+        Margins.Top = 0
+        Margins.Right = 0
+        Margins.Bottom = 0
+        Align = alClient
+        Flat = True
+        OnClick = buttonReceiptClick
         ExplicitLeft = 31
         ExplicitTop = 24
         ExplicitWidth = 23

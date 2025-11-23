@@ -72,7 +72,8 @@ uses
   ServiceOrderRepositoryInterface in 'src\repository\interface\ServiceOrderRepositoryInterface.pas',
   ServiceOrderRepository in 'src\repository\implementation\ServiceOrderRepository.pas',
   ServiceOrderController in 'src\controller\ServiceOrderController.pas',
-  ToolController in 'src\controller\ToolController.pas';
+  ToolController in 'src\controller\ToolController.pas',
+  ReceiptView in 'src\view\ReceiptView.pas' {formReceipt};
 
 {$R *.res}
 
@@ -81,5 +82,6 @@ begin
   Application.MainFormOnTaskbar := True;
   Application.CreateForm(TConnection, Connection);
   Application.CreateForm(TformMain, formMain);
+  Application.CreateForm(TformReceipt, formReceipt);
   Application.Run;
 end.
