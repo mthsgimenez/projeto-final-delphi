@@ -16,6 +16,7 @@ type TToolRepository = class(TRepositoryBase, IToolRepository)
     function Update(aTool: TTool): TTool;
     function FindById(aToolId: Integer): TTool;
     function FindAll(): TObjectList<TTool>;
+    function FindAvailable(): TObjectList<TTool>;
     function DeleteById(aToolId: Integer): Boolean;
     function ExistsById(aToolId: Integer): Boolean;
 
@@ -63,6 +64,46 @@ begin
   Result := nil;
 
   Self.Query.SQL.Text := 'SELECT * FROM tools';
+
+  try
+    Self.Query.Open;
+
+    if not Self.Query.IsEmpty then begin
+      tools := TObjectList<TTool>.Create;
+      Result := tools;
+
+      while not Self.Query.Eof do begin
+        tool := TTool.Create;
+        tool.code := Self.Query.FieldByName('code').AsString;
+        tool.id := Self.Query.FieldByName('id').AsInteger;
+        tool.model := Self.toolTypeRepository.FindById(
+          Self.Query.FieldByName('id_tool_model').AsInteger
+        );
+        tool.state := StringToState(Self.Query.FieldByName('state').AsString);
+        tool.honingNum := Self.Query.FieldByName('honing_num').AsInteger;
+        tool.storage := Self.storageRepository.FindById(
+          Self.Query.FieldByName('id_storage').AsInteger
+        );
+        tool.status := StringToStatus(Self.Query.FieldByName('status').AsString);
+
+        tools.Add(tool);
+
+        Self.Query.Next;
+      end;
+    end;
+  finally
+    Self.Query.Close;
+  end;
+end;
+
+function TToolRepository.FindAvailable: TObjectList<TTool>;
+var
+  tools: TObjectList<TTool>;
+  tool: TTool;
+begin
+  Result := nil;
+
+  Self.Query.SQL.Text := 'SELECT * FROM tools WHERE "status" = ''AVAILABLE''';
 
   try
     Self.Query.Open;

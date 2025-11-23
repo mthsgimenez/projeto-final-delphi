@@ -28,6 +28,8 @@ implementation
 constructor TServiceOrderRepository.Create(aToolRepository: IToolRepository;
   aSupplierRepository: ISupplierRepository);
 begin
+  inherited Create;
+
   Self.toolRepository := aToolRepository;
   Self.supplierRepository := aSupplierRepository;
 end;
@@ -86,7 +88,7 @@ begin
         Self.GetTools(order);
 
         Result := order;
-      finally
+      except
         Self.Query.Connection.Rollback;
         order.Free;
       end;
@@ -196,7 +198,7 @@ begin
           toolsQuery.FieldByName('id_tool').AsInteger
         );
 
-        aServiceOrder.AddItemToOrder(tool);
+        aServiceOrder.items.Add(tool);
 
         toolsQuery.Next;
       end;

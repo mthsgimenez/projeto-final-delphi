@@ -3,15 +3,17 @@ unit OrderView;
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics, System.Generics.Collections,
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics, System.Generics.Collections, Vcl.ExtCtrls,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ComCtrls, Vcl.StdCtrls, Vcl.Grids, Dependencies, MessageHelper,
   PurchaseOrderModel, PurchaseOrderDTO, PurchaseOrderController,
+  ServiceOrderModel, ServiceOrderDTO, ServiceOrderController,
+  ToolModel, ToolController,
   ToolTypeModel, ToolTypeController,
-  SupplierModel, SupplierController, Vcl.ExtCtrls;
+  SupplierModel, SupplierController;
 
 type TFilterStatus = (ALL_STATUSES, OPEN, CLOSED, CANCELLED);
 type TFilterType = (ALL_TYPES, PURCHASE_ORDER, SERVICE_ORDER);
-type TPicking = (SUPPLIER, TOOLTYPE);
+type TPicking = (SUPPLIER, TOOLTYPE, TOOL);
 
 type
   TformOrder = class(TForm)
@@ -38,6 +40,20 @@ type
     editQuantity: TEdit;
     buttonAddToolType: TButton;
     labelPrice: TLabel;
+    tabCreateService: TTabSheet;
+    editSupplier2: TEdit;
+    labelSupplier2: TLabel;
+    buttonPickSupplier2: TButton;
+    listPreviewService: TListBox;
+    editTool: TEdit;
+    labelTool: TLabel;
+    buttonPickTool: TButton;
+    editPrice: TEdit;
+    labelPrice2: TLabel;
+    buttonAddTool: TButton;
+    labelDisplayPrice: TLabel;
+    buttonBack2: TButton;
+    buttonSaveService: TButton;
     panelPicker: TPanel;
     gridPick: TStringGrid;
     buttonCancelPick: TButton;
@@ -60,30 +76,50 @@ type
     procedure buttonAddToolTypeClick(Sender: TObject);
     procedure buttonSavePurchaseClick(Sender: TObject);
     procedure tabCreatePurchaseHide(Sender: TObject);
+    procedure buttonPickSupplier2Click(Sender: TObject);
+    procedure buttonPickToolClick(Sender: TObject);
+    procedure tabCreateServiceShow(Sender: TObject);
+    procedure buttonBack2Click(Sender: TObject);
+    procedure buttonCreateServiceClick(Sender: TObject);
+    procedure editPriceExit(Sender: TObject);
+    procedure buttonAddToolClick(Sender: TObject);
+    procedure tabCreateServiceHide(Sender: TObject);
+    procedure buttonSaveServiceClick(Sender: TObject);
   private
     selectedOrder: TObject;
 
     purchaseOrderController: TPurchaseOrderController;
+    serviceOrderController: TServiceOrderController;
     toolTypeController: TToolTypeController;
+    toolController: TToolController;
     supplierController: TSupplierController;
 
     purchaseOrders: TObjectList<TPurchaseOrder>;
+    serviceOrders: TObjectList<TServiceOrder>;
     suppliers: TObjectList<TSupplier>;
     toolTypes: TObjectList<TToolType>;
+    tools: TObjectList<TTool>;
 
     currentPicking: TPicking;
-    selectedSupplier: TSupplier;
-    selectedToolType: TToolType;
 
+    selectedSupplier: TSupplier;
     chosenSupplier: TSupplier;
+
+    selectedToolType: TToolType;
     chosenToolType: TToolType;
+
+    selectedTool: TTool;
+    chosenTool: TTool;
 
     orderPrice: Currency;
     purchaseOrderDTO: TPurchaseOrderDTO;
+    serviceOrderDTO: TServiceOrderDTO;
 
     procedure ClearPurchaseCreate;
+    procedure ClearServiceCreate;
     procedure UpdateSuppliersGrid();
     procedure UpdateToolTypesGrid();
+    procedure UpdateToolGrid();
     procedure UpdateOrdersGrid(aFilterType: TFilterType;
       aFilterStatus: TFilterStatus);
   public
@@ -100,11 +136,48 @@ implementation
 
 { TformOrder }
 
+procedure TformOrder.buttonAddToolClick(Sender: TObject);
+var
+  price: Currency;
+  unformattedPrice: String;
+  fs: TFormatSettings;
+begin
+  if not Assigned(Self.chosenTool) then begin
+    TMessageHelper.GetInstance.Error('Selecione uma ferramenta');
+    Exit;
+  end;
+
+  unformattedPrice := StringReplace(Self.editPrice.Text, 'R$', '', [rfReplaceAll]);
+  unformattedPrice := Trim(unformattedPrice);
+
+  fs := TFormatSettings.Create;
+  fs.CurrencyString := 'R$';
+  fs.CurrencyFormat := 0;
+  fs.DecimalSeparator := ',';
+  fs.ThousandSeparator := '.';
+
+  if not TryStrToCurr(unformattedPrice, price, fs) then begin
+    TMessageHelper.GetInstance.Error('Preço inválido');
+    Exit;
+  end;
+
+  Self.serviceOrderDTO.AddItem(Self.chosenTool.id);
+  Self.orderPrice := Self.orderPrice + price;
+
+  Self.listPreviewService.AddItem(Format('%s %s', [Self.chosenTool.code, Self.editPrice.Text]), nil);
+
+  Self.editPrice.Clear;
+  Self.editTool.Clear;
+  Self.tools.Remove(Self.chosenTool);
+  Self.chosenTool := nil;
+
+  Self.labelDisplayPrice.Caption := Format('Total: %m', [Self.orderPrice], fs);
+end;
+
 procedure TformOrder.buttonAddToolTypeClick(Sender: TObject);
 var
   quantity: Integer;
   item: TPurchaseOrderItemDTO;
-  i: Integer;
 begin
   try
     quantity := StrToInt(Self.editQuantity.Text);
@@ -135,6 +208,11 @@ begin
   Self.editQuantity.Clear;
 end;
 
+procedure TformOrder.buttonBack2Click(Sender: TObject);
+begin
+  Self.pcontrolOrders.ActivePageIndex := 0;
+end;
+
 procedure TformOrder.buttonBackClick(Sender: TObject);
 begin
   Self.pcontrolOrders.ActivePageIndex := 0;
@@ -142,12 +220,28 @@ end;
 
 procedure TformOrder.buttonCancelClick(Sender: TObject);
 var
-  purchaseOrder: TPurchaseOrder;
-  updatedPurchaseOrder: TPurchaseOrder;
+  purchaseOrder, updatedPurchaseOrder: TPurchaseOrder;
+  serviceOrder, updatedServiceOrder: TServiceOrder;
 begin
   if not Assigned(Self.selectedOrder) then begin
     TMessageHelper.GetInstance.Error('Nenhum pedido selecionado');
     Exit;
+  end;
+
+  if Self.selectedOrder is TPurchaseOrder then begin
+    purchaseOrder := TPurchaseOrder(Self.selectedOrder);
+
+    if purchaseOrder.status <> PurchaseOrderModel.OPEN then begin
+      TMessageHelper.GetInstance.Error('Não é possível cancelar um pedido que não está aberto');
+      Exit;
+    end;
+  end else if Self.selectedOrder is TServiceOrder then begin
+    serviceOrder := TServiceOrder(Self.selectedOrder);
+
+    if ServiceOrder.status <> ServiceOrderModel.OPEN then begin
+      TMessageHelper.GetInstance.Error('Não é possível cancelar um pedido que não está aberto');
+      Exit;
+    end;
   end;
 
   if not TMessageHelper.GetInstance.Confirmation(
@@ -161,6 +255,14 @@ begin
       Self.purchaseOrders.Remove(purchaseOrder);
       Self.purchaseOrders.Add(updatedPurchaseOrder);
       Self.UpdateOrdersGrid(PURCHASE_ORDER, CANCELLED);
+    end;
+  end else if Self.selectedOrder is TServiceOrder then begin
+    serviceOrder := TServiceOrder(Self.selectedOrder);
+    updatedServiceOrder := Self.serviceOrderController.CancelOrder(serviceOrder.id);
+    if Assigned(updatedServiceOrder) then begin
+      Self.serviceOrders.Remove(serviceOrder);
+      Self.serviceOrders.Add(updatedServiceOrder);
+      Self.UpdateOrdersGrid(SERVICE_ORDER, CANCELLED);
     end;
   end;
 end;
@@ -181,6 +283,11 @@ end;
 procedure TformOrder.buttonCreatePurchaseClick(Sender: TObject);
 begin
   Self.pcontrolOrders.ActivePageIndex := 1;
+end;
+
+procedure TformOrder.buttonCreateServiceClick(Sender: TObject);
+begin
+  Self.pcontrolOrders.ActivePageIndex := 2;
 end;
 
 procedure TformOrder.buttonFilterClick(Sender: TObject);
@@ -215,6 +322,7 @@ begin
 
       Self.chosenSupplier := Self.selectedSupplier;
       Self.editSupplier.Text := Self.chosenSupplier.tradeName;
+      Self.editSupplier2.Text := Self.chosenSupplier.tradeName;
     end;
     TOOLTYPE: begin
       if not Assigned(Self.selectedToolType) then begin
@@ -225,18 +333,42 @@ begin
       Self.chosenToolType := Self.selectedToolType;
       Self.editToolType.Text := Self.chosenToolType.code;
     end;
+    TOOL: begin
+      if not Assigned(Self.selectedTool) then begin
+        TMessageHelper.GetInstance.Error('Nenhuma ferramenta selecionada');
+        Exit;
+      end;
+
+      Self.chosenTool := Self.selectedTool;
+      Self.editTool.Text := Self.chosenTool.code;
+    end;
   end;
 
   Self.selectedSupplier := nil;
   Self.selectedToolType := nil;
+  Self.selectedTool := nil;
 
   Self.panelPicker.Visible := False;
+end;
+
+procedure TformOrder.buttonPickSupplier2Click(Sender: TObject);
+begin
+  Self.currentPicking := SUPPLIER;
+  Self.UpdateSuppliersGrid;
+  Self.panelPicker.Visible := True;
 end;
 
 procedure TformOrder.buttonPickSupplierClick(Sender: TObject);
 begin
   Self.currentPicking := SUPPLIER;
   Self.UpdateSuppliersGrid;
+  Self.panelPicker.Visible := True;
+end;
+
+procedure TformOrder.buttonPickToolClick(Sender: TObject);
+begin
+  Self.currentPicking := TOOL;
+  Self.UpdateToolGrid;
   Self.panelPicker.Visible := True;
 end;
 
@@ -274,6 +406,34 @@ begin
   Self.pcontrolOrders.ActivePageIndex := 0;
 end;
 
+procedure TformOrder.buttonSaveServiceClick(Sender: TObject);
+var
+  order: TServiceOrder;
+begin
+  if not Assigned(Self.chosenSupplier) then begin
+    TMessageHelper.GetInstance.Error('Escolha um fornecedor');
+    Exit;
+  end;
+
+  if Length(Self.serviceOrderDTO.items) < 1 then begin
+    TMessageHelper.GetInstance.Error('Nenhuma ferramenta no pedido');
+    Exit;
+  end;
+
+  Self.serviceOrderDTO.supplierId := Self.chosenSupplier.id;
+
+  order := Self.serviceOrderController.CreateOrder(Self.serviceOrderDTO);
+
+  if not Assigned(order) then begin
+    TMessageHelper.GetInstance.Error('Não foi possível emitir a ordem de serviço');
+    Exit;
+  end;
+
+  Self.serviceOrders.Add(order);
+
+  Self.pcontrolOrders.ActivePageIndex := 0;
+end;
+
 procedure TformOrder.ClearPurchaseCreate;
 begin
   Self.orderPrice := 0;
@@ -292,6 +452,24 @@ begin
   Self.selectedToolType := nil;
 end;
 
+procedure TformOrder.ClearServiceCreate;
+begin
+  Self.orderPrice := 0;
+  Self.serviceOrderDTO.supplierId := 0;
+  SetLength(Self.serviceOrderDTO.items, 0);
+
+  Self.editSupplier2.Clear;
+  Self.editTool.Clear;
+  Self.editPrice.Clear;
+  Self.listPreviewService.Clear;
+  Self.labelDisplayPrice.Caption := 'Total: R$0,00';
+
+  Self.chosenSupplier := nil;
+  Self.chosenTool := nil;
+  Self.selectedSupplier := nil;
+  Self.selectedTool := nil;
+end;
+
 constructor TformOrder.Create(AOwner: TComponent);
 begin
   inherited;
@@ -300,21 +478,54 @@ begin
   Self.purchaseOrderDTO.supplierId := 0;
 
   Self.purchaseOrderController := TDependencies.GetInstance.GetPurchaseOrderController;
+  Self.serviceOrderController := TDependencies.GetInstance.GetServiceOrderController;
   Self.toolTypeController := TDependencies.GetInstance.GetToolTypeController;
+  Self.toolController := TDependencies.GetInstance.GetToolController;
   Self.supplierController := TDependencies.GetInstance.GetSupplierController;
 
   Self.purchaseOrders := Self.purchaseOrderController.GetOrders;
+  Self.serviceOrders := Self.serviceOrderController.GetOrders;
 end;
 
 destructor TformOrder.Destroy;
 begin
   if Assigned(Self.purchaseOrders) then
     FreeAndNil(Self.purchaseOrders);
+  if Assigned(Self.serviceOrders) then
+    FreeAndNil(Self.serviceOrders);
+  if Assigned(Self.tools) then
+    FreeAndNil(Self.tools);
   if Assigned(Self.toolTypes) then
     FreeAndNil(Self.toolTypes);
   if Assigned(Self.suppliers) then
     FreeAndNil(Self.suppliers);
   inherited;
+end;
+
+procedure TformOrder.editPriceExit(Sender: TObject);
+var
+  price: Currency;
+  formattedPrice: String;
+  fs: TFormatSettings;
+begin
+  try
+    fs := TFormatSettings.Create;
+    fs.CurrencyString := 'R$';
+    fs.CurrencyFormat := 0;
+    fs.DecimalSeparator := ',';
+    fs.ThousandSeparator := '.';
+
+    price := StrToCurr(Self.editPrice.Text, fs);
+
+    formattedPrice := Format('%m', [price], fs);
+
+    Self.editPrice.Text := formattedPrice;
+  except
+    on E: EConvertError do
+    begin
+      TMessageHelper.GetInstance.Error('Preço inválido');
+    end;
+  end;
 end;
 
 procedure TformOrder.gridOrdersSelectCell(Sender: TObject; ACol, ARow: LongInt;
@@ -339,6 +550,7 @@ begin
   case Self.currentPicking of
     SUPPLIER: Self.selectedSupplier := TSupplier(Self.gridPick.Objects[0, ARow]);
     TOOLTYPE: Self.selectedToolType := TToolType(Self.gridPick.Objects[0, ARow]);
+    TOOL: Self.selectedTool := TTool(Self.gridPick.Objects[0, ARow]);
   end;
 end;
 
@@ -356,6 +568,22 @@ begin
     Self.suppliers := Self.supplierController.GetSuppliers;
 end;
 
+procedure TformOrder.tabCreateServiceHide(Sender: TObject);
+begin
+  if Assigned(Self.tools) then
+    FreeAndNil(Self.tools);
+  Self.ClearServiceCreate;
+end;
+
+procedure TformOrder.tabCreateServiceShow(Sender: TObject);
+begin
+  if not Assigned(Self.tools) then
+    Self.tools := Self.toolController.GetAvailableTools;
+
+  if not Assigned(Self.suppliers) then
+    Self.suppliers := Self.supplierController.GetSuppliers;
+end;
+
 procedure TformOrder.tabListShow(Sender: TObject);
 begin
   Self.UpdateOrdersGrid(ALL_TYPES, ALL_STATUSES);
@@ -364,7 +592,8 @@ end;
 procedure TformOrder.UpdateOrdersGrid(aFilterType: TFilterType;
   aFilterStatus: TFilterStatus);
 var
-  order: TPurchaseOrder;
+  pOrder: TPurchaseOrder;
+  sOrder: TServiceOrder;
   i: Integer;
 begin
   with Self.gridOrders do begin
@@ -382,26 +611,50 @@ begin
 
     if aFilterType <> SERVICE_ORDER then
     if Assigned(Self.purchaseOrders) then
-      for order in Self.purchaseOrders do begin
+      for pOrder in Self.purchaseOrders do begin
         if aFilterStatus <> ALL_STATUSES then begin
           case aFilterStatus of
-            OPEN: if order.status <> PurchaseOrderModel.OPEN then continue;
-            CLOSED: if order.status <> PurchaseOrderModel.CLOSED then continue;
-            CANCELLED: if order.status <> PurchaseOrderModel.CANCELLED then continue;
+            OPEN: if pOrder.status <> PurchaseOrderModel.OPEN then continue;
+            CLOSED: if pOrder.status <> PurchaseOrderModel.CLOSED then continue;
+            CANCELLED: if pOrder.status <> PurchaseOrderModel.CANCELLED then continue;
           end;
         end;
 
         i := RowCount;
         RowCount := RowCount + 1;
-        Objects[0, i] := order;
-        Cells[0, i] := IntToStr(order.id);
-        Cells[1, i] := order.supplier.tradeName;
-        Cells[2, i] := FormatDateTime('hh:nn  dd/mm/yyyy', order.issuedAt);
-        if order.statusUpdatedAt <> 0.0 then
-          Cells[3, i] := FormatDateTime('hh:nn  dd/mm/yyyy', order.statusUpdatedAt)
+        Objects[0, i] := pOrder;
+        Cells[0, i] := IntToStr(pOrder.id);
+        Cells[1, i] := pOrder.supplier.tradeName;
+        Cells[2, i] := FormatDateTime('hh:nn  dd/mm/yyyy', pOrder.issuedAt);
+        if pOrder.statusUpdatedAt <> 0.0 then
+          Cells[3, i] := FormatDateTime('hh:nn  dd/mm/yyyy', pOrder.statusUpdatedAt)
         else
           Cells[3, i] := '';
-        Cells[4, i] := PurchaseOrderModel.StatusToViewString(order.status);
+        Cells[4, i] := PurchaseOrderModel.StatusToViewString(pOrder.status);
+      end;
+
+    if aFilterType <> PURCHASE_ORDER then
+    if Assigned(Self.serviceOrders) then
+      for sOrder in Self.serviceOrders do begin
+        if aFilterStatus <> ALL_STATUSES then begin
+          case aFilterStatus of
+            OPEN: if sOrder.status <> ServiceOrderModel.OPEN then continue;
+            CLOSED: if sOrder.status <> ServiceOrderModel.CLOSED then continue;
+            CANCELLED: if sOrder.status <> ServiceOrderModel.CANCELLED then continue;
+          end;
+        end;
+
+        i := RowCount;
+        RowCount := RowCount + 1;
+        Objects[0, i] := sOrder;
+        Cells[0, i] := IntToStr(sOrder.id);
+        Cells[1, i] := sOrder.supplier.tradeName;
+        Cells[2, i] := FormatDateTime('hh:nn  dd/mm/yyyy', sOrder.issuedAt);
+        if sOrder.statusUpdatedAt <> 0.0 then
+          Cells[3, i] := FormatDateTime('hh:nn  dd/mm/yyyy', sOrder.statusUpdatedAt)
+        else
+          Cells[3, i] := '';
+        Cells[4, i] := ServiceOrderModel.StatusToViewString(sOrder.status);
       end;
   end;
 end;
@@ -429,6 +682,36 @@ begin
         Cells[0, i] := supplier.tradeName;
         Cells[1, i] := supplier.legalName;
         Cells[2, i] := supplier.CNPJ.getCNPJ;
+      end;
+  end;
+end;
+
+procedure TformOrder.UpdateToolGrid;
+var
+  tool: TTool;
+  i: Integer;
+begin
+  with Self.gridPick do begin
+    RowCount := 1;
+    ColCount := 4;
+    Cells[0, 0] := 'Código';
+    Cells[1, 0] := 'Modelo';
+    Cells[2, 0] := 'Estado';
+    Cells[3, 0] := 'Num. Afiações';
+    ColWidths[0] := 150;
+    ColWidths[1] := 150;
+    ColWidths[2] := 150;
+    ColWidths[3] := 100;
+
+    if Assigned(Self.tools) then
+      for tool in Self.tools do begin
+        i := RowCount;
+        RowCount := RowCount + 1;
+        Objects[0, i] := tool;
+        Cells[0, i] := tool.code;
+        Cells[1, i] := tool.model.code;
+        Cells[2, i] := ToolModel.StateToStringDisplay(tool.state);
+        Cells[3, i] := IntToStr(tool.honingNum);
       end;
   end;
 end;

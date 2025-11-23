@@ -70,7 +70,9 @@ uses
   ServiceOrderModel in 'src\model\ServiceOrderModel.pas',
   ServiceOrderDTO in 'src\DTO\ServiceOrderDTO.pas',
   ServiceOrderRepositoryInterface in 'src\repository\interface\ServiceOrderRepositoryInterface.pas',
-  ServiceOrderRepository in 'src\repository\implementation\ServiceOrderRepository.pas';
+  ServiceOrderRepository in 'src\repository\implementation\ServiceOrderRepository.pas',
+  ServiceOrderController in 'src\controller\ServiceOrderController.pas',
+  ToolController in 'src\controller\ToolController.pas';
 
 {$R *.res}
 

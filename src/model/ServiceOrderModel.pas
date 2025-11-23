@@ -20,7 +20,6 @@ type TServiceOrder = class
     items: TObjectList<TTool>;
     price: Currency;
 
-    procedure AddItemToOrder(aTool: TTool);
     constructor Create;
     destructor Destroy; override;
 end;
@@ -65,13 +64,6 @@ begin
 end;
 
 { TPurchaseOrder }
-
-procedure TServiceOrder.AddItemToOrder(aTool: TTool);
-begin
-  aTool.status := HONING;
-
-  Self.items.Add(aTool);
-end;
 
 constructor TServiceOrder.Create;
 begin

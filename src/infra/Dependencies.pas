@@ -9,7 +9,7 @@ uses DBHelper,
   CNPJApiInterface, ImplCnpja,
   ToolTypeRepositoryInterface, ToolTypeRepository, ToolTypeController,
   StorageRepositoryInterface, StorageRepository, StorageController,
-  ToolRepositoryInterface, ToolRepository,
+  ToolRepositoryInterface, ToolRepository, ToolController,
   PurchaseOrderRepositoryInterface, PurchaseOrderRepository, PurchaseOrderController,
   ServiceOrderRepositoryInterface, ServiceOrderRepository, ServiceOrderController,
   ReportRepositoryInterface, ReportRepository, ReportController;
@@ -37,6 +37,7 @@ type
     storageController: TStorageController;
 
     toolRepository: IToolRepository;
+    toolController: TToolController;
 
     purchaseOrderRepository: IPurchaseOrderRepository;
     purchaseOrderController: TPurchaseOrderController;
@@ -54,6 +55,7 @@ type
     function GetPermissionController: TPermissionController;
     function GetSupplierController: TSupplierController;
     function GetToolTypeController: TToolTypeController;
+    function GetToolController: TToolController;
     function GetStorageController: TStorageController;
     function GetPurchaseOrderController: TPurchaseOrderController;
     function GetServiceOrderController: TServiceOrderController;
@@ -93,6 +95,7 @@ begin
   if Assigned(Self.permissionController) then Self.permissionController.Free;
   if Assigned(Self.supplierController) then Self.supplierController.Free;
   if Assigned(Self.toolTypeController) then Self.toolTypeController.Free;
+  if Assigned(Self.toolController) then Self.toolController.Free;
   if Assigned(Self.storageController) then Self.storageController.Free;
   if Assigned(Self.purchaseOrderController) then Self.purchaseOrderController.Free;
   if Assigned(Self.serviceOrderController) then Self.serviceOrderController.Free;
@@ -165,6 +168,14 @@ begin
     Self.supplierController := TSupplierController.Create(Self.supplierRepository);
 
   Result := Self.supplierController;
+end;
+
+function TDependencies.GetToolController: TToolController;
+begin
+  if not Assigned(Self.toolController) then
+    Self.toolController := TToolController.Create(Self.toolRepository);
+
+  Result := Self.toolController;
 end;
 
 function TDependencies.GetToolTypeController: TToolTypeController;

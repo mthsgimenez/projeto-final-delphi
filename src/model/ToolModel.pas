@@ -28,6 +28,7 @@ function StringToStatus(aString: String): TStatus;
 function StatusToString(aStatus: TStatus): String;
 function StringToState(aString: String): TState;
 function StateToString(aState: TState): String;
+function StateToStringDisplay(aState: TState): String;
 
 implementation
 
@@ -80,6 +81,16 @@ begin
   case aState of
     NEW: Result := 'NEW';
     HONED:    Result := 'HONED';
+  else
+    raise Exception.Create(Format('Valor de state inválido: %d', [Ord(aState)]));
+  end;
+end;
+
+function StateToStringDisplay(aState: TState): String;
+begin
+  case aState of
+    NEW: Result := 'NOVA';
+    HONED:    Result := 'AFIADA';
   else
     raise Exception.Create(Format('Valor de state inválido: %d', [Ord(aState)]));
   end;

@@ -222,6 +222,8 @@
         <DCCReference Include="src\DTO\ServiceOrderDTO.pas"/>
         <DCCReference Include="src\repository\interface\ServiceOrderRepositoryInterface.pas"/>
         <DCCReference Include="src\repository\implementation\ServiceOrderRepository.pas"/>
+        <DCCReference Include="src\controller\ServiceOrderController.pas"/>
+        <DCCReference Include="src\controller\ToolController.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

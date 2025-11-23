@@ -113,7 +113,9 @@ begin
       if not Assigned(tool) then
         raise Exception.Create(Format('Ferramenta (ID: %d) não encontrada', [toolId]));
 
-      order.AddItemToOrder(tool);
+      tool.status := HONING;
+      order.items.Add(Self.toolRepository.Update(tool));
+      tool.Free;
     end;
   except
     order.Free;

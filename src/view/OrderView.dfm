@@ -108,6 +108,7 @@ object formOrder: TformOrder
         Height = 43
         Caption = 'Emitir ordem de servi'#231'o'
         TabOrder = 6
+        OnClick = buttonCreateServiceClick
       end
       object buttonCancel: TButton
         Left = 15
@@ -212,48 +213,160 @@ object formOrder: TformOrder
         TabOrder = 8
         OnClick = buttonAddToolTypeClick
       end
-      object panelPicker: TPanel
-        Left = 32
-        Top = 31
-        Width = 665
-        Height = 409
-        BevelOuter = bvNone
-        BorderWidth = 1
-        BorderStyle = bsSingle
-        Caption = 'panelPicker'
-        Color = clSnow
-        ParentBackground = False
-        ShowCaption = False
-        TabOrder = 9
-        Visible = False
-        object gridPick: TStringGrid
-          Left = 20
-          Top = 24
-          Width = 620
-          Height = 329
-          FixedCols = 0
-          TabOrder = 0
-          OnSelectCell = gridPickSelectCell
-        end
-        object buttonCancelPick: TButton
-          Left = 20
-          Top = 368
-          Width = 105
-          Height = 25
-          Caption = 'Voltar'
-          TabOrder = 1
-          OnClick = buttonCancelPickClick
-        end
-        object buttonPick: TButton
-          Left = 536
-          Top = 367
-          Width = 105
-          Height = 25
-          Caption = 'Escolher'
-          TabOrder = 2
-          OnClick = buttonPickClick
-        end
+    end
+    object tabCreateService: TTabSheet
+      Caption = 'tabCreateService'
+      ImageIndex = 2
+      TabVisible = False
+      OnHide = tabCreateServiceHide
+      OnShow = tabCreateServiceShow
+      object labelSupplier2: TLabel
+        Left = 51
+        Top = 43
+        Width = 63
+        Height = 15
+        Caption = 'Fornecedor:'
       end
+      object labelTool: TLabel
+        Left = 323
+        Top = 104
+        Width = 63
+        Height = 15
+        Caption = 'Ferramenta:'
+      end
+      object labelPrice2: TLabel
+        Left = 353
+        Top = 147
+        Width = 33
+        Height = 15
+        Caption = 'Pre'#231'o:'
+      end
+      object labelDisplayPrice: TLabel
+        Left = 51
+        Top = 296
+        Width = 93
+        Height = 15
+        Caption = 'Valor total: R$0,00'
+      end
+      object editSupplier2: TEdit
+        Left = 120
+        Top = 40
+        Width = 121
+        Height = 23
+        Enabled = False
+        TabOrder = 0
+      end
+      object buttonPickSupplier2: TButton
+        Left = 264
+        Top = 39
+        Width = 129
+        Height = 25
+        Caption = 'Escolher fornecedor'
+        TabOrder = 1
+        OnClick = buttonPickSupplier2Click
+      end
+      object listPreviewService: TListBox
+        Left = 51
+        Top = 88
+        Width = 249
+        Height = 193
+        ItemHeight = 15
+        TabOrder = 2
+      end
+      object editTool: TEdit
+        Left = 400
+        Top = 101
+        Width = 121
+        Height = 23
+        Enabled = False
+        TabOrder = 3
+      end
+      object buttonPickTool: TButton
+        Left = 536
+        Top = 100
+        Width = 75
+        Height = 25
+        Caption = 'Escolher'
+        TabOrder = 4
+        OnClick = buttonPickToolClick
+      end
+      object editPrice: TEdit
+        Left = 400
+        Top = 144
+        Width = 121
+        Height = 23
+        TabOrder = 5
+        OnExit = editPriceExit
+      end
+      object buttonAddTool: TButton
+        Left = 400
+        Top = 192
+        Width = 121
+        Height = 33
+        Caption = 'Adicionar'
+        TabOrder = 6
+        OnClick = buttonAddToolClick
+      end
+      object buttonBack2: TButton
+        Left = 51
+        Top = 464
+        Width = 169
+        Height = 49
+        Caption = 'Voltar'
+        TabOrder = 7
+        OnClick = buttonBack2Click
+      end
+      object buttonSaveService: TButton
+        Left = 491
+        Top = 464
+        Width = 169
+        Height = 49
+        Caption = 'Emitir ordem de servi'#231'o'
+        TabOrder = 8
+        OnClick = buttonSaveServiceClick
+      end
+    end
+  end
+  object panelPicker: TPanel
+    Left = 32
+    Top = 31
+    Width = 665
+    Height = 409
+    BevelOuter = bvNone
+    BorderWidth = 1
+    BorderStyle = bsSingle
+    Caption = 'panelPicker'
+    Color = clSnow
+    ParentBackground = False
+    ShowCaption = False
+    TabOrder = 1
+    Visible = False
+    object gridPick: TStringGrid
+      Left = 20
+      Top = 24
+      Width = 620
+      Height = 329
+      FixedCols = 0
+      TabOrder = 0
+      OnSelectCell = gridPickSelectCell
+    end
+    object buttonCancelPick: TButton
+      Left = 20
+      Top = 368
+      Width = 105
+      Height = 25
+      Caption = 'Voltar'
+      TabOrder = 1
+      OnClick = buttonCancelPickClick
+    end
+    object buttonPick: TButton
+      Left = 536
+      Top = 367
+      Width = 105
+      Height = 25
+      Caption = 'Escolher'
+      TabOrder = 2
+      OnClick = buttonPickClick
     end
   end
 end
