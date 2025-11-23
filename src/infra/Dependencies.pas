@@ -11,6 +11,7 @@ uses DBHelper,
   StorageRepositoryInterface, StorageRepository, StorageController,
   ToolRepositoryInterface, ToolRepository,
   PurchaseOrderRepositoryInterface, PurchaseOrderRepository, PurchaseOrderController,
+  ServiceOrderRepositoryInterface, ServiceOrderRepository, ServiceOrderController,
   ReportRepositoryInterface, ReportRepository, ReportController;
 
 type
@@ -40,6 +41,9 @@ type
     purchaseOrderRepository: IPurchaseOrderRepository;
     purchaseOrderController: TPurchaseOrderController;
 
+    serviceOrderRepository: IServiceOrderRepository;
+    serviceOrderController: TServiceOrderController;
+
     reportRepository: IReportRepository;
     reportController: TReportController;
 
@@ -52,6 +56,7 @@ type
     function GetToolTypeController: TToolTypeController;
     function GetStorageController: TStorageController;
     function GetPurchaseOrderController: TPurchaseOrderController;
+    function GetServiceOrderController: TServiceOrderController;
     function GetReportController: TReportController;
 
     class function GetInstance: TDependencies;
@@ -76,7 +81,8 @@ begin
   Self.storageRepository := TStorageRepository.Create(Self.helper, Self.toolTypeRepository);
   Self.toolRepository := TToolRepository.Create(Self.helper, Self.toolTypeRepository, Self.storageRepository);
 
-  Self.purchaseOrderRepository := TPurchaseOrderRepository.Create(Self.helper, Self.toolTypeRepository, Self.supplierRepository);
+  Self.purchaseOrderRepository := TPurchaseOrderRepository.Create(Self.toolTypeRepository, Self.supplierRepository);
+  Self.serviceOrderRepository := TServiceOrderRepository.Create(Self.toolRepository, Self.supplierRepository);
 
   Self.reportRepository := TReportRepository.Create;
 end;
@@ -89,8 +95,8 @@ begin
   if Assigned(Self.toolTypeController) then Self.toolTypeController.Free;
   if Assigned(Self.storageController) then Self.storageController.Free;
   if Assigned(Self.purchaseOrderController) then Self.purchaseOrderController.Free;
+  if Assigned(Self.serviceOrderController) then Self.serviceOrderController.Free;
   if Assigned(Self.reportController) then Self.reportController.Free;
-
 
   Self.helper.Free;
   inherited;
@@ -131,6 +137,18 @@ begin
     Self.reportController := TReportController.Create(Self.reportRepository);
 
   Result := Self.reportController;
+end;
+
+function TDependencies.GetServiceOrderController: TServiceOrderController;
+begin
+  if not Assigned(Self.serviceOrderController) then
+    Self.serviceOrderController := TServiceOrderController.Create(
+      Self.serviceOrderRepository,
+      Self.toolRepository,
+      Self.supplierRepository
+    );
+
+  Result := Self.serviceOrderController;
 end;
 
 function TDependencies.GetStorageController: TStorageController;

@@ -66,7 +66,11 @@ uses
   ReportRepositoryInterface in 'src\repository\interface\ReportRepositoryInterface.pas',
   ReportRepository in 'src\repository\implementation\ReportRepository.pas',
   ReportsView in 'src\view\ReportsView.pas' {formReports},
-  ReportController in 'src\controller\ReportController.pas';
+  ReportController in 'src\controller\ReportController.pas',
+  ServiceOrderModel in 'src\model\ServiceOrderModel.pas',
+  ServiceOrderDTO in 'src\DTO\ServiceOrderDTO.pas',
+  ServiceOrderRepositoryInterface in 'src\repository\interface\ServiceOrderRepositoryInterface.pas',
+  ServiceOrderRepository in 'src\repository\implementation\ServiceOrderRepository.pas';
 
 {$R *.res}
 
