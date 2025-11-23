@@ -73,6 +73,7 @@ begin
 
       while not Self.Query.Eof do begin
         tool := TTool.Create;
+        tool.code := Self.Query.FieldByName('code').AsString;
         tool.id := Self.Query.FieldByName('id').AsInteger;
         tool.model := Self.toolTypeRepository.FindById(
           Self.Query.FieldByName('id_tool_model').AsInteger
@@ -109,6 +110,7 @@ begin
     if not Self.Query.IsEmpty then begin
       tool := TTool.Create;
       tool.id := Self.Query.FieldByName('id').AsInteger;
+      tool.code := Self.Query.FieldByName('code').AsString;
       tool.model := Self.toolTypeRepository.FindById(
         Self.Query.FieldByName('id_tool_model').AsInteger
       );
@@ -203,6 +205,7 @@ begin
     if not Self.Query.IsEmpty then begin
       Result := TTool.Create;
       Result.id := Self.Query.FieldByName('id').AsInteger;
+      Result.code := Self.Query.FieldByName('code').AsString;
       Result.model := Self.toolTypeRepository.FindById(
         Self.Query.FieldByName('id_tool_model').AsInteger
       );
