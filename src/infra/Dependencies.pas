@@ -115,7 +115,12 @@ end;
 function TDependencies.GetPurchaseOrderController: TPurchaseOrderController;
 begin
   if not Assigned(Self.purchaseOrderController) then
-    Self.purchaseOrderController := TPurchaseOrderController.Create(Self.purchaseOrderRepository, Self.toolRepository);
+    Self.purchaseOrderController := TPurchaseOrderController.Create(
+      Self.purchaseOrderRepository,
+      Self.supplierRepository,
+      Self.toolTypeRepository,
+      Self.toolRepository
+    );
 
   Result := Self.purchaseOrderController;
 end;

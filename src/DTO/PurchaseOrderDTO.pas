@@ -4,28 +4,26 @@ interface
 
 uses System.Generics.Collections, PurchaseOrderModel, SupplierModel;
 
-type TPurchaseOrderDTO = class
-  public
-    supplier: TSupplier;
-    items: TObjectList<TPurchaseOrderItem>;
+type TPurchaseOrderItemDTO = record
+  modelId: Integer;
+  quantity: Integer;
+end;
 
-    constructor Create;
-    destructor Destroy; override;
+type TPurchaseOrderDTO = record
+    supplierId: Integer;
+    items: TArray<TPurchaseOrderItemDTO>;
+
+    procedure AddItem(aItem: TPurchaseOrderItemDTO);
 end;
 
 implementation
 
 { TPurchaseOrderDTO }
 
-constructor TPurchaseOrderDTO.Create;
+procedure TPurchaseOrderDTO.AddItem(aItem: TPurchaseOrderItemDTO);
 begin
-  Self.items := TObjectList<TPurchaseOrderItem>.Create;
-end;
-
-destructor TPurchaseOrderDTO.Destroy;
-begin
-  Self.items.Free;
-  inherited;
+  SetLength(Self.items, Length(Self.items) + 1);
+  Self.items[High(Self.items)] := aItem;
 end;
 
 end.

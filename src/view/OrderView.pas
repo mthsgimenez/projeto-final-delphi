@@ -59,6 +59,7 @@ type
     procedure buttonPickSupplierClick(Sender: TObject);
     procedure buttonAddToolTypeClick(Sender: TObject);
     procedure buttonSavePurchaseClick(Sender: TObject);
+    procedure tabCreatePurchaseHide(Sender: TObject);
   private
     selectedOrder: TObject;
 
@@ -77,6 +78,10 @@ type
     chosenSupplier: TSupplier;
     chosenToolType: TToolType;
 
+    orderPrice: Currency;
+    purchaseOrderDTO: TPurchaseOrderDTO;
+
+    procedure ClearPurchaseCreate;
     procedure UpdateSuppliersGrid();
     procedure UpdateToolTypesGrid();
     procedure UpdateOrdersGrid(aFilterType: TFilterType;
@@ -98,9 +103,8 @@ implementation
 procedure TformOrder.buttonAddToolTypeClick(Sender: TObject);
 var
   quantity: Integer;
-  item: TPurchaseOrderItem;
+  item: TPurchaseOrderItemDTO;
   i: Integer;
-  sum: Currency;
 begin
   try
     quantity := StrToInt(Self.editQuantity.Text);
@@ -119,20 +123,16 @@ begin
     Exit;
   end;
 
-  item := TPurchaseOrderItem.Create;
   item.quantity := quantity;
-  item.model := Self.chosenToolType;
+  item.modelId := Self.chosenToolType.id;
+  Self.purchaseOrderDTO.AddItem(item);
 
-  Self.listPreview.AddItem(Format('%s %s x%d', [item.model.code, FormatCurr('R$#,0.00', item.model.price), item.quantity]), item);
+  Self.listPreview.AddItem(Format('%s %s x%d', [Self.chosenToolType.code, FormatCurr('R$#,0.00', Self.chosenToolType.price), item.quantity]), nil);
 
-  sum := 0;
-  for i := 0 to Self.listPreview.Items.Count - 1 do begin
-    item := TPurchaseOrderItem(Self.listPreview.Items.Objects[i]);
+  Self.orderPrice := Self.orderPrice + Self.chosenToolType.price * item.quantity;
+  Self.labelPrice.Caption := FormatCurr('Total: R$#,0.00', Self.orderPrice);
 
-    sum := sum + item.model.price * item.quantity;
-  end;
-
-  Self.labelPrice.Caption := FormatCurr('Total: R$#,0.00', sum);
+  Self.editQuantity.Clear;
 end;
 
 procedure TformOrder.buttonBackClick(Sender: TObject);
@@ -249,10 +249,7 @@ end;
 
 procedure TformOrder.buttonSavePurchaseClick(Sender: TObject);
 var
-  purchaseOrderDTO: TPurchaseOrderDTO;
   newOrder: TPurchaseOrder;
-  item: TPurchaseOrderItem;
-  i: Integer;
 begin
   if not Assigned(Self.chosenSupplier) then begin
     TMessageHelper.GetInstance.Error('Nenhum fornecedor escolhido');
@@ -264,31 +261,44 @@ begin
     Exit;
   end;
 
-  purchaseOrderDTO := TPurchaseOrderDTO.Create;
-  purchaseOrderDTO.supplier := Self.chosenSupplier;
-  for i := 0 to Self.listPreview.Items.Count - 1 do begin
-    item := TPurchaseOrderItem(Self.listPreview.Items.Objects[i]);
-
-    purchaseOrderDTO.items.Add(item);
-  end;
+  purchaseOrderDTO.supplierId := Self.chosenSupplier.id;
 
   newOrder := Self.purchaseOrderController.CreateOrder(purchaseOrderDTO);
   if not Assigned(newOrder) then begin
     TMessageHelper.GetInstance.Error('Não foi possível emitir a ordem de compra');
-    FreeAndNil(purchaseOrderDTO);
     Exit;
   end;
 
   Self.purchaseOrders.Add(newOrder);
-  Self.chosenSupplier := nil;
-  Self.chosenToolType := nil;
 
   Self.pcontrolOrders.ActivePageIndex := 0;
+end;
+
+procedure TformOrder.ClearPurchaseCreate;
+begin
+  Self.orderPrice := 0;
+  Self.purchaseOrderDTO.supplierId := 0;
+  SetLength(Self.purchaseOrderDTO.items, 0);
+
+  Self.editSupplier.Clear;
+  Self.editToolType.Clear;
+  Self.editQuantity.Clear;
+  Self.listPreview.Clear;
+  Self.labelPrice.Caption := 'Total: R$0,00';
+
+  Self.chosenSupplier := nil;
+  Self.chosenToolType := nil;
+  Self.selectedSupplier := nil;
+  Self.selectedToolType := nil;
 end;
 
 constructor TformOrder.Create(AOwner: TComponent);
 begin
   inherited;
+  Self.orderPrice := 0;
+  SetLength(Self.purchaseOrderDTO.items, 0);
+  Self.purchaseOrderDTO.supplierId := 0;
+
   Self.purchaseOrderController := TDependencies.GetInstance.GetPurchaseOrderController;
   Self.toolTypeController := TDependencies.GetInstance.GetToolTypeController;
   Self.supplierController := TDependencies.GetInstance.GetSupplierController;
@@ -330,6 +340,11 @@ begin
     SUPPLIER: Self.selectedSupplier := TSupplier(Self.gridPick.Objects[0, ARow]);
     TOOLTYPE: Self.selectedToolType := TToolType(Self.gridPick.Objects[0, ARow]);
   end;
+end;
+
+procedure TformOrder.tabCreatePurchaseHide(Sender: TObject);
+begin
+  Self.ClearPurchaseCreate;
 end;
 
 procedure TformOrder.tabCreatePurchaseShow(Sender: TObject);
@@ -381,9 +396,11 @@ begin
         Objects[0, i] := order;
         Cells[0, i] := IntToStr(order.id);
         Cells[1, i] := order.supplier.tradeName;
-        Cells[2, i] := FormatDateTime('hh:nn dd\mm\yyyy', order.issuedAt);
+        Cells[2, i] := FormatDateTime('hh:nn  dd/mm/yyyy', order.issuedAt);
         if order.statusUpdatedAt <> 0.0 then
-          Cells[3, i] := FormatDateTime('hh:nn dd\mm\yyyy', order.statusUpdatedAt);
+          Cells[3, i] := FormatDateTime('hh:nn  dd/mm/yyyy', order.statusUpdatedAt)
+        else
+          Cells[3, i] := '';
         Cells[4, i] := PurchaseOrderModel.StatusToViewString(order.status);
       end;
   end;

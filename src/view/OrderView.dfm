@@ -21,7 +21,7 @@ object formOrder: TformOrder
     Margins.Top = 0
     Margins.Right = 0
     Margins.Bottom = 0
-    ActivePage = tabCreatePurchase
+    ActivePage = tabList
     Align = alClient
     TabOrder = 0
     object tabList: TTabSheet
@@ -123,6 +123,7 @@ object formOrder: TformOrder
       Caption = 'tabCreatePurchase'
       ImageIndex = 1
       TabVisible = False
+      OnHide = tabCreatePurchaseHide
       OnShow = tabCreatePurchaseShow
       object labelPrice: TLabel
         Left = 32
@@ -220,6 +221,8 @@ object formOrder: TformOrder
         BorderWidth = 1
         BorderStyle = bsSingle
         Caption = 'panelPicker'
+        Color = clSnow
+        ParentBackground = False
         ShowCaption = False
         TabOrder = 9
         Visible = False
