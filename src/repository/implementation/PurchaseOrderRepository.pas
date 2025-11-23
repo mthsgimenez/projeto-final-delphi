@@ -2,12 +2,11 @@ unit PurchaseOrderRepository;
 
 interface
 
-uses System.Generics.Collections, System.SysUtils, DBHelper, RepositoryBase, Data.DB, FireDAC.Stan.Param, FireDAC.Comp.Client, FireDAC.DApt,
+uses System.Generics.Collections, System.SysUtils, RepositoryBase, Data.DB, FireDAC.Stan.Param, FireDAC.Comp.Client, FireDAC.DApt,
   PurchaseOrderRepositoryInterface, PurchaseOrderModel, ToolTypeModel, ToolTypeRepositoryInterface, SupplierRepositoryInterface;
 
 type TPurchaseOrderRepository = class(TRepositoryBase, IPurchaseOrderRepository)
   private
-    helper: TDBHelper;
     toolTypeRepository: IToolTypeRepository;
     supplierRepository: ISupplierRepository;
 
@@ -18,7 +17,7 @@ type TPurchaseOrderRepository = class(TRepositoryBase, IPurchaseOrderRepository)
     function FindById(aPurchaseOrderId: Integer): TPurchaseOrder;
     function FindAll(): TObjectList<TPurchaseOrder>;
 
-    constructor Create(aHelper: TDBHelper; aToolTypeRepository: IToolTypeRepository;
+    constructor Create(aToolTypeRepository: IToolTypeRepository;
       aSupplierRepository: ISupplierRepository);
 end;
 
@@ -27,12 +26,10 @@ implementation
 { TPurchaseOrderRepository }
 
 constructor TPurchaseOrderRepository.Create(
-  aHelper: TDBHelper;
   aToolTypeRepository: IToolTypeRepository;
   aSupplierRepository: ISupplierRepository);
 begin
   inherited Create;
-  Self.helper := aHelper;
   Self.toolTypeRepository := aToolTypeRepository;
   Self.supplierRepository := aSupplierRepository;
 end;
