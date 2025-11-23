@@ -38,7 +38,7 @@ object formToolType: TformToolType
       object labelUsage: TLabel
         Left = 195
         Top = 260
-        Width = 96
+        Width = 95
         Height = 15
         Caption = 'Tipo de consumo:'
       end
@@ -138,8 +138,7 @@ object formToolType: TformToolType
         TabOrder = 6
         Items.Strings = (
           'Consum'#237'vel'
-          'Afi'#225'vel'
-          'Dur'#225'vel')
+          'Afi'#225'vel')
       end
       object buttonSave: TButton
         Left = 386
@@ -170,8 +169,7 @@ object formToolType: TformToolType
           'Brocas'
           'Cabecotes'
           'Fresas'
-          'Insertos'
-          'EPI')
+          'Insertos')
       end
     end
     object tabList: TTabSheet
@@ -267,7 +265,6 @@ object formToolType: TformToolType
         TabOrder = 0
         OnDrawCell = gridToolTypesDrawCell
         OnMouseDown = gridToolTypesMouseDown
-        ExplicitHeight = 480
       end
       object panelButtonCreate: TPanel
         Left = 538

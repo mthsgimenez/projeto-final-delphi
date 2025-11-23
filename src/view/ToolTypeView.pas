@@ -89,11 +89,12 @@ end;
 procedure TformToolType.buttonSaveClick(Sender: TObject);
 var
   data: TToolTypeDTO;
-  price: double;
+  price: Currency;
   problems: TStringList;
   newTool, updatedTool: TToolType;
   supplier: TSupplier;
   unformattedPrice: String;
+  fs: TFormatSettings;
 begin
   data.code := Self.editCode.Text;
   data.description := Self.editDescription.Text;
@@ -104,15 +105,21 @@ begin
     data.id_supplier := supplier.id;
   end;
 
-  unformattedPrice := StringReplace(Self.editPrice.Text, 'R$', '', [rfReplaceAll]);
-  unformattedPrice := StringReplace(unformattedPrice, '.', '', [rfReplaceAll]);
-  unformattedPrice := StringReplace(unformattedPrice, ',', '.', [rfReplaceAll]);
+  fs := TFormatSettings.Create;
+  fs.CurrencyString := 'R$';
+  fs.CurrencyFormat := 0;
+  fs.DecimalSeparator := ',';
+  fs.ThousandSeparator := '.';
 
-  if not TryStrToFloat(unformattedPrice, price) then begin
+  unformattedPrice := StringReplace(Self.editPrice.Text, 'R$', '', [rfReplaceAll]);
+  unformattedPrice := Trim(unformattedPrice);
+
+  if not TryStrToCurr(unformattedPrice, price, fs) then begin
     TMessageHelper.GetInstance.Error('Preço inválido');
     Exit;
   end;
-  data.price := Currency(price);
+
+  data.price := price;
   data.image := Self.editImage.Text;
 
   problems := data.Validate;
@@ -196,18 +203,27 @@ end;
 
 procedure TformToolType.editPriceExit(Sender: TObject);
 var
-  value: Double;
-  formattedValue: String;
+  price: Currency;
+  formattedPrice: String;
+  fs: TFormatSettings;
 begin
-  formattedValue := Self.editPrice.Text;
-  formattedValue := StringReplace(formattedValue, ',', '.', [rfReplaceAll]);
+  try
+    fs := TFormatSettings.Create;
+    fs.CurrencyString := 'R$';
+    fs.CurrencyFormat := 0;
+    fs.DecimalSeparator := ',';
+    fs.ThousandSeparator := '.';
 
-  if TryStrToFloat(formattedValue, value) then begin
-    formattedValue := FormatFloat('#,0.00', value);
-    formattedValue := StringReplace(formattedValue, '.', '#', [rfReplaceAll]);
-    formattedValue := StringReplace(formattedValue, ',', '.', [rfReplaceAll]);
-    formattedValue := StringReplace(formattedValue, '#', ',', [rfReplaceAll]);
-    Self.editPrice.Text := 'R$' + formattedValue;
+    price := StrToCurr(Self.editPrice.Text, fs);
+
+    formattedPrice := Format('%m', [price], fs);
+
+    Self.editPrice.Text := formattedPrice;
+  except
+    on E: EConvertError do
+    begin
+      TMessageHelper.GetInstance.Error('Preço inválido');
+    end;
   end;
 end;
 
