@@ -3,20 +3,27 @@ unit PurchaseOrderController;
 interface
 
 uses Logging, Session, PurchaseOrderRepositoryInterface, PurchaseOrderModel, PurchaseOrderDTO,
-  System.Generics.Collections, System.SysUtils, ToolRepositoryInterface, ToolModel, StorageModel;
+  System.Generics.Collections, System.SysUtils, ToolRepositoryInterface, ToolModel, StorageModel,
+  SupplierRepositoryInterface, ToolTypeModel, ToolTypeRepositoryInterface;
 
 type TPurchaseOrderController = class
   private
     purchaseOrderRepository: IPurchaseOrderRepository;
     toolRepository: IToolRepository;
+    supplierRepository: ISupplierRepository;
+    toolTypeRepository: IToolTypeRepository;
     logger: TLogger;
   public
     function GetOrders(): TObjectList<TPurchaseOrder>;
     function CreateOrder(aData: TPurchaseOrderDTO): TPurchaseOrder;
     function CancelOrder(aOrderId: Integer): TPurchaseOrder;
     function CloseOrder(aOrderId: Integer; aStorage: TStorage): TPurchaseOrder;
-    constructor Create(aPurchaseOrderRepository: IPurchaseOrderRepository;
-      aToolRepository: IToolRepository);
+    constructor Create(
+      aPurchaseOrderRepository: IPurchaseOrderRepository;
+      aSupplierRepository: ISupplierRepository;
+      aToolTypeRepository: IToolTypeRepository;
+      aToolRepository: IToolRepository
+    );
 end;
 
 implementation
@@ -78,11 +85,16 @@ begin
 end;
 
 constructor TPurchaseOrderController.Create(
-  aPurchaseOrderRepository: IPurchaseOrderRepository;
-  aToolRepository: IToolRepository);
+      aPurchaseOrderRepository: IPurchaseOrderRepository;
+      aSupplierRepository: ISupplierRepository;
+      aToolTypeRepository: IToolTypeRepository;
+      aToolRepository: IToolRepository
+    );
 begin
   Self.logger := TLogger.GetLogger;
   Self.purchaseOrderRepository := aPurchaseOrderRepository;
+  Self.supplierRepository := aSupplierRepository;
+  Self.toolTypeRepository := aToolTypeRepository;
   Self.toolRepository := aToolRepository;
 end;
 
@@ -90,12 +102,27 @@ function TPurchaseOrderController.CreateOrder(
   aData: TPurchaseOrderDTO): TPurchaseOrder;
 var
   order: TPurchaseOrder;
-  item: TPurchaseOrderItem;
+  item: TPurchaseOrderItemDTO;
+  model: TToolType;
 begin
   order := TPurchaseOrder.Create;
-  order.supplier := aData.supplier;
-  for item in aData.items do begin
-    order.AddItemToOrder(item.model, item.quantity);
+  order.supplier := Self.supplierRepository.FindById(aData.supplierId);
+
+  if not Assigned(order.supplier) then
+    raise Exception.Create(Format('Fornecedor (ID: %d) não encontrado', [aData.supplierId]));
+
+  try
+    for item in aData.items do begin
+      model := Self.toolTypeRepository.FindById(item.modelId);
+
+      if not Assigned(model) then
+        raise Exception.Create(Format('Ferramenta (ID: %d) não encontrada', [item.modelId]));
+
+      order.AddItemToOrder(model, item.quantity);
+    end;
+  except
+    order.Free;
+    raise;
   end;
 
   Result := Self.purchaseOrderRepository.CreatePurchaseOrder(order);

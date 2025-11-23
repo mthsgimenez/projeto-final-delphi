@@ -187,8 +187,6 @@ begin
           insertStr := insertStr + ',';
 
         insertStr := insertStr + Format('(%d, %d, %d)', [order.id, item.model.id, item.quantity]);
-
-        order.AddItemToOrder(item.model, item.quantity);
       end;
 
       Self.Query.SQL.Text :=
@@ -196,6 +194,8 @@ begin
 
       try
         Self.Query.ExecSQL;
+
+        Self.GetToolTypes(order);
 
         Result := order;
       except
