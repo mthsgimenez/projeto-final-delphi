@@ -176,16 +176,13 @@ begin
   Result := nil;
 
   Self.Query.SQL.Text :=
-    'INSERT INTO tools (code, id_tool_model, state, honing_num, id_storage, status) ' +
-    'VALUES (:code, :toolTypeId, :state, :honingNum, :storageId, :status) ' +
+    'INSERT INTO tools (code, id_tool_model, id_storage) ' +
+    'VALUES (:code, :toolTypeId, :storageId) ' +
     'RETURNING *';
 
   Self.Query.ParamByName('code').AsString := aTool.model.code + '_temp';
   Self.Query.ParamByName('toolTypeId').AsInteger := aTool.model.id;
-  Self.Query.ParamByName('state').AsString := StateToString(atool.state);
-  Self.Query.ParamByName('honingNum').AsInteger := aTool.honingNum;
   Self.Query.ParamByName('storageId').AsInteger := aTool.storage.id;
-  Self.Query.ParamByName('status').AsString := StatusToString(atool.status);
 
   Self.Query.Connection.StartTransaction;
   try
