@@ -18,6 +18,7 @@ type TServiceOrderController = class
     function CreateOrder(aData: TServiceOrderDTO): TServiceOrder;
     function CancelOrder(aOrderId: Integer): TServiceOrder;
     function CloseOrder(aOrderId: Integer): TServiceOrder;
+    function GetOpen(): TObjectList<TServiceOrder>;
 
     constructor Create(
       aServiceOrderRepository: IServiceOrderRepository;
@@ -102,6 +103,7 @@ var
 begin
   order := TServiceOrder.Create;
   order.supplier := Self.supplierRepository.FindById(aData.supplierId);
+  order.price := aData.price;
 
   if not Assigned(order.supplier) then
     raise Exception.Create(Format('Fornecedor (ID: %d) não encontrado', [aData.supplierId]));
@@ -127,6 +129,11 @@ begin
     Self.logger.Info(Format('Ordem de serviço emitida: Usuário (ID: %d) emitiu a ordem de serviço (ID: %d)', [TSession.GetUser.id, Result.id]));
 
   order.Free;
+end;
+
+function TServiceOrderController.GetOpen: TObjectList<TServiceOrder>;
+begin
+  Result := Self.serviceOrderRepository.FindOpen;
 end;
 
 function TServiceOrderController.GetOrders: TObjectList<TServiceOrder>;

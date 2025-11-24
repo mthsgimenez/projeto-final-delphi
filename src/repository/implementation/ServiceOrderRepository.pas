@@ -16,6 +16,7 @@ type TServiceOrderRepository = class(TRepositoryBase, IServiceOrderRepository)
     function UpdateStatus(aServiceOrder: TServiceOrder): TServiceOrder;
     function FindById(aServiceOrderId: Integer): TServiceOrder;
     function FindAll(): TObjectList<TServiceOrder>;
+    function FindOpen(): TObjectList<TServiceOrder>;
 
     constructor Create(aToolRepository: IToolRepository;
       aSupplierRepository: ISupplierRepository);
@@ -44,8 +45,9 @@ begin
   Result := nil;
 
   Self.Query.SQL.Text :=
-  'INSERT INTO service_orders (id_supplier) VALUES (:supplierId) RETURNING *';
+  'INSERT INTO service_orders (id_supplier, price) VALUES (:supplierId, :price) RETURNING *';
   Self.Query.ParamByName('supplierId').AsInteger := aServiceOrder.supplier.id;
+  Self.Query.ParamByName('price').AsCurrency := aServiceOrder.price;
 
   Self.Query.Connection.StartTransaction;
   try
@@ -67,6 +69,7 @@ begin
         Self.Query.FieldByName('status').AsString
       );
       order.issuedAt := Self.Query.FieldByName('issued_at').AsDateTime;
+      order.price := Self.Query.FieldByName('price').AsCurrency;
 
       Self.Query.Close;
 
@@ -126,6 +129,7 @@ begin
         order.issuedAt := Self.Query.FieldByName('issued_at').AsDateTime;
         if not Self.Query.FieldByName('status_updated_at').IsNull then
           order.statusUpdatedAt := Self.Query.FieldByName('status_updated_at').AsDateTime;
+        order.price := Self.Query.FieldByName('price').AsCurrency;
 
         Self.GetTools(order);
 
@@ -167,10 +171,55 @@ begin
       order.issuedAt := Self.Query.FieldByName('issued_at').AsDateTime;
       if not Self.Query.FieldByName('status_updated_at').IsNull then
         order.statusUpdatedAt := Self.Query.FieldByName('status_updated_at').AsDateTime;
+      order.price := Self.Query.FieldByName('price').AsCurrency;
 
       Self.GetTools(order);
 
       Result := order;
+    end;
+  finally
+    Self.Query.Close;
+  end;
+end;
+
+function TServiceOrderRepository.FindOpen: TObjectList<TServiceOrder>;
+var
+  ordersList: TObjectList<TServiceOrder>;
+  order: TServiceOrder;
+begin
+  Result := nil;
+
+  Self.Query.SQL.Text := 'SELECT * FROM service_orders WHERE "status" = ''OPEN'' ORDER BY issued_at DESC';
+
+  try
+    Self.Query.Open;
+
+    if not Self.Query.IsEmpty then begin
+      ordersList := TObjectList<TServiceOrder>.Create;
+
+      while not Self.Query.Eof do begin
+        order := TServiceOrder.Create;
+
+        order.id := Self.Query.FieldByName('id').AsInteger;
+        order.supplier := Self.supplierRepository.FindById(
+          Self.Query.FieldByName('id_supplier').AsInteger
+        );
+        order.status := ServiceOrderModel.StringToStatus(
+          Self.Query.FieldByName('status').AsString
+        );
+        order.issuedAt := Self.Query.FieldByName('issued_at').AsDateTime;
+        if not Self.Query.FieldByName('status_updated_at').IsNull then
+          order.statusUpdatedAt := Self.Query.FieldByName('status_updated_at').AsDateTime;
+        order.price := Self.Query.FieldByName('price').AsCurrency;
+
+        Self.GetTools(order);
+
+        ordersList.Add(order);
+
+        Self.Query.Next;
+      end;
+
+      Result := ordersList;
     end;
   finally
     Self.Query.Close;
@@ -241,6 +290,7 @@ begin
       order.issuedAt := Self.Query.FieldByName('issued_at').AsDateTime;
       if not Self.Query.FieldByName('status_updated_at').IsNull then
         order.statusUpdatedAt := Self.Query.FieldByName('status_updated_at').AsDateTime;
+      order.price := Self.Query.FieldByName('price').AsCurrency;
 
       Self.GetTools(order);
 

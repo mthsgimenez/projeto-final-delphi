@@ -421,6 +421,7 @@ begin
   end;
 
   Self.serviceOrderDTO.supplierId := Self.chosenSupplier.id;
+  Self.serviceOrderDTO.price := Self.orderPrice;
 
   order := Self.serviceOrderController.CreateOrder(Self.serviceOrderDTO);
 
@@ -597,17 +598,20 @@ var
   i: Integer;
 begin
   with Self.gridOrders do begin
+    ColCount := 6;
     RowCount := 1;
     Cells[0, 0] := 'Código';
-    Cells[1, 0] := 'Fornecedor';
-    Cells[2, 0] := 'Data de emissão';
-    Cells[3, 0] := 'Data de atualização';
-    Cells[4, 0] := 'Status';
-    ColWidths[0] := 80;
-    ColWidths[1] := 190;
-    ColWidths[2] := 140;
-    ColWidths[3] := 140;
-    ColWidths[4] := 140;
+    Cells[1, 0] := 'Tipo';
+    Cells[2, 0] := 'Fornecedor';
+    Cells[3, 0] := 'Data de emissão';
+    Cells[4, 0] := 'Data de atualização';
+    Cells[5, 0] := 'Status';
+    ColWidths[0] := 50;
+    ColWidths[1] := 100;
+    ColWidths[2] := 170;
+    ColWidths[3] := 130;
+    ColWidths[4] := 110;
+    ColWidths[5] := 130;
 
     if aFilterType <> SERVICE_ORDER then
     if Assigned(Self.purchaseOrders) then
@@ -624,13 +628,14 @@ begin
         RowCount := RowCount + 1;
         Objects[0, i] := pOrder;
         Cells[0, i] := IntToStr(pOrder.id);
-        Cells[1, i] := pOrder.supplier.tradeName;
-        Cells[2, i] := FormatDateTime('hh:nn  dd/mm/yyyy', pOrder.issuedAt);
+        Cells[1, i] := 'Compra';
+        Cells[2, i] := pOrder.supplier.tradeName;
+        Cells[3, i] := FormatDateTime('hh:nn  dd/mm/yyyy', pOrder.issuedAt);
         if pOrder.statusUpdatedAt <> 0.0 then
-          Cells[3, i] := FormatDateTime('hh:nn  dd/mm/yyyy', pOrder.statusUpdatedAt)
+          Cells[4, i] := FormatDateTime('hh:nn  dd/mm/yyyy', pOrder.statusUpdatedAt)
         else
-          Cells[3, i] := '';
-        Cells[4, i] := PurchaseOrderModel.StatusToViewString(pOrder.status);
+          Cells[4, i] := '';
+        Cells[5, i] := PurchaseOrderModel.StatusToViewString(pOrder.status);
       end;
 
     if aFilterType <> PURCHASE_ORDER then
@@ -648,13 +653,14 @@ begin
         RowCount := RowCount + 1;
         Objects[0, i] := sOrder;
         Cells[0, i] := IntToStr(sOrder.id);
-        Cells[1, i] := sOrder.supplier.tradeName;
-        Cells[2, i] := FormatDateTime('hh:nn  dd/mm/yyyy', sOrder.issuedAt);
+        Cells[1, i] := 'Serviço';
+        Cells[2, i] := sOrder.supplier.tradeName;
+        Cells[3, i] := FormatDateTime('hh:nn  dd/mm/yyyy', sOrder.issuedAt);
         if sOrder.statusUpdatedAt <> 0.0 then
-          Cells[3, i] := FormatDateTime('hh:nn  dd/mm/yyyy', sOrder.statusUpdatedAt)
+          Cells[4, i] := FormatDateTime('hh:nn  dd/mm/yyyy', sOrder.statusUpdatedAt)
         else
-          Cells[3, i] := '';
-        Cells[4, i] := ServiceOrderModel.StatusToViewString(sOrder.status);
+          Cells[4, i] := '';
+        Cells[5, i] := ServiceOrderModel.StatusToViewString(sOrder.status);
       end;
   end;
 end;

@@ -61,6 +61,7 @@ CREATE TABLE service_orders (
 	status varchar(15) DEFAULT 'OPEN'::character varying NOT NULL,
 	issued_at TIMESTAMP NOT NULL DEFAULT NOW(),
 	status_updated_at TIMESTAMP NULL,
+	price money NOT NULL,
 	CONSTRAINT service_orders_pk PRIMARY KEY (id),
 	CONSTRAINT service_orders_suppliers_fk FOREIGN KEY (id_supplier) REFERENCES suppliers(id) ON DELETE RESTRICT ON UPDATE CASCADE
 );
