@@ -340,16 +340,19 @@ var
 begin
   with Self.gridToolTypes do begin
     RowCount := 1;
+    ColCount := 6;
     Cells[0, 0] := 'Código';
     Cells[1, 0] := 'Descrição';
-    Cells[2, 0] := 'Qtde. em estoque';
-    Cells[3, 0] := 'Qtde. em uso';
-    Cells[4, 0] := 'Qtde. disponível';
+    Cells[2, 0] := 'Qtd. em estoque';
+    Cells[3, 0] := 'Qtd. disponível';
+    Cells[4, 0] := 'Qtd. em uso';
+    Cells[5, 0] := 'Qtd. em afiação';
     ColWidths[0] := 100;
-    ColWidths[1] := 215;
-    ColWidths[2] := 125;
-    ColWidths[3] := 125;
-    ColWidths[4] := 125;
+    ColWidths[1] := 140;
+    ColWidths[2] := 100;
+    ColWidths[3] := 100;
+    ColWidths[4] := 100;
+    ColWidths[5] := 100;
 
     if Assigned(Self.toolTypes) then
       for tool in Self.toolTypes do begin
@@ -359,8 +362,9 @@ begin
         Cells[0, i] := tool.code;
         Cells[1, i] := tool.description;
         Cells[2, i] := IntToStr(tool.quantityTotal);
-        Cells[3, i] := IntToStr(tool.quantityInUse);
-        Cells[4, i] := IntToStr(tool.quantityTotal - tool.quantityInUse);
+        Cells[3, i] := IntToStr(tool.quantityAvailable);
+        Cells[4, i] := IntToStr(tool.quantityInUse);
+        Cells[5, i] := IntToStr(tool.quantityHoning);
       end;
   end;
 end;

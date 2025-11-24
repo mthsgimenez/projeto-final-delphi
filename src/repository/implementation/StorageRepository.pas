@@ -9,6 +9,7 @@ type TStorageRepository = class(TRepositoryBase, IStorageRepository)
   private
     helper: TDBHelper;
     toolTypeRepository: IToolTypeRepository;
+    procedure GetToolTypeCountInsideStorage(aStorageId: Integer; aToolType: TToolType);
   public
     function Insert(aStorage: TStorage): TStorage;
     function Update(aStorage: TStorage): TStorage;
@@ -188,6 +189,42 @@ begin
   end;
 end;
 
+procedure TStorageRepository.GetToolTypeCountInsideStorage(aStorageId: Integer;
+  aToolType: TToolType);
+var
+  countQuery: TFDQuery;
+begin
+  countQuery := TFDQuery.Create(Self.Query.Connection);
+  countQuery.Connection := Self.Query.Connection;
+
+  countQuery.SQL.Text := 'SELECT s.*, ' +
+    'COUNT(t.id) AS "quantity_total", ' +
+    'COUNT(t.id) FILTER (WHERE t.status = ''AVAILABLE'') AS "quantity_available", ' +
+    'COUNT(t.id) FILTER (WHERE t.status = ''IN_USE'') AS "quantity_in_use", ' +
+    'COUNT(t.id) FILTER (WHERE t.status = ''HONING'') AS "quantity_honing" ' +
+    'FROM storages s ' +
+    'LEFT JOIN tools t ON t.id_storage = s.id ' +
+    'WHERE s.id = :storageId ' +
+    'AND t.id_tool_model = :toolTypeId ' +
+    'GROUP BY s.id';
+  countQuery.ParamByName('toolTypeId').AsInteger := aToolType.id;
+  countQuery.ParamByName('storageId').AsInteger := aStorageId;
+
+  try
+    countQuery.Open;
+
+    if not countQuery.IsEmpty then begin
+      aToolType.quantityTotal := countQuery.FieldByName('quantity_total').AsInteger;
+      aToolType.quantityAvailable := countQuery.FieldByName('quantity_available').AsInteger;
+      aToolType.quantityInUse := countQuery.FieldByName('quantity_in_use').AsInteger;
+      aToolType.quantityHoning := countQuery.FieldByName('quantity_honing').AsInteger;
+    end;
+  finally
+    countQuery.Close;
+    countQuery.Free;
+  end;
+end;
+
 function TStorageRepository.GetToolTypesInStorage(
   aStorageId: Integer): TObjectList<TToolType>;
 var
@@ -215,6 +252,8 @@ begin
         toolType := Self.toolTypeRepository.FindById(
           Self.Query.FieldByName('id').AsInteger
         );
+
+        Self.GetToolTypeCountInsideStorage(aStorageId, toolType);
 
         list.Add(toolType);
 

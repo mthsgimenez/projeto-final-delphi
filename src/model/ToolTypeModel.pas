@@ -15,7 +15,9 @@ type TToolType = class
     price: Currency;
     image: String;
     quantityTotal: Integer;
+    quantityAvailable: Integer;
     quantityInUse: Integer;
+    quantityHoning: Integer;
 
     destructor Destroy; override;
 end;
