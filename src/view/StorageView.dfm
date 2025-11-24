@@ -152,6 +152,7 @@ object formStorage: TformStorage
         Width = 700
         Height = 468
         ColCount = 4
+        FixedCols = 0
         TabOrder = 0
         OnDrawCell = gridStoragesDrawCell
       end

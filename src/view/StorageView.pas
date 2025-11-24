@@ -193,10 +193,10 @@ end;
 
 destructor TformStorage.Destroy;
 begin
-  Self.storages.Free;
+  if Assigned(Self.storages) then
+    Self.storages.Free;
   if Assigned(Self.toolTypes) then
     Self.toolTypes.Free;
-
   if Assigned(Self.tools) then
     Self.tools.Free;
   inherited;
@@ -277,15 +277,18 @@ var
   i: Integer;
 begin
   with Self.gridStorages do begin
+    ColCount := 5;
     RowCount := 1;
     Cells[0, 0] := 'Nome';
-    Cells[1, 0] := 'Total ferramentas em estoque';
-    Cells[2, 0] := 'Ferramentas em uso';
-    Cells[3, 0] := 'Ferramentas disponíveis';
-    ColWidths[0] := 170;
-    ColWidths[1] := 170;
-    ColWidths[2] := 170;
-    ColWidths[3] := 170;
+    Cells[1, 0] := 'Total em estoque';
+    Cells[2, 0] := 'Disponíveis';
+    Cells[3, 0] := 'Em uso';
+    Cells[4, 0] := 'Em afiação';
+    ColWidths[0] := 140;
+    ColWidths[1] := 130;
+    ColWidths[2] := 130;
+    ColWidths[3] := 130;
+    ColWidths[4] := 130;
 
     if Assigned(Self.storages) then
       for storage in Self.storages do begin
@@ -294,8 +297,9 @@ begin
         Objects[0, i] := storage;
         Cells[0, i] := storage.name;
         Cells[1, i] := IntToStr(storage.quantityTotal);
-        Cells[2, i] := IntToStr(storage.quantityInUse);
-        Cells[3, i] := IntToStr(storage.quantityTotal - storage.quantityInUse);
+        Cells[2, i] := IntToStr(storage.quantityAvailable);
+        Cells[3, i] := IntToStr(storage.quantityInUse);
+        Cells[4, i] := IntToStr(storage.quantityHoning);
       end;
   end;
 end;

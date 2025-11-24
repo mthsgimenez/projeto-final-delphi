@@ -2,7 +2,7 @@ unit StorageRepository;
 
 interface
 
-uses System.Generics.Collections, System.SysUtils, DBHelper, RepositoryBase, Data.DB, FireDAC.Stan.Param,
+uses System.Generics.Collections, System.SysUtils, DBHelper, RepositoryBase, Data.DB, FireDAC.Stan.Param, FireDAC.Comp.Client, FireDAC.DApt,
   StorageRepositoryInterface, StorageModel, ToolTypeModel, ToolModel, ToolTypeRepositoryInterface;
 
 type TStorageRepository = class(TRepositoryBase, IStorageRepository)
@@ -62,9 +62,14 @@ var
 begin
   Result := nil;
 
-  Self.Query.SQL.Text := 'SELECT s.*, COUNT(t.id) AS "quantity_total", ' +
-    'COUNT (t.id) FILTER (WHERE t.status = ''IN_USE'') AS "quantity_in_use" ' +
-    'FROM storages s LEFT JOIN tools t ON t.id_storage = s.id GROUP BY s.id';
+  Self.Query.SQL.Text := 'SELECT s.*, ' +
+      'COUNT(t.id) AS "quantity_total", ' +
+      'COUNT(t.id) FILTER (WHERE t.status = ''AVAILABLE'') AS "quantity_available", ' +
+      'COUNT(t.id) FILTER (WHERE t.status = ''IN_USE'') AS "quantity_in_use", ' +
+      'COUNT(t.id) FILTER (WHERE t.status = ''HONING'') AS "quantity_honing" ' +
+      'FROM storages s ' +
+      'LEFT JOIN tools t ON t.id_storage = s.id ' +
+      'GROUP BY s.id';
 
   try
     Self.Query.Open;
@@ -77,7 +82,9 @@ begin
         storage.id := Self.Query.FieldByName('id').AsInteger;
         storage.name := Self.Query.FieldByName('name').AsString;
         storage.quantityTotal := Self.Query.FieldByName('quantity_total').AsInteger;
+        storage.quantityAvailable := Self.Query.FieldByName('quantity_available').AsInteger;
         storage.quantityInUse := Self.Query.FieldByName('quantity_in_use').AsInteger;
+        storage.quantityHoning := Self.Query.FieldByName('quantity_honing').AsInteger;
 
         storages.Add(storage);
 
@@ -97,11 +104,15 @@ var
 begin
   Result := nil;
 
-  Self.Query.SQL.Text :=
-    'SELECT s.*, COUNT(t.id) AS "quantity_total", ' +
-    'COUNT (t.id) FILTER (WHERE t.status = ''IN_USE'') AS "quantity_in_use" ' +
-    'FROM storages s LEFT JOIN tools t ON t.id_storage = s.id ' +
-    'WHERE s.id = :storageId GROUP BY s.id';
+  Self.Query.SQL.Text := 'SELECT s.*, ' +
+      'COUNT(t.id) AS "quantity_total", ' +
+      'COUNT(t.id) FILTER (WHERE t.status = ''AVAILABLE'') AS "quantity_available", ' +
+      'COUNT(t.id) FILTER (WHERE t.status = ''IN_USE'') AS "quantity_in_use", ' +
+      'COUNT(t.id) FILTER (WHERE t.status = ''HONING'') AS "quantity_honing" ' +
+      'FROM storages s ' +
+      'LEFT JOIN tools t ON t.id_storage = s.id ' +
+      'WHERE s.id = :storageId ' +
+      'GROUP BY s.id';
   Self.Query.ParamByName('storageId').AsInteger := aStorageId;
 
   try
@@ -112,7 +123,9 @@ begin
       storage.id := Self.Query.FieldByName('id').AsInteger;
       storage.name := Self.Query.FieldByName('name').AsString;
       storage.quantityTotal := Self.Query.FieldByName('quantity_total').AsInteger;
+      storage.quantityAvailable := Self.Query.FieldByName('quantity_available').AsInteger;
       storage.quantityInUse := Self.Query.FieldByName('quantity_in_use').AsInteger;
+      storage.quantityHoning := Self.Query.FieldByName('quantity_honing').AsInteger;
 
       Result := storage;
     end;
@@ -126,53 +139,52 @@ function TStorageRepository.GetToolsInStorage(aStorageId,
 var
   toolsList: TObjectList<TTool>;
   tool: TTool;
-  storage: TStorage;
-  toolType: TToolType;
+  toolsQuery: TFDQuery;
 begin
   Result := nil;
 
-  storage := Self.FindById(aStorageId);
-  toolType := Self.toolTypeRepository.FindById(aToolTypeId);
+  toolsQuery := TFDQuery.Create(Self.Query.Connection);
+  toolsQuery.Connection := Self.Query.Connection;
 
-  Self.Query.SQL.Text :=
+  toolsQuery.SQL.Text :=
     'SELECT t.* FROM tools t ' +
     'JOIN tools_models tm ON t.id_tool_model = tm.id ' +
     'JOIN storages s ON t.id_storage = s.id ' +
     'WHERE tm.id = :toolTypeId AND s.id = :storageId';
 
-  Self.Query.ParamByName('toolTypeId').AsInteger := aToolTypeId;
-  Self.Query.ParamByName('storageId').AsInteger := aStorageId;
+  toolsQuery.ParamByName('toolTypeId').AsInteger := aToolTypeId;
+  toolsQuery.ParamByName('storageId').AsInteger := aStorageId;
 
   try
-    try
-      Self.Query.Open;
-      if not Self.Query.IsEmpty then begin
-        toolsList := TObjectList<TTool>.Create;
+    toolsQuery.Open;
+    if not toolsQuery.IsEmpty then begin
+      toolsList := TObjectList<TTool>.Create;
 
-        while not Self.Query.Eof do begin
-          tool := TTool.Create;
+      while not toolsQuery.Eof do begin
+        tool := TTool.Create;
 
-          tool.id := Self.Query.FieldByName('id').AsInteger;
-          tool.code := Self.Query.FieldByName('code').AsString;
-          tool.state := StringToState(Self.Query.FieldByName('state').AsString);
-          tool.honingNum := Self.Query.FieldByName('id').AsInteger;
-          tool.status := StringToStatus(Self.Query.FieldByName('status').AsString);
-          tool.model := toolType;
-          tool.storage := storage;
+        tool.id := toolsQuery.FieldByName('id').AsInteger;
+        tool.code := toolsQuery.FieldByName('code').AsString;
+        tool.state := StringToState(toolsQuery.FieldByName('state').AsString);
+        tool.honingNum := toolsQuery.FieldByName('honing_num').AsInteger;
+        tool.status := StringToStatus(toolsQuery.FieldByName('status').AsString);
+        tool.model := Self.toolTypeRepository.FindById(
+          toolsQuery.FieldByName('id_tool_model').AsInteger
+        );
+        tool.storage := Self.FindById(
+          toolsQuery.FieldByName('id_storage').AsInteger
+        );
 
-          toolsList.Add(tool);
+        toolsList.Add(tool);
 
-          Self.Query.Next;
-        end;
-
-        Result := toolsList;
+        toolsQuery.Next;
       end;
-    except
-      storage.Free;
-      toolType.Free;
+
+      Result := toolsList;
     end;
   finally
-    Self.Query.Close;
+    toolsQuery.Close;
+    toolsQuery.Free;
   end;
 end;
 

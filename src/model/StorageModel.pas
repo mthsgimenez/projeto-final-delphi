@@ -7,7 +7,9 @@ type TStorage = class
     id: Integer;
     name: String;
     quantityTotal: Integer;
+    quantityAvailable: Integer;
     quantityInUse: Integer;
+    quantityHoning: Integer;
 end;
 
 implementation
