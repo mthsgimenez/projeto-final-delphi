@@ -5,7 +5,8 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ComCtrls, Vcl.StdCtrls, Vcl.Grids, System.Generics.Collections,
-  Dependencies, StorageController, StorageModel, ToolTypeModel, StorageDTO, MessageHelper, ToolModel, ToolController;
+  Dependencies, StorageController, StorageModel, ToolTypeModel, StorageDTO, MessageHelper, ToolModel, ToolController,
+  Vcl.ExtCtrls;
 
 type
   TformStorage = class(TForm)
@@ -30,6 +31,11 @@ type
     buttonDiscard: TButton;
     buttonStatus: TButton;
     buttonMove: TButton;
+    panelMoveTool: TPanel;
+    labelMove: TLabel;
+    buttonMoveTool: TButton;
+    buttonCancelMove: TButton;
+    listStorages: TListBox;
     procedure buttonCancelClick(Sender: TObject);
     procedure buttonSaveClick(Sender: TObject);
     procedure tabListShow(Sender: TObject);
@@ -54,6 +60,9 @@ type
       var CanSelect: Boolean);
     procedure buttonDiscardClick(Sender: TObject);
     procedure buttonStatusClick(Sender: TObject);
+    procedure buttonMoveClick(Sender: TObject);
+    procedure buttonCancelMoveClick(Sender: TObject);
+    procedure buttonMoveToolClick(Sender: TObject);
   private
     toolController: TToolController;
 
@@ -71,6 +80,7 @@ type
     procedure UpdateToolTypesGrid;
     procedure UpdateToolsGrid;
     procedure UpdateStorage(aStorage: TStorage);
+    procedure UpdateStoragesList(aCurrentStorageId: Integer);
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
@@ -90,6 +100,11 @@ begin
   Self.selectedStorage := nil;
   Self.pcontrolStorage.ActivePageIndex := 0;
   Self.editName.Clear;
+end;
+
+procedure TformStorage.buttonCancelMoveClick(Sender: TObject);
+begin
+  Self.panelMoveTool.Visible := False;
 end;
 
 procedure TformStorage.buttonCreateClick(Sender: TObject);
@@ -143,6 +158,7 @@ begin
   Self.UpdateToolsGrid;
 
   Self.UpdateStorage(Self.selectedStorage);
+  Self.selectedStorage := nil;
 
   if Assigned(Self.toolTypes) then
     Self.toolTypes.Free;
@@ -158,6 +174,56 @@ begin
 
   Self.pcontrolStorage.ActivePageIndex := 1;
   Self.editName.Text := Self.selectedStorage.name;
+end;
+
+procedure TformStorage.buttonMoveClick(Sender: TObject);
+begin
+  if not Assigned(Self.selectedTool) then begin
+    TMessageHelper.GetInstance.Error('Nenhuma ferramenta selecionada');
+    Exit;
+  end;
+
+  if Self.selectedTool.status <> AVAILABLE then begin
+    TMessageHelper.GetInstance.Error('Não é possível mover uma ferramenta que não esteja disponível');
+    Exit;
+  end;
+
+  Self.UpdateStoragesList(Self.selectedStorage.id);
+  Self.panelMoveTool.Visible := True;
+end;
+
+procedure TformStorage.buttonMoveToolClick(Sender: TObject);
+var
+  storage: TStorage;
+  updatedTool: TTool;
+begin
+  if Self.listStorages.ItemIndex = -1 then begin
+    TMessageHelper.GetInstance.Error('Escolha um estoque');
+    Exit;
+  end;
+
+  storage := TStorage(Self.listStorages.Items.Objects[Self.listStorages.ItemIndex]);
+
+  updatedTool := Self.toolController.MoveTool(Self.selectedTool.id, storage.id);
+  if not Assigned(updatedTool) then begin
+    TMessageHelper.GetInstance.Error('Não foi possível mover o item');
+    Exit;
+  end;
+
+  Self.tools.Remove(Self.selectedTool);
+  updatedTool.Free;
+
+  Self.UpdateToolsGrid;
+
+  Self.panelMoveTool.Visible := False;
+
+  if Assigned(Self.toolTypes) then
+    Self.toolTypes.Free;
+  Self.toolTypes := Self.storageController.GetToolTypes(Self.selectedStorage.id);
+
+  Self.UpdateStorage(Self.selectedStorage);
+  Self.selectedStorage := nil;
+  Self.UpdateStorage(storage);
 end;
 
 procedure TformStorage.buttonSaveClick(Sender: TObject);
@@ -214,6 +280,7 @@ begin
   Self.UpdateToolsGrid;
 
   Self.UpdateStorage(Self.selectedStorage);
+  Self.selectedStorage := nil;
 
   if Assigned(Self.toolTypes) then
     Self.toolTypes.Free;
@@ -400,6 +467,19 @@ begin
         Cells[4, i] := IntToStr(storage.quantityHoning);
       end;
   end;
+end;
+
+procedure TformStorage.UpdateStoragesList(aCurrentStorageId: Integer);
+var
+  storage: TStorage;
+begin
+  Self.listStorages.Clear;
+
+  if Assigned(Self.storages) then
+    for storage in Self.storages do begin
+      if not (storage.id = aCurrentStorageId) then
+        Self.listStorages.AddItem(storage.name, storage);
+    end;
 end;
 
 procedure TformStorage.UpdateToolsGrid;

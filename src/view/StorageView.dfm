@@ -21,7 +21,7 @@ object formStorage: TformStorage
     Margins.Top = 0
     Margins.Right = 0
     Margins.Bottom = 0
-    ActivePage = tabToolTypes
+    ActivePage = tabTools
     Align = alClient
     TabOrder = 0
     object tabList: TTabSheet
@@ -191,6 +191,54 @@ object formStorage: TformStorage
         Height = 40
         Caption = 'Mover unidade'
         TabOrder = 4
+        OnClick = buttonMoveClick
+      end
+      object panelMoveTool: TPanel
+        Left = 112
+        Top = 96
+        Width = 489
+        Height = 289
+        BorderWidth = 1
+        BorderStyle = bsSingle
+        Caption = 'panelMoveTool'
+        Color = clSnow
+        ParentBackground = False
+        ShowCaption = False
+        TabOrder = 5
+        Visible = False
+        object labelMove: TLabel
+          Left = 20
+          Top = 11
+          Width = 107
+          Height = 15
+          Caption = 'Destinar ao estoque:'
+        end
+        object buttonMoveTool: TButton
+          Left = 352
+          Top = 245
+          Width = 113
+          Height = 28
+          Caption = 'Mover unidade'
+          TabOrder = 0
+          OnClick = buttonMoveToolClick
+        end
+        object buttonCancelMove: TButton
+          Left = 20
+          Top = 245
+          Width = 122
+          Height = 28
+          Caption = 'Cancelar'
+          TabOrder = 1
+          OnClick = buttonCancelMoveClick
+        end
+        object listStorages: TListBox
+          Left = 21
+          Top = 32
+          Width = 444
+          Height = 199
+          ItemHeight = 15
+          TabOrder = 2
+        end
       end
     end
   end

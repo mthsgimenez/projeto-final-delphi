@@ -3,27 +3,32 @@ unit ToolController;
 interface
 
 uses System.Generics.Collections, System.SysUtils, Session, Logging,
-  ToolModel, ToolRepositoryInterface;
+  ToolModel, ToolRepositoryInterface, StorageRepositoryInterface, StorageModel;
 
 type TToolController = class
   private
     toolRepository: IToolRepository;
+    storageRepository: IStorageRepository;
     logger: TLogger;
   public
     function GetTools: TObjectList<TTool>;
     function GetAvailableTools: TObjectList<TTool>;
     function DiscardTool(aToolId: Integer): Boolean;
     function ToggleAvailability(aToolId: Integer): TTool;
-    constructor Create(aToolRepository: IToolRepository);
+    function MoveTool(aToolId: Integer; aTargetStorageId: Integer): TTool;
+    constructor Create(aToolRepository: IToolRepository;
+      aStorageRepository: IStorageRepository);
 end;
 
 implementation
 
 { TToolController }
 
-constructor TToolController.Create(aToolRepository: IToolRepository);
+constructor TToolController.Create(aToolRepository: IToolRepository;
+  aStorageRepository: IStorageRepository);
 begin
   Self.toolRepository := aToolRepository;
+  Self.storageRepository := aStorageRepository;
   Self.logger := TLogger.GetLogger;
 end;
 
@@ -47,6 +52,24 @@ end;
 function TToolController.GetTools: TObjectList<TTool>;
 begin
   Result := Self.toolRepository.FindAll;
+end;
+
+function TToolController.MoveTool(aToolId, aTargetStorageId: Integer): TTool;
+var
+  tool: TTool;
+  storage: TStorage;
+begin
+  tool := Self.toolRepository.FindById(aToolId);
+  if not Assigned(tool) then
+    raise Exception.Create(Format('Ferramenta (ID: %d) não encontrada', [aToolId]));
+  storage := Self.storageRepository.FindById(aTargetStorageId);
+  if not Assigned(storage) then
+    raise Exception.Create(Format('Estoque (ID: %d) não encontrado', [aTargetStorageId]));
+
+  tool.storage := storage;
+  Result := Self.toolRepository.Update(tool);
+
+  tool.Free;
 end;
 
 function TToolController.ToggleAvailability(aToolId: Integer): TTool;

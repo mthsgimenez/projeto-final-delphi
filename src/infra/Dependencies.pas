@@ -174,7 +174,10 @@ end;
 function TDependencies.GetToolController: TToolController;
 begin
   if not Assigned(Self.toolController) then
-    Self.toolController := TToolController.Create(Self.toolRepository);
+    Self.toolController := TToolController.Create(
+      Self.toolRepository,
+      Self.storageRepository
+    );
 
   Result := Self.toolController;
 end;
