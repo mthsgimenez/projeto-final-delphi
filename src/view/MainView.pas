@@ -97,7 +97,7 @@ end;
 procedure TformMain.OnLogin(user: TUserModel);
 const
   closedWidth = 50;
-  openWidth = 250;
+  openWidth = 220;
 var
   menuForm: TformMenu;
 begin
