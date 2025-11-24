@@ -82,6 +82,5 @@ begin
   Application.MainFormOnTaskbar := True;
   Application.CreateForm(TConnection, Connection);
   Application.CreateForm(TformMain, formMain);
-  Application.CreateForm(TformReceipt, formReceipt);
   Application.Run;
 end.

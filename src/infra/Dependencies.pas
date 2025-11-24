@@ -128,7 +128,8 @@ begin
       Self.purchaseOrderRepository,
       Self.supplierRepository,
       Self.toolTypeRepository,
-      Self.toolRepository
+      Self.toolRepository,
+      Self.storageRepository
     );
 
   Result := Self.purchaseOrderController;

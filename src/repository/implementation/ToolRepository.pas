@@ -193,10 +193,10 @@ begin
 
       tool.id := Self.Query.FieldByName('id').AsInteger;
       tool.code := Self.Query.FieldByName('code').AsString;
-      tool.code := Format('%s_%d', [tool.code, tool.id]);
       tool.model := Self.toolTypeRepository.FindById(
         Self.Query.FieldByName('id_tool_model').AsInteger
       );
+      tool.code := Format('%s_%d', [tool.model.code, tool.id]);
       tool.state := StringToState(Self.Query.FieldByName('state').AsString);
       tool.honingNum := Self.Query.FieldByName('honing_num').AsInteger;
       tool.storage := Self.storageRepository.FindById(

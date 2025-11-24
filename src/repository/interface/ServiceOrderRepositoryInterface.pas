@@ -9,6 +9,7 @@ type IServiceOrderRepository = interface
   function UpdateStatus(aServiceOrder: TServiceOrder): TServiceOrder;
   function FindById(aServiceOrderId: Integer): TServiceOrder;
   function FindAll(): TObjectList<TServiceOrder>;
+  function FindOpen(): TObjectList<TServiceOrder>;
 end;
 
 implementation

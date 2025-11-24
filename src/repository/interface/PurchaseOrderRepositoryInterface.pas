@@ -9,6 +9,7 @@ type IPurchaseOrderRepository = interface
   function UpdateStatus(aPurchaseOrder: TPurchaseOrder): TPurchaseOrder;
   function FindById(aPurchaseOrderId: Integer): TPurchaseOrder;
   function FindAll(): TObjectList<TPurchaseOrder>;
+  function FindOpen(): TObjectList<TPurchaseOrder>;
 end;
 
 implementation

@@ -12,6 +12,7 @@ type TMessageHelper = class
     class function GetInstance: TMessageHelper;
     procedure Warning(aMessage: String);
     procedure Error(aMessage: String);
+    procedure Info(aMessage: String);
     function Confirmation(aMessage: String): Boolean;
 end;
 
@@ -52,6 +53,15 @@ begin
     instance := TMessageHelper.Create;
 
   Result := instance;
+end;
+
+procedure TMessageHelper.Info(aMessage: String);
+begin
+  MessageDlg(
+    aMessage,
+    mtInformation,
+    [mbOk],
+    0);
 end;
 
 procedure TMessageHelper.Warning(aMessage: String);

@@ -16,6 +16,7 @@ type TPurchaseOrderRepository = class(TRepositoryBase, IPurchaseOrderRepository)
     function UpdateStatus(aPurchaseOrder: TPurchaseOrder): TPurchaseOrder;
     function FindById(aPurchaseOrderId: Integer): TPurchaseOrder;
     function FindAll(): TObjectList<TPurchaseOrder>;
+    function FindOpen(): TObjectList<TPurchaseOrder>;
 
     constructor Create(aToolTypeRepository: IToolTypeRepository;
       aSupplierRepository: ISupplierRepository);
@@ -107,6 +108,49 @@ begin
       Self.GetToolTypes(order);
 
       Result := order;
+    end;
+  finally
+    Self.Query.Close;
+  end;
+end;
+
+function TPurchaseOrderRepository.FindOpen: TObjectList<TPurchaseOrder>;
+var
+  ordersList: TObjectList<TPurchaseOrder>;
+  order: TPurchaseOrder;
+begin
+  Result := nil;
+
+  Self.Query.SQL.Text := 'SELECT * FROM purchase_orders WHERE "status" = ''OPEN'' ORDER BY issued_at DESC';
+
+  try
+    Self.Query.Open;
+
+    if not Self.Query.IsEmpty then begin
+      ordersList := TObjectList<TPurchaseOrder>.Create;
+
+      while not Self.Query.Eof do begin
+        order := TPurchaseOrder.Create;
+
+        order.id := Self.Query.FieldByName('id').AsInteger;
+        order.supplier := Self.supplierRepository.FindById(
+          Self.Query.FieldByName('id_supplier').AsInteger
+        );
+        order.status := StringToStatus(
+          Self.Query.FieldByName('status').AsString
+        );
+        order.issuedAt := Self.Query.FieldByName('issued_at').AsDateTime;
+        if not Self.Query.FieldByName('status_updated_at').IsNull then
+          order.statusUpdatedAt := Self.Query.FieldByName('status_updated_at').AsDateTime;
+
+        Self.GetToolTypes(order);
+
+        ordersList.Add(order);
+
+        Self.Query.Next;
+      end;
+
+      Result := ordersList;
     end;
   finally
     Self.Query.Close;

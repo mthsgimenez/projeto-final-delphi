@@ -27,6 +27,7 @@ type TPurchaseOrder = class
     items: TObjectList<TPurchaseOrderItem>;
 
     function GetTotalPrice: Currency;
+    function GetTotalQuantity: Integer;
     procedure AddItemToOrder(aToolType: TToolType; aQuantity: Integer);
     constructor Create;
     destructor Destroy; override;
@@ -109,6 +110,20 @@ begin
   end;
 
   result := total;
+end;
+
+function TPurchaseOrder.GetTotalQuantity: Integer;
+var
+  item: TPurchaseOrderItem;
+  count: Integer;
+begin
+  count := 0;
+
+  for item in Self.items do begin
+    count := count + item.quantity;
+  end;
+
+  Result := count;
 end;
 
 { TPurchaseOrderItem }

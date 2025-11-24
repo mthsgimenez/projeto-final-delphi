@@ -4,7 +4,8 @@ interface
 
 uses Logging, Session, PurchaseOrderRepositoryInterface, PurchaseOrderModel, PurchaseOrderDTO,
   System.Generics.Collections, System.SysUtils, ToolRepositoryInterface, ToolModel, StorageModel,
-  SupplierRepositoryInterface, ToolTypeModel, ToolTypeRepositoryInterface;
+  SupplierRepositoryInterface, ToolTypeModel, ToolTypeRepositoryInterface,
+  StorageRepositoryInterface;
 
 type TPurchaseOrderController = class
   private
@@ -12,17 +13,20 @@ type TPurchaseOrderController = class
     toolRepository: IToolRepository;
     supplierRepository: ISupplierRepository;
     toolTypeRepository: IToolTypeRepository;
+    storageRepository: IStorageRepository;
     logger: TLogger;
   public
     function GetOrders(): TObjectList<TPurchaseOrder>;
     function CreateOrder(aData: TPurchaseOrderDTO): TPurchaseOrder;
     function CancelOrder(aOrderId: Integer): TPurchaseOrder;
-    function CloseOrder(aOrderId: Integer; aStorage: TStorage): TPurchaseOrder;
+    function CloseOrder(aOrderId: Integer; aStorageId: Integer): TPurchaseOrder;
+    function GetOpen(): TObjectList<TPurchaseOrder>;
     constructor Create(
       aPurchaseOrderRepository: IPurchaseOrderRepository;
       aSupplierRepository: ISupplierRepository;
       aToolTypeRepository: IToolTypeRepository;
-      aToolRepository: IToolRepository
+      aToolRepository: IToolRepository;
+      aStorageRepository: IStorageRepository
     );
 end;
 
@@ -50,7 +54,7 @@ begin
 end;
 
 function TPurchaseOrderController.CloseOrder(aOrderId: Integer;
-aStorage: TStorage): TPurchaseOrder;
+aStorageId: Integer): TPurchaseOrder;
 var
   order: TPurchaseOrder;
   item: TPurchaseOrderItem;
@@ -64,10 +68,10 @@ begin
   for item in order.items do begin
     tool := TTool.Create;
 
-    tool.model := item.model;
-    tool.storage := aStorage;
+    tool.model := Self.toolTypeRepository.FindById(item.model.id);
+    tool.storage := Self.storageRepository.FindById(aStorageId);
 
-    for i := 0 to item.quantity do begin
+    for i := 1 to item.quantity do begin
       _ := Self.toolRepository.Insert(tool);
       _.Free;
     end;
@@ -88,7 +92,8 @@ constructor TPurchaseOrderController.Create(
       aPurchaseOrderRepository: IPurchaseOrderRepository;
       aSupplierRepository: ISupplierRepository;
       aToolTypeRepository: IToolTypeRepository;
-      aToolRepository: IToolRepository
+      aToolRepository: IToolRepository;
+      aStorageRepository: IStorageRepository
     );
 begin
   Self.logger := TLogger.GetLogger;
@@ -96,6 +101,7 @@ begin
   Self.supplierRepository := aSupplierRepository;
   Self.toolTypeRepository := aToolTypeRepository;
   Self.toolRepository := aToolRepository;
+  Self.storageRepository := aStorageRepository;
 end;
 
 function TPurchaseOrderController.CreateOrder(
@@ -130,6 +136,11 @@ begin
     Self.logger.Info(Format('Pedido de compra emitido: Usuário (ID: %d) emitiu o pedido de compra (ID: %d)', [TSession.GetUser.id, Result.id]));
 
   order.Free;
+end;
+
+function TPurchaseOrderController.GetOpen: TObjectList<TPurchaseOrder>;
+begin
+  Result := Self.purchaseOrderRepository.FindOpen;
 end;
 
 function TPurchaseOrderController.GetOrders: TObjectList<TPurchaseOrder>;
