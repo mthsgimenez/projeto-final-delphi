@@ -38,7 +38,7 @@ object formToolType: TformToolType
       object labelUsage: TLabel
         Left = 195
         Top = 260
-        Width = 95
+        Width = 96
         Height = 15
         Caption = 'Tipo de consumo:'
       end
@@ -199,7 +199,7 @@ object formToolType: TformToolType
       end
       object labelTitle: TLabel
         Left = 12
-        Top = 7
+        Top = -4
         Width = 145
         Height = 37
         Caption = 'Ferramentas'
@@ -249,13 +249,13 @@ object formToolType: TformToolType
       object gridToolTypes: TStringGrid
         AlignWithMargins = True
         Left = 0
-        Top = 60
+        Top = 45
         Width = 726
-        Height = 481
+        Height = 501
         Margins.Left = 0
-        Margins.Top = 60
+        Margins.Top = 45
         Margins.Right = 0
-        Margins.Bottom = 10
+        Margins.Bottom = 5
         Align = alClient
         BevelInner = bvNone
         BevelOuter = bvNone
@@ -265,10 +265,11 @@ object formToolType: TformToolType
         TabOrder = 0
         OnDrawCell = gridToolTypesDrawCell
         OnMouseDown = gridToolTypesMouseDown
+        ExplicitTop = 40
       end
       object panelButtonCreate: TPanel
         Left = 538
-        Top = 8
+        Top = 0
         Width = 185
         Height = 41
         BevelOuter = bvNone
@@ -306,10 +307,7 @@ object formToolType: TformToolType
           Font.Style = []
           ParentFont = False
           OnClick = buttonCreateClick
-          ExplicitLeft = 56
-          ExplicitTop = 16
-          ExplicitWidth = 23
-          ExplicitHeight = 22
+          ExplicitTop = -6
         end
       end
     end
