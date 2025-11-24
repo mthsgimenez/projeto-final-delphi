@@ -5,7 +5,7 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ComCtrls, Vcl.StdCtrls, Vcl.Grids, System.Generics.Collections,
-  Dependencies, StorageController, StorageModel, ToolTypeModel, StorageDTO, MessageHelper, ToolModel;
+  Dependencies, StorageController, StorageModel, ToolTypeModel, StorageDTO, MessageHelper, ToolModel, ToolController;
 
 type
   TformStorage = class(TForm)
@@ -27,6 +27,9 @@ type
     buttonTools: TButton;
     gridTools: TStringGrid;
     buttonToolsBack: TButton;
+    buttonDiscard: TButton;
+    buttonStatus: TButton;
+    buttonMove: TButton;
     procedure buttonCancelClick(Sender: TObject);
     procedure buttonSaveClick(Sender: TObject);
     procedure tabListShow(Sender: TObject);
@@ -47,7 +50,13 @@ type
     procedure buttonToolsClick(Sender: TObject);
     procedure tabToolsShow(Sender: TObject);
     procedure buttonToolsBackClick(Sender: TObject);
+    procedure gridToolsSelectCell(Sender: TObject; ACol, ARow: LongInt;
+      var CanSelect: Boolean);
+    procedure buttonDiscardClick(Sender: TObject);
+    procedure buttonStatusClick(Sender: TObject);
   private
+    toolController: TToolController;
+
     storageController: TStorageController;
     storages: TObjectList<TStorage>;
     selectedStorage: TStorage;
@@ -61,6 +70,7 @@ type
     procedure UpdateStorageGrid;
     procedure UpdateToolTypesGrid;
     procedure UpdateToolsGrid;
+    procedure UpdateStorage(aStorage: TStorage);
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
@@ -107,6 +117,38 @@ begin
   end;
 end;
 
+procedure TformStorage.buttonDiscardClick(Sender: TObject);
+begin
+  if not Assigned(Self.selectedTool) then begin
+    TMessageHelper.GetInstance.Error('Nenhuma ferramenta selecionada');
+    Exit;
+  end;
+
+  if Self.selectedTool.status = HONING then begin
+    TMessageHelper.GetInstance.Error('Não é possível descartar uma ferramenta em afiação');
+    Exit;
+  end;
+
+  if not TMessageHelper.GetInstance.Confirmation(
+    Format('Tem certeza que quer descartar a unidade %s?', [Self.selectedTool.code])
+  ) then Exit;
+
+  if not Self.toolController.DiscardTool(Self.selectedTool.id) then begin
+    TMessageHelper.GetInstance.Error('Não foi possível descartar a unidade');
+    Exit;
+  end;
+
+  Self.tools.Remove(Self.selectedTool);
+  Self.selectedTool := nil;
+  Self.UpdateToolsGrid;
+
+  Self.UpdateStorage(Self.selectedStorage);
+
+  if Assigned(Self.toolTypes) then
+    Self.toolTypes.Free;
+  Self.toolTypes := Self.storageController.GetToolTypes(Self.selectedStorage.id);
+end;
+
 procedure TformStorage.buttonEditClick(Sender: TObject);
 begin
   if not Assigned(Self.selectedStorage) then begin
@@ -144,6 +186,38 @@ begin
   Self.storages.Add(newStorage);
   Self.pcontrolStorage.ActivePageIndex := 0;
   Self.editName.Clear;
+end;
+
+procedure TformStorage.buttonStatusClick(Sender: TObject);
+var
+  updatedTool: TTool;
+begin
+  if not Assigned(Self.selectedTool) then begin
+    TMessageHelper.GetInstance.Error('Nenhuma ferramenta selecionada');
+    Exit;
+  end;
+
+  if Self.selectedTool.status = HONING then begin
+    TMessageHelper.GetInstance.Error('Não é possível alterar a disponibilidade de uma ferramenta em afiação');
+    Exit;
+  end;
+
+  try
+    updatedTool := Self.toolController.ToggleAvailability(Self.selectedTool.id);
+  except
+    TMessageHelper.GetInstance.Error('Não foi possível alterar a disponibilidade da ferramenta');
+    Exit;
+  end;
+
+  Self.tools.Remove(Self.selectedTool);
+  Self.tools.Add(updatedTool);
+  Self.UpdateToolsGrid;
+
+  Self.UpdateStorage(Self.selectedStorage);
+
+  if Assigned(Self.toolTypes) then
+    Self.toolTypes.Free;
+  Self.toolTypes := Self.storageController.GetToolTypes(Self.selectedStorage.id);
 end;
 
 procedure TformStorage.buttonToolsBackClick(Sender: TObject);
@@ -188,6 +262,7 @@ constructor TformStorage.Create(AOwner: TComponent);
 begin
   inherited;
   Self.storageController := TDependencies.GetInstance.GetStorageController;
+  Self.toolController := TDependencies.GetInstance.GetToolController;
   Self.storages := Self.storageController.GetStorages;
 end;
 
@@ -227,6 +302,17 @@ begin
   end;
 
   Self.selectedStorage := TStorage(Self.gridStorages.Objects[0, ARow]);
+end;
+
+procedure TformStorage.gridToolsSelectCell(Sender: TObject; ACol, ARow: LongInt;
+  var CanSelect: Boolean);
+begin
+  if ARow = 0 then begin
+    CanSelect := False;
+    Exit;
+  end;
+
+  Self.selectedTool := TTool(Self.gridTools.Objects[0, ARow]);
 end;
 
 procedure TformStorage.gridToolTypesDrawCell(Sender: TObject; ACol,
@@ -269,6 +355,18 @@ end;
 procedure TformStorage.tabToolTypesShow(Sender: TObject);
 begin
   Self.UpdateToolTypesGrid;
+end;
+
+procedure TformStorage.UpdateStorage(aStorage: TStorage);
+var
+  updatedStorage: TStorage;
+begin
+  updatedStorage := Self.storageController.GetStorage(aStorage.id);
+
+  if Assigned(updatedStorage) then begin
+    Self.storages.Remove(aStorage);
+    Self.storages.Add(updatedStorage);
+  end;
 end;
 
 procedure TformStorage.UpdateStorageGrid;
@@ -326,9 +424,9 @@ begin
         RowCount := RowCount + 1;
         Objects[0, i] := tool;
         Cells[0, i] := tool.code;
-        Cells[1, i] := StateToString(tool.state);
+        Cells[1, i] := StateToStringDisplay(tool.state);
         Cells[2, i] := IntToStr(tool.honingNum);
-        Cells[3, i] := StatusToString(tool.status);
+        Cells[3, i] := StatusToStringDisplay(tool.status);
       end;
   end;
 end;

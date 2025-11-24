@@ -21,7 +21,7 @@ object formStorage: TformStorage
     Margins.Top = 0
     Margins.Right = 0
     Margins.Bottom = 0
-    ActivePage = tabList
+    ActivePage = tabToolTypes
     Align = alClient
     TabOrder = 0
     object tabList: TTabSheet
@@ -155,6 +155,7 @@ object formStorage: TformStorage
         FixedCols = 0
         TabOrder = 0
         OnDrawCell = gridStoragesDrawCell
+        OnSelectCell = gridToolsSelectCell
       end
       object buttonToolsBack: TButton
         Left = 12
@@ -164,6 +165,32 @@ object formStorage: TformStorage
         Caption = 'Voltar'
         TabOrder = 1
         OnClick = buttonToolsBackClick
+      end
+      object buttonDiscard: TButton
+        Left = 259
+        Top = 496
+        Width = 134
+        Height = 41
+        Caption = 'Descartar unidade'
+        TabOrder = 2
+        OnClick = buttonDiscardClick
+      end
+      object buttonStatus: TButton
+        Left = 412
+        Top = 497
+        Width = 141
+        Height = 40
+        Caption = 'Alterar disponibilidade'
+        TabOrder = 3
+        OnClick = buttonStatusClick
+      end
+      object buttonMove: TButton
+        Left = 571
+        Top = 497
+        Width = 141
+        Height = 40
+        Caption = 'Mover unidade'
+        TabOrder = 4
       end
     end
   end

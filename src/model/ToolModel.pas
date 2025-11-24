@@ -26,6 +26,7 @@ end;
 
 function StringToStatus(aString: String): TStatus;
 function StatusToString(aStatus: TStatus): String;
+function StatusToStringDisplay(aStatus: TStatus): String;
 function StringToState(aString: String): TState;
 function StateToString(aState: TState): String;
 function StateToStringDisplay(aState: TState): String;
@@ -65,6 +66,17 @@ begin
   end;
 end;
 
+function StatusToStringDisplay(aStatus: TStatus): String;
+begin
+  case aStatus of
+    AVAILABLE: Result := 'Disponível';
+    IN_USE:    Result := 'Em uso';
+    HONING:    Result := 'Em afiação';
+  else
+    raise Exception.Create(Format('Valor de status inválido: %d', [Ord(aStatus)]));
+  end;
+end;
+
 function StringToState(aString: String): TState;
 begin
   aString := UpperCase(aString);
@@ -89,8 +101,8 @@ end;
 function StateToStringDisplay(aState: TState): String;
 begin
   case aState of
-    NEW: Result := 'NOVA';
-    HONED:    Result := 'AFIADA';
+    NEW: Result := 'Nova';
+    HONED:    Result := 'Afiada';
   else
     raise Exception.Create(Format('Valor de state inválido: %d', [Ord(aState)]));
   end;
