@@ -47,6 +47,9 @@ type
     panelReceipt: TPanel;
     labelReceipt: TLabel;
     buttonReceipt: TSpeedButton;
+    imgOrders: TImage;
+    imgReceipt: TImage;
+    imgReports: TImage;
     procedure imgMenuClick(Sender: TObject);
     procedure buttonUserMenuClick(Sender: TObject);
     procedure buttonPermissionsClick(Sender: TObject);
