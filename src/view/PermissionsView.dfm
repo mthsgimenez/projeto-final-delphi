@@ -45,20 +45,20 @@ object formPermissions: TformPermissions
         Enabled = False
         ItemHeight = 17
         Items.Strings = (
-          'USERS_CREATE'
-          'USERS_UPDATE'
-          'USERS_DELETE'
-          'USERS_PERMISSIONS'
-          'SUPPLIERS_CREATE'
-          'SUPPLIERS_UPDATE'
-          'SUPPLIERS_DELETE'
-          'TOOLS_CREATE'
-          'TOOLS_UPDATE'
-          'TOOLS_DELETE'
-          'STORAGE'
-          'ORDERS'
-          'RECEIPT'
-          'REPORTS')
+          'Cadastrar usu'#225'rios'
+          'Atualizar usu'#225'rios'
+          'Excluir usu'#225'rios'
+          'Gerenciar grupos de permiss'#245'es'
+          'Cadastrar fornecedores'
+          'Atualizar fornecedores'
+          'Excluir fornecedores'
+          'Cadastrar ferramentas'
+          'Atualizar ferramentas'
+          'Excluir ferramentas'
+          'Gerenciar estoque'
+          'Emitir e visualizar ordens de compra e servi'#231'o'
+          'Receber pedidos'
+          'Emitir relat'#243'rios')
         TabOrder = 1
       end
       object buttonCreate: TButton
@@ -111,7 +111,7 @@ object formPermissions: TformPermissions
       end
       object labelPermissions: TLabel
         Left = 192
-        Top = 115
+        Top = 123
         Width = 114
         Height = 15
         Caption = 'Permiss'#245'es do grupo:'
@@ -126,25 +126,25 @@ object formPermissions: TformPermissions
       end
       object listPermissions: TCheckListBox
         Left = 192
-        Top = 136
+        Top = 144
         Width = 305
-        Height = 289
+        Height = 249
         ItemHeight = 17
         Items.Strings = (
-          'USERS_CREATE'
-          'USERS_UPDATE'
-          'USERS_DELETE'
-          'USERS_PERMISSIONS'
-          'SUPPLIERS_CREATE'
-          'SUPPLIERS_UPDATE'
-          'SUPPLIERS_DELETE'
-          'TOOLS_CREATE'
-          'TOOLS_UPDATE'
-          'TOOLS_DELETE'
-          'STORAGE'
-          'ORDERS'
-          'RECEIPT'
-          'REPORTS')
+          'Cadastrar usu'#225'rios'
+          'Atualizar usu'#225'rios'
+          'Excluir usu'#225'rios'
+          'Gerenciar grupos de permiss'#245'es'
+          'Cadastrar fornecedores'
+          'Atualizar fornecedores'
+          'Excluir fornecedores'
+          'Cadastrar ferramentas'
+          'Atualizar ferramentas'
+          'Excluir ferramentas'
+          'Gerenciar estoque'
+          'Emitir e visualizar ordens de compra e servi'#231'o'
+          'Receber pedidos'
+          'Emitir relat'#243'rios')
         TabOrder = 1
       end
       object buttonSave: TButton
