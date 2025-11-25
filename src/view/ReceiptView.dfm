@@ -38,8 +38,11 @@ object formReceipt: TformReceipt
       Top = 39
       Width = 700
       Height = 451
+      BevelOuter = bvNone
+      BorderStyle = bsNone
       FixedCols = 0
       TabOrder = 0
+      OnDrawCell = gridOrdersDrawCell
       OnSelectCell = gridOrdersSelectCell
     end
     object buttonClearFilter: TButton
@@ -49,6 +52,7 @@ object formReceipt: TformReceipt
       Height = 25
       Caption = 'Limpar filtro'
       TabOrder = 1
+      OnClick = buttonClearFilterClick
     end
     object comboType: TComboBox
       Left = 215
@@ -68,6 +72,7 @@ object formReceipt: TformReceipt
       Height = 25
       Caption = 'Filtrar'
       TabOrder = 3
+      OnClick = buttonFilterClick
     end
     object buttonCloseOrder: TButton
       Left = 569

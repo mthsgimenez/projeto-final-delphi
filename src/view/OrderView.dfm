@@ -47,8 +47,11 @@ object formOrder: TformOrder
         Top = 50
         Width = 700
         Height = 449
+        BevelOuter = bvNone
+        BorderStyle = bsNone
         FixedCols = 0
         TabOrder = 0
+        OnDrawCell = gridOrdersDrawCell
         OnSelectCell = gridOrdersSelectCell
       end
       object comboType: TComboBox
@@ -346,8 +349,11 @@ object formOrder: TformOrder
       Top = 24
       Width = 620
       Height = 329
+      BevelOuter = bvNone
+      BorderStyle = bsNone
       FixedCols = 0
       TabOrder = 0
+      OnDrawCell = gridOrdersDrawCell
       OnSelectCell = gridPickSelectCell
     end
     object buttonCancelPick: TButton

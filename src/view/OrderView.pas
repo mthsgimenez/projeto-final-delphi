@@ -85,6 +85,8 @@ type
     procedure buttonAddToolClick(Sender: TObject);
     procedure tabCreateServiceHide(Sender: TObject);
     procedure buttonSaveServiceClick(Sender: TObject);
+    procedure gridOrdersDrawCell(Sender: TObject; ACol, ARow: LongInt;
+      Rect: TRect; State: TGridDrawState);
   private
     selectedOrder: TObject;
 
@@ -527,6 +529,22 @@ begin
       TMessageHelper.GetInstance.Error('Preço inválido');
     end;
   end;
+end;
+
+procedure TformOrder.gridOrdersDrawCell(Sender: TObject; ACol, ARow: LongInt;
+  Rect: TRect; State: TGridDrawState);
+var
+  grid: TStringGrid;
+begin
+  grid := TStringGrid(Sender);
+
+  if ARow = 0 then begin
+    grid.Canvas.Brush.Color := RGB($41, $69, $E1);
+    grid.Canvas.Font.Color := RGB($FF, $FF, $FF);
+  end;
+
+  grid.Canvas.FillRect(Rect);
+  grid.Canvas.TextOut(Rect.Left + 4, Rect.Top + 4, grid.Cells[ACol, ARow]);
 end;
 
 procedure TformOrder.gridOrdersSelectCell(Sender: TObject; ACol, ARow: LongInt;

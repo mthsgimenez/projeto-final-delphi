@@ -33,6 +33,8 @@ object formStorage: TformStorage
         Top = 16
         Width = 700
         Height = 473
+        BevelOuter = bvNone
+        BorderStyle = bsNone
         ColCount = 4
         FixedCols = 0
         TabOrder = 0
@@ -117,6 +119,8 @@ object formStorage: TformStorage
         Top = 16
         Width = 700
         Height = 465
+        BevelOuter = bvNone
+        BorderStyle = bsNone
         FixedCols = 0
         TabOrder = 0
         OnDrawCell = gridToolTypesDrawCell
@@ -151,6 +155,8 @@ object formStorage: TformStorage
         Top = 13
         Width = 700
         Height = 468
+        BevelOuter = bvNone
+        BorderStyle = bsNone
         ColCount = 4
         FixedCols = 0
         TabOrder = 0

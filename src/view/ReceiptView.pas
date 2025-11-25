@@ -31,6 +31,10 @@ type
     procedure buttonCancelClick(Sender: TObject);
     procedure buttonClosePurchaseOrderClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
+    procedure buttonFilterClick(Sender: TObject);
+    procedure buttonClearFilterClick(Sender: TObject);
+    procedure gridOrdersDrawCell(Sender: TObject; ACol, ARow: LongInt;
+      Rect: TRect; State: TGridDrawState);
   private
     purchaseOrderController: TPurchaseOrderController;
     serviceOrderController: TServiceOrderController;
@@ -61,6 +65,11 @@ implementation
 procedure TformReceipt.buttonCancelClick(Sender: TObject);
 begin
   Self.panelClosePurchaseOrder.Visible := False;
+end;
+
+procedure TformReceipt.buttonClearFilterClick(Sender: TObject);
+begin
+  Self.comboType.ItemIndex := -1;
 end;
 
 procedure TformReceipt.buttonCloseOrderClick(Sender: TObject);
@@ -118,6 +127,19 @@ begin
   end;
 end;
 
+procedure TformReceipt.buttonFilterClick(Sender: TObject);
+var
+  fType: TFilterType;
+begin
+  case Self.comboType.ItemIndex of
+    0: fType := PURCHASE_ORDER;
+    1: fType := SERVICE_ORDER;
+    else FType := ALL_TYPES;
+  end;
+
+  Self.UpdateOrdersGrid(fType);
+end;
+
 constructor TformReceipt.Create(AOwner: TComponent);
 begin
   inherited;
@@ -144,6 +166,22 @@ end;
 procedure TformReceipt.FormCreate(Sender: TObject);
 begin
   Self.UpdateOrdersGrid(ALL_TYPES);
+end;
+
+procedure TformReceipt.gridOrdersDrawCell(Sender: TObject; ACol, ARow: LongInt;
+  Rect: TRect; State: TGridDrawState);
+var
+  grid: TStringGrid;
+begin
+  grid := TStringGrid(Sender);
+
+  if ARow = 0 then begin
+    grid.Canvas.Brush.Color := RGB($41, $69, $E1);
+    grid.Canvas.Font.Color := RGB($FF, $FF, $FF);
+  end;
+
+  grid.Canvas.FillRect(Rect);
+  grid.Canvas.TextOut(Rect.Left + 4, Rect.Top + 4, grid.Cells[ACol, ARow]);
 end;
 
 procedure TformReceipt.gridOrdersSelectCell(Sender: TObject; ACol,
