@@ -96,7 +96,7 @@ object formOrder: TformOrder
         OnClick = buttonClearClick
       end
       object buttonCreatePurchase: TButton
-        Left = 392
+        Left = 568
         Top = 505
         Width = 147
         Height = 43
@@ -105,7 +105,7 @@ object formOrder: TformOrder
         OnClick = buttonCreatePurchaseClick
       end
       object buttonCreateService: TButton
-        Left = 568
+        Left = 408
         Top = 505
         Width = 147
         Height = 43
@@ -114,13 +114,119 @@ object formOrder: TformOrder
         OnClick = buttonCreateServiceClick
       end
       object buttonCancel: TButton
-        Left = 15
+        Left = 247
         Top = 505
         Width = 147
         Height = 43
         Caption = 'Cancelar ordem'
         TabOrder = 7
         OnClick = buttonCancelClick
+      end
+      object buttonDetails: TButton
+        Left = 15
+        Top = 505
+        Width = 147
+        Height = 43
+        Caption = 'Visualizar detalhes'
+        TabOrder = 8
+        OnClick = buttonDetailsClick
+      end
+      object panelDetails: TPanel
+        Left = 191
+        Top = 72
+        Width = 310
+        Height = 380
+        BevelOuter = bvNone
+        BorderWidth = 1
+        BorderStyle = bsSingle
+        Caption = 'panelDetails'
+        Color = clSnow
+        ParentBackground = False
+        ShowCaption = False
+        TabOrder = 9
+        Visible = False
+        object labelId: TLabel
+          Left = 15
+          Top = 11
+          Width = 22
+          Height = 21
+          Caption = 'ID: '
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -16
+          Font.Name = 'Segoe UI'
+          Font.Style = []
+          ParentFont = False
+        end
+        object labelSupplier: TLabel
+          Left = 15
+          Top = 38
+          Width = 82
+          Height = 21
+          Caption = 'Fornecedor:'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -16
+          Font.Name = 'Segoe UI'
+          Font.Style = []
+          ParentFont = False
+        end
+        object labelIssueDate: TLabel
+          Left = 15
+          Top = 65
+          Width = 117
+          Height = 21
+          Caption = 'Data de emiss'#227'o:'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -16
+          Font.Name = 'Segoe UI'
+          Font.Style = []
+          ParentFont = False
+        end
+        object labelPriceDetail: TLabel
+          Left = 15
+          Top = 92
+          Width = 74
+          Height = 21
+          Caption = 'Valor total:'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -16
+          Font.Name = 'Segoe UI'
+          Font.Style = []
+          ParentFont = False
+        end
+        object labelItems: TLabel
+          Left = 15
+          Top = 119
+          Width = 36
+          Height = 21
+          Caption = 'Itens:'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -16
+          Font.Name = 'Segoe UI'
+          Font.Style = []
+          ParentFont = False
+        end
+        object buttonCloseDetails: TButton
+          Left = 96
+          Top = 339
+          Width = 105
+          Height = 30
+          Caption = 'Fechar'
+          TabOrder = 0
+          OnClick = buttonCloseDetailsClick
+        end
+        object listItems: TListBox
+          Left = 15
+          Top = 146
+          Width = 274
+          Height = 181
+          ItemHeight = 15
+          TabOrder = 1
+        end
       end
     end
     object tabCreatePurchase: TTabSheet

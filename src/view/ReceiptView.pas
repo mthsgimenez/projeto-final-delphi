@@ -6,7 +6,7 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, System.Generics.Collections,
   Dependencies, PurchaseOrderModel, ServiceOrderModel, PurchaseOrderController, ServiceOrderController,
-  Vcl.Grids, Vcl.StdCtrls, MessageHelper, StorageController, StorageModel;
+  Vcl.Grids, Vcl.StdCtrls, MessageHelper, StorageController, StorageModel, ToolModel;
 
 type TFilterType = (ALL_TYPES, PURCHASE_ORDER, SERVICE_ORDER);
 
@@ -25,6 +25,14 @@ type
     buttonClosePurchaseOrder: TButton;
     buttonCancel: TButton;
     listStorages: TListBox;
+    panelDetails: TPanel;
+    listItems: TListBox;
+    buttonBack: TButton;
+    labelId: TLabel;
+    labelSupplier: TLabel;
+    labelIssueDate: TLabel;
+    labelPrice: TLabel;
+    labelItems: TLabel;
     procedure gridOrdersSelectCell(Sender: TObject; ACol, ARow: LongInt;
       var CanSelect: Boolean);
     procedure buttonCloseOrderClick(Sender: TObject);
@@ -35,6 +43,8 @@ type
     procedure buttonClearFilterClick(Sender: TObject);
     procedure gridOrdersDrawCell(Sender: TObject; ACol, ARow: LongInt;
       Rect: TRect; State: TGridDrawState);
+    procedure buttonBackClick(Sender: TObject);
+    procedure buttonDetailsClick(Sender: TObject);
   private
     purchaseOrderController: TPurchaseOrderController;
     serviceOrderController: TServiceOrderController;
@@ -61,6 +71,11 @@ implementation
 {$R *.dfm}
 
 { TformReceipt }
+
+procedure TformReceipt.buttonBackClick(Sender: TObject);
+begin
+  Self.panelDetails.Visible := False;
+end;
 
 procedure TformReceipt.buttonCancelClick(Sender: TObject);
 begin
@@ -125,6 +140,60 @@ begin
     Self.panelClosePurchaseOrder.Visible := False;
     Self.UpdateOrdersGrid(ALL_TYPES);
   end;
+end;
+
+procedure TformReceipt.buttonDetailsClick(Sender: TObject);
+var
+  pOrder: TPurchaseOrder;
+  sOrder: TServiceOrder;
+  pItem: TPurchaseOrderItem;
+  sItem: TTool;
+  fs: TFormatSettings;
+begin
+  if not Assigned(Self.selectedOrder) then begin
+    TMessageHelper.GetInstance.Error('Selecione um pedido');
+    Exit;
+  end;
+
+  fs := TFormatSettings.Create;
+  fs.CurrencyString := 'R$';
+  fs.CurrencyFormat := 0;
+  fs.DecimalSeparator := ',';
+  fs.ThousandSeparator := '.';
+
+  if Self.selectedOrder is TPurchaseOrder then begin
+    pOrder := TPurchaseOrder(Self.selectedOrder);
+
+    Self.listItems.Clear;
+    for pItem in pOrder.items do begin
+      Self.listItems.AddItem(Format('%s x%d', [pItem.model.code, pItem.quantity]), nil);
+    end;
+
+    Self.labelId.Caption := Format('ID: %d', [pOrder.id]);
+    Self.labelSupplier.Caption := Format('Fornecedor: %s', [pOrder.supplier.tradeName]);
+    Self.labelIssueDate.Caption := Format(
+      'Data de emissão: %s',
+      [FormatDateTime('hh:nn  dd/mm/yyyy', pOrder.issuedAt)]
+    );
+    Self.labelPrice.Caption := Format('Valor total: %m', [pOrder.GetTotalPrice], fs);
+  end else begin
+    sOrder := TServiceOrder(Self.selectedOrder);
+
+    Self.listItems.Clear;
+    for sItem in sOrder.items do begin
+      Self.listItems.AddItem(sItem.code, nil);
+    end;
+
+    Self.labelId.Caption := Format('ID: %d', [sOrder.id]);
+    Self.labelSupplier.Caption := Format('Fornecedor: %s', [sOrder.supplier.tradeName]);
+    Self.labelIssueDate.Caption := Format(
+      'Data de emissão: %s',
+      [FormatDateTime('hh:nn  dd/mm/yyyy', sOrder.issuedAt)]
+    );
+    Self.labelPrice.Caption := Format('Valor total: %m', [sOrder.price], fs);
+  end;
+
+  Self.panelDetails.Visible := True;
 end;
 
 procedure TformReceipt.buttonFilterClick(Sender: TObject);

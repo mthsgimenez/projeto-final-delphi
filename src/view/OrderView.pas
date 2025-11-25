@@ -58,6 +58,15 @@ type
     gridPick: TStringGrid;
     buttonCancelPick: TButton;
     buttonPick: TButton;
+    buttonDetails: TButton;
+    panelDetails: TPanel;
+    buttonCloseDetails: TButton;
+    labelId: TLabel;
+    labelSupplier: TLabel;
+    labelIssueDate: TLabel;
+    labelPriceDetail: TLabel;
+    labelItems: TLabel;
+    listItems: TListBox;
     procedure tabListShow(Sender: TObject);
     procedure buttonFilterClick(Sender: TObject);
     procedure buttonClearClick(Sender: TObject);
@@ -87,6 +96,8 @@ type
     procedure buttonSaveServiceClick(Sender: TObject);
     procedure gridOrdersDrawCell(Sender: TObject; ACol, ARow: LongInt;
       Rect: TRect; State: TGridDrawState);
+    procedure buttonDetailsClick(Sender: TObject);
+    procedure buttonCloseDetailsClick(Sender: TObject);
   private
     selectedOrder: TObject;
 
@@ -282,6 +293,11 @@ begin
   Self.comboStatus.ItemIndex := -1;
 end;
 
+procedure TformOrder.buttonCloseDetailsClick(Sender: TObject);
+begin
+  Self.panelDetails.Visible := False;
+end;
+
 procedure TformOrder.buttonCreatePurchaseClick(Sender: TObject);
 begin
   Self.pcontrolOrders.ActivePageIndex := 1;
@@ -290,6 +306,60 @@ end;
 procedure TformOrder.buttonCreateServiceClick(Sender: TObject);
 begin
   Self.pcontrolOrders.ActivePageIndex := 2;
+end;
+
+procedure TformOrder.buttonDetailsClick(Sender: TObject);
+var
+  pOrder: TPurchaseOrder;
+  sOrder: TServiceOrder;
+  pItem: TPurchaseOrderItem;
+  sItem: TTool;
+  fs: TFormatSettings;
+begin
+  if not Assigned(Self.selectedOrder) then begin
+    TMessageHelper.GetInstance.Error('Selecione um pedido');
+    Exit;
+  end;
+
+  fs := TFormatSettings.Create;
+  fs.CurrencyString := 'R$';
+  fs.CurrencyFormat := 0;
+  fs.DecimalSeparator := ',';
+  fs.ThousandSeparator := '.';
+
+  if Self.selectedOrder is TPurchaseOrder then begin
+    pOrder := TPurchaseOrder(Self.selectedOrder);
+
+    Self.listItems.Clear;
+    for pItem in pOrder.items do begin
+      Self.listItems.AddItem(Format('%s x%d', [pItem.model.code, pItem.quantity]), nil);
+    end;
+
+    Self.labelId.Caption := Format('ID: %d', [pOrder.id]);
+    Self.labelSupplier.Caption := Format('Fornecedor: %s', [pOrder.supplier.tradeName]);
+    Self.labelIssueDate.Caption := Format(
+      'Data de emissão: %s',
+      [FormatDateTime('hh:nn  dd/mm/yyyy', pOrder.issuedAt)]
+    );
+    Self.labelPriceDetail.Caption := Format('Valor total: %m', [pOrder.GetTotalPrice], fs);
+  end else begin
+    sOrder := TServiceOrder(Self.selectedOrder);
+
+    Self.listItems.Clear;
+    for sItem in sOrder.items do begin
+      Self.listItems.AddItem(sItem.code, nil);
+    end;
+
+    Self.labelId.Caption := Format('ID: %d', [sOrder.id]);
+    Self.labelSupplier.Caption := Format('Fornecedor: %s', [sOrder.supplier.tradeName]);
+    Self.labelIssueDate.Caption := Format(
+      'Data de emissão: %s',
+      [FormatDateTime('hh:nn  dd/mm/yyyy', sOrder.issuedAt)]
+    );
+    Self.labelPriceDetail.Caption := Format('Valor total: %m', [sOrder.price], fs);
+  end;
+
+  Self.panelDetails.Visible := True;
 end;
 
 procedure TformOrder.buttonFilterClick(Sender: TObject);
