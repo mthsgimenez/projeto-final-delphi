@@ -15,7 +15,7 @@ type TStorageController = class
     function GetStorages: TObjectList<TStorage>;
     function DeleteStorage(aId: Integer): Boolean;
     function GetToolTypes(aStorageId: Integer): TObjectList<TToolType>;
-    function GetTools(aStorage: TStorage; aToolType: TToolType): TObjectList<TTool>;
+    function GetTools(aStorageId: Integer; aToolTypeId: Integer): TObjectList<TTool>;
   end;
 
 implementation
@@ -87,10 +87,10 @@ begin
   Result := Self.storageRepository.FindAll;
 end;
 
-function TStorageController.GetTools(aStorage: TStorage;
-  aToolType: TToolType): TObjectList<TTool>;
+function TStorageController.GetTools(aStorageId: Integer;
+  aToolTypeId: Integer): TObjectList<TTool>;
 begin
-  Result := Self.storageRepository.GetToolsInStorage(aStorage.id, aToolType.id);
+  Result := Self.storageRepository.GetToolsInStorage(aStorageId, aToolTypeId);
 end;
 
 function TStorageController.GetToolTypes(

@@ -76,6 +76,8 @@ type
     tools: TObjectList<TTool>;
     selectedTool: TTool;
 
+    currentStorageId: Integer;
+
     procedure UpdateStorageGrid;
     procedure UpdateToolTypesGrid;
     procedure UpdateToolsGrid;
@@ -158,11 +160,10 @@ begin
   Self.UpdateToolsGrid;
 
   Self.UpdateStorage(Self.selectedStorage);
-  Self.selectedStorage := nil;
 
   if Assigned(Self.toolTypes) then
     Self.toolTypes.Free;
-  Self.toolTypes := Self.storageController.GetToolTypes(Self.selectedStorage.id);
+  Self.toolTypes := Self.storageController.GetToolTypes(Self.currentStorageId);
 end;
 
 procedure TformStorage.buttonEditClick(Sender: TObject);
@@ -219,10 +220,9 @@ begin
 
   if Assigned(Self.toolTypes) then
     Self.toolTypes.Free;
-  Self.toolTypes := Self.storageController.GetToolTypes(Self.selectedStorage.id);
+  Self.toolTypes := Self.storageController.GetToolTypes(Self.currentStorageId);
 
   Self.UpdateStorage(Self.selectedStorage);
-  Self.selectedStorage := nil;
   Self.UpdateStorage(storage);
 end;
 
@@ -279,12 +279,11 @@ begin
   Self.tools.Add(updatedTool);
   Self.UpdateToolsGrid;
 
-  Self.UpdateStorage(Self.selectedStorage);
-  Self.selectedStorage := nil;
-
   if Assigned(Self.toolTypes) then
     Self.toolTypes.Free;
-  Self.toolTypes := Self.storageController.GetToolTypes(Self.selectedStorage.id);
+  Self.toolTypes := Self.storageController.GetToolTypes(Self.currentStorageId);
+
+  Self.UpdateStorage(Self.selectedStorage);
 end;
 
 procedure TformStorage.buttonToolsBackClick(Sender: TObject);
@@ -302,7 +301,7 @@ begin
   if Assigned(Self.tools) then
     Self.tools.Free;
 
-  Self.tools := Self.storageController.GetTools(Self.selectedStorage, Self.selectedToolType);
+  Self.tools := Self.storageController.GetTools(Self.currentStorageId, Self.selectedToolType.id);
   Self.pcontrolStorage.ActivePageIndex := 3;
 end;
 
@@ -318,10 +317,12 @@ begin
     Exit;
   end;
 
+  Self.currentStorageId := Self.selectedStorage.id;
+
   if Assigned(Self.toolTypes) then
     Self.toolTypes.Free;
 
-  Self.toolTypes := Self.storageController.GetToolTypes(Self.selectedStorage.id);
+  Self.toolTypes := Self.storageController.GetToolTypes(Self.currentStorageId);
   Self.pcontrolStorage.ActivePageIndex := 2;
 end;
 
