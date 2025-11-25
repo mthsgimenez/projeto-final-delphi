@@ -1,0 +1,3 @@
+SpentReport RCDATA "spent.fr3"
+StockReport RCDATA "stock.fr3"
+UsageReport RCDATA "usage.fr3"

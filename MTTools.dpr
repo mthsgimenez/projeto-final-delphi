@@ -1,5 +1,7 @@
 program MTTools;
 
+{$R *.dres}
+
 uses
   Vcl.Forms,
   DBConfigDTO in 'src\DTO\DBConfigDTO.pas',
