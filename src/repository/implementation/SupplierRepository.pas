@@ -124,7 +124,7 @@ begin
   Result := nil;
 
   Self.Query.SQL.Text := 'INSERT INTO suppliers(trade_name, legal_name, cnpj, cep, email, phone) ' +
-  'VALUES (:tradeName, :legalName, :cnpj, :cep, :email, :phone)';
+  'VALUES (:tradeName, :legalName, :cnpj, :cep, :email, :phone) RETURNING *';
 
   Self.Query.ParamByName('tradeName').AsString := aSupplier.tradeName;
   Self.Query.ParamByName('legalName').AsString := aSupplier.legalName;
